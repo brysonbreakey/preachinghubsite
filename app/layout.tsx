@@ -6,6 +6,7 @@ import ScrollReveal from "@/components/ScrollReveal";
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://preachinghub.com"),
   title: "PreachingHub — Sermon Prep & Coaching for Preachers",
   description: "Structured sermon prep, coaching-quality feedback, and team tools built for preachers who take their craft seriously.",
   openGraph: {
