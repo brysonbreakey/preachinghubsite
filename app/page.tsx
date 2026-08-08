@@ -288,7 +288,7 @@ function FeedbackReportMockup() {
 function Hero() {
   return (
     <section
-      className="relative pt-40 pb-24 px-6 overflow-hidden"
+      className="relative pt-32 sm:pt-40 pb-16 sm:pb-24 px-6 overflow-hidden"
       style={{ background: "linear-gradient(135deg, #1e3a8a 0%, #2c4a9e 45%, #3760ad 100%)" }}
     >
       {/* Decorative glow orbs */}
@@ -346,7 +346,7 @@ function Hero() {
 
 function ProblemStatement() {
   return (
-    <section className="py-24 px-6 bg-white">
+    <section className="py-16 sm:py-24 px-6 bg-white">
       <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 items-center">
         <div className="order-2 md:order-1" data-animate="fade-up">
           <p className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: "#3760ad" }}>The Problem</p>
@@ -444,7 +444,7 @@ function Features() {
   ];
 
   return (
-    <section id="features" className="py-24 px-6 bg-slate-50">
+    <section id="features" className="py-16 sm:py-24 px-6 bg-slate-50">
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-16" data-animate="fade-up">
           <h2 className="text-4xl sm:text-5xl font-extrabold text-slate-900 mb-4 tracking-tight">
@@ -461,7 +461,7 @@ function Features() {
           style={{ background: "linear-gradient(135deg, #eff6ff 0%, #f5f3ff 100%)" }}
           data-animate="fade-up"
         >
-          <div>
+          <div className="min-w-0">
             <div className="w-11 h-11 rounded-2xl flex items-center justify-center mb-5 bg-white" style={{ border: `1px solid ${bigFeature.accent}25` }}>
               <Icon d={bigFeature.icon} size={20} color={bigFeature.accent} />
             </div>
@@ -469,8 +469,8 @@ function Features() {
             <h3 className="text-2xl font-bold text-slate-900 mb-3 leading-snug">{bigFeature.title}</h3>
             <p className="text-slate-500 leading-relaxed">{bigFeature.body}</p>
           </div>
-          <div className="flex justify-center md:justify-end">
-            <div className="relative scale-[0.85] origin-center md:origin-right">
+          <div className="min-w-0 flex justify-center md:justify-end">
+            <div className="feature-mockup-scale relative">
               <div className="absolute -bottom-8 -right-8 scale-[0.5] origin-bottom-right rotate-2" style={{ zIndex: 0 }}>
                 <FeedbackReportMockup />
               </div>
@@ -504,11 +504,111 @@ function Features() {
   );
 }
 
+// ─── Process cycle ──────────────────────────────────────────────────────────
+
+function ProcessCycle() {
+  const steps = [
+    {
+      number: "01",
+      title: "Prepare",
+      icon: ["M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z", "M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"],
+      body: "Use the Sermon Builder to craft your message with a proven, fully customizable prep process.",
+      tools: ["Sermon Builder", "Customizable Prep Process", "Research Tool Library"],
+    },
+    {
+      number: "02",
+      title: "Rehearse",
+      icon: ["M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z", "M19 10v2a7 7 0 0 1-14 0v-2", "M12 19v4", "M8 23h8"],
+      body: "Upload your notes or a rehearsal recording and get coaching feedback before you ever step into the pulpit.",
+      tools: ["Live Recording", "AI Feedback Reports"],
+    },
+    {
+      number: "03",
+      title: "Preach",
+      icon: ["M11 5 6 9H2v6h4l5 4V5z", "M15.54 8.46a5 5 0 0 1 0 7.07"],
+      body: "Step up with confidence, knowing your message is clear, faithful, and ready.",
+      tools: ["Pulpit Mode", "Sermon Organizer"],
+    },
+    {
+      number: "04",
+      title: "Review",
+      icon: ["M22 12h-4l-3 9L9 3l-3 9H2"],
+      body: "Get a detailed coaching report — strengths, growth areas, and pacing analysis — so you keep growing sermon after sermon.",
+      tools: ["PDF Coaching Report", "Pacing Analysis", "Tone/Volume Analysis", "Visual Delivery Analysis"],
+    },
+  ];
+
+  return (
+    <section className="py-16 sm:py-24 px-6 bg-white overflow-hidden">
+      <div className="max-w-6xl mx-auto">
+        <div className="text-center mb-16" data-animate="fade-up">
+          <p className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: "#3760ad" }}>The Process</p>
+          <h2 className="text-4xl sm:text-5xl font-extrabold text-slate-900 mb-4 tracking-tight">
+            How we help preachers grow.
+          </h2>
+          <p className="text-lg text-slate-500 max-w-xl mx-auto">
+            The same four-step rhythm, every single week — until it&apos;s just how you preach.
+          </p>
+        </div>
+
+        <div className="relative grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {steps.map((step, i) => (
+            <div key={step.title} className="relative">
+              <div
+                className="feature-card bg-white rounded-2xl border border-slate-200 p-6 h-full"
+                data-animate="fade-up"
+                data-delay={String(i * 100)}
+              >
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="relative w-11 h-11 shrink-0 rounded-2xl flex items-center justify-center bg-blue-50" style={{ border: "1px solid #3760ad25" }}>
+                    <Icon d={step.icon} size={18} color="#3760ad" strokeWidth={2} />
+                    <span
+                      className="step-pulse absolute -top-2 -right-2 w-6 h-6 rounded-full flex items-center justify-center text-white text-[10px] font-bold"
+                      style={{ backgroundColor: "#3760ad", animationDelay: `${i * 0.6}s` }}
+                    >
+                      {step.number}
+                    </span>
+                  </div>
+                  <h3 className="text-lg font-bold text-slate-900 tracking-tight">{step.title}</h3>
+                </div>
+                <p className="text-sm text-slate-500 leading-relaxed mb-5">{step.body}</p>
+                <p className="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-2">Tools we offer</p>
+                <ul className="space-y-1.5">
+                  {step.tools.map((tool) => (
+                    <li key={tool} className="flex items-center gap-2 text-sm text-slate-600">
+                      <Icon d="M20 6 9 17l-5-5" size={13} color="#16a34a" strokeWidth={2.5} />
+                      {tool}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Connector arrow to next step (desktop only) */}
+              {i < steps.length - 1 && (
+                <div className="hidden lg:flex absolute top-1/2 -right-6 -translate-y-1/2 z-10 items-center justify-center w-6 h-6">
+                  <span className="step-arrow" style={{ animationDelay: `${i * 0.6}s` }}>
+                    <Icon d="M5 12h14M12 5l7 7-7 7" size={18} color="#3760ad" strokeWidth={2.5} />
+                  </span>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+
+        <div className="flex items-center justify-center gap-2 mt-10 text-sm text-slate-400" data-animate="fade-up" data-delay="400">
+          <Icon d={["M3 12a9 9 0 1 1 3 6.7", "M3 16v-4h4"]} size={16} color="#94a3b8" strokeWidth={2} />
+          Back to prepare an even stronger sermon next week.
+        </div>
+      </div>
+    </section>
+  );
+}
+
 // ─── Testimonials ─────────────────────────────────────────────────────────────
 
 function Testimonials() {
   return (
-    <section className="py-24 px-6 bg-slate-50">
+    <section className="py-16 sm:py-24 px-6 bg-slate-50">
       <div className="max-w-5xl mx-auto text-center">
         <h2 className="text-4xl sm:text-5xl font-extrabold text-slate-900 mb-4 tracking-tight" data-animate="fade-up">What preachers are saying</h2>
         <p className="text-lg text-slate-500 mb-16 max-w-xl mx-auto" data-animate="fade-up" data-delay="100">Preachers using PreachingHub to sharpen their craft week after week.</p>
@@ -546,7 +646,7 @@ function Testimonials() {
 
 function AboutCompany() {
   return (
-    <section className="py-24 px-6 bg-white">
+    <section className="py-16 sm:py-24 px-6 bg-white">
       <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 items-center">
         <div data-animate="fade-up">
           <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-slate-300/50" style={{ aspectRatio: "4/5" }}>
@@ -582,7 +682,7 @@ function AboutCompany() {
 function FinalCTA() {
   return (
     <section
-      className="relative py-24 px-6 overflow-hidden text-center"
+      className="relative py-16 sm:py-24 px-6 overflow-hidden text-center"
       style={{ background: "linear-gradient(135deg, #1e3a8a 0%, #2c4a9e 45%, #3760ad 100%)" }}
     >
       {/* Decorative glow orbs */}
@@ -595,7 +695,7 @@ function FinalCTA() {
           14-Day Free Trial &middot; No Card Required
         </div>
         <h2 className="text-4xl sm:text-5xl font-black text-white leading-[1.05] tracking-tight mb-6">
-          Ready to take your preaching to the next level?
+          Ready to make your next sermon your best one yet?
         </h2>
         <p className="text-xl text-blue-100/80 max-w-xl mx-auto mb-10 leading-relaxed">
           Join preachers who use PreachingHub to prepare with more clarity, preach with more confidence, and grow every single week.
@@ -619,6 +719,7 @@ export default function Page() {
       <Hero />
       <ProblemStatement />
       <Features />
+      <ProcessCycle />
       <Testimonials />
       <AboutCompany />
       <FinalCTA />

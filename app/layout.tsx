@@ -28,6 +28,10 @@ const animationCSS = `
 .hero-sub     { animation: hero-fade-up 0.7s ease both; animation-delay: 0.32s; }
 .hero-cta     { animation: hero-fade-up 0.7s ease both; animation-delay: 0.44s; }
 .hero-mockup  { animation: hero-fade-up 0.9s ease both; animation-delay: 0.6s;  }
+.feature-mockup-scale { transform: scale(0.6); transform-origin: top center; margin-bottom: -140px; }
+@media (min-width: 768px) {
+  .feature-mockup-scale { transform: scale(0.85); transform-origin: center right; margin-bottom: 0; }
+}
 [data-animate] { opacity: 0; will-change: opacity, transform; transition: opacity 0.6s ease, transform 0.6s ease; }
 [data-animate="fade-up"]    { transform: translateY(36px); }
 [data-animate="fade-in"]    { transform: none; }
@@ -47,6 +51,16 @@ const animationCSS = `
 .how-step-icon:hover { transform: scale(1.08); background-color: #dbeafe; }
 .testimonial-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
 .testimonial-card:hover { transform: translateY(-3px); box-shadow: 0 10px 28px -8px rgba(55,96,173,0.12); }
+@keyframes step-pulse-badge {
+  0%, 70%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(55,96,173,0.5); }
+  15% { transform: scale(1.18); box-shadow: 0 0 0 6px rgba(55,96,173,0); }
+}
+.step-pulse { animation: step-pulse-badge 2.4s ease-in-out infinite; }
+@keyframes step-arrow-flow {
+  0%, 70%, 100% { opacity: 0.35; transform: translateX(0); }
+  15% { opacity: 1; transform: translateX(3px); }
+}
+.step-arrow { display: inline-flex; animation: step-arrow-flow 2.4s ease-in-out infinite; }
 .stagger-children > * { transition-delay: calc(var(--i, 0) * 80ms); }
 `
 

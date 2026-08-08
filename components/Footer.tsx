@@ -11,7 +11,10 @@ export function Footer() {
           <a href={SIGNUP_URL} className="hover:text-white transition-colors">Start Your Free Trial</a>
           <a href="mailto:support@preachinghub.com" className="hover:text-white transition-colors">Support</a>
         </div>
-        <p className="text-slate-500 text-xs">&copy; 2026 PreachingHub. Built for preachers by preachers.</p>
+        <p className="text-slate-500 text-xs">
+          &copy; 2026 PreachingHub. Built for preachers by preachers. &middot;{" "}
+          <a href="/privacy" className="hover:text-slate-300 transition-colors">Privacy Policy</a>
+        </p>
       </div>
     </footer>
   );
