@@ -377,10 +377,11 @@ function ProblemStatement() {
 
 function Features() {
   const bigFeature = {
-    icon: ["M13 2 3 14h9l-1 8 10-12h-9z"],
+    icon: ["m12 3-1.9 5.8a2 2 0 0 1-1.287 1.288L3 12l5.8 1.9a2 2 0 0 1 1.288 1.287L12 21l1.9-5.8a2 2 0 0 1 1.287-1.288L21 12l-5.8-1.9a2 2 0 0 1-1.288-1.287Z"],
     label: "Instant Sermon Feedback",
     title: "Expert coaching on every sermon",
-    body: "Upload a recording, your notes, or even a YouTube link and get a detailed coaching report across seven preaching categories — strengths, growth areas, reflection questions, and pacing analysis.",
+    body: "Every sermon you preach is a chance to grow. Upload a recording, your notes, or even a YouTube link, and get expert coaching — built by real preaching coaches — to help you preach with more clarity, confidence, and impact, sermon after sermon.",
+    features: ["Detailed Coaching Report", "Pacing Analysis", "Tone/Volume Analyzer", "Face/Body Language Analyzer", "Full Sermon Transcript"],
     accent: "#3760ad", bg: "#eff6ff",
   };
 
@@ -467,7 +468,15 @@ function Features() {
             </div>
             <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: bigFeature.accent }}>{bigFeature.label}</p>
             <h3 className="text-2xl font-bold text-slate-900 mb-3 leading-snug">{bigFeature.title}</h3>
-            <p className="text-slate-500 leading-relaxed">{bigFeature.body}</p>
+            <p className="text-slate-500 leading-relaxed mb-5">{bigFeature.body}</p>
+            <ul className="grid sm:grid-cols-2 gap-x-4 gap-y-2">
+              {bigFeature.features.map((f) => (
+                <li key={f} className="flex items-center gap-2 text-sm text-slate-600">
+                  <Icon d="M20 6 9 17l-5-5" size={14} color="#16a34a" strokeWidth={2.5} />
+                  {f}
+                </li>
+              ))}
+            </ul>
           </div>
           <div className="min-w-0 flex justify-center md:justify-end">
             <div className="feature-mockup-scale relative">
