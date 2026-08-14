@@ -69,9 +69,12 @@ function Hero() {
         <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 mb-5 tracking-tight leading-tight">
           A tier for every preacher&apos;s current needs.
         </h1>
-        <p className="text-lg text-slate-500 leading-relaxed">
+        <p className="text-lg text-slate-500 leading-relaxed mb-5">
           Whether you preach occasionally or you&apos;re building a weekly coaching rhythm with your staff, there&apos;s a plan built for where you are. Every plan starts with a 14-day free trial &mdash; no card required.
         </p>
+        <span className="inline-flex items-center gap-2 bg-blue-50 border border-blue-100 text-[#3760ad] text-xs font-semibold px-3 py-1.5 rounded-full uppercase tracking-wide">
+          No demo call. No long wait.
+        </span>
       </div>
     </section>
   );

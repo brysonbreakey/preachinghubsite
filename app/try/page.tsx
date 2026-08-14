@@ -443,6 +443,8 @@ export default function TryPage() {
             Submit a YouTube link, paste your notes, or upload audio. In minutes you&apos;ll receive helpful sermon feedback to take your preaching to the next level.
             <br />
             No account needed. No card required.
+            <br />
+            Get your report in minutes. No long wait. No demo call. No account needed.
           </p>
         </div>
 
