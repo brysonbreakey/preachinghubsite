@@ -71,13 +71,6 @@ export function StackUp() {
                 </tr>
               </thead>
               <tbody>
-                {/* Section 1 label */}
-                <tr>
-                  <td colSpan={7} className="pt-6 pb-3 px-4 text-center">
-                    <span className="text-xs italic text-slate-400">The essentials — we all have these</span>
-                  </td>
-                </tr>
-
                 {/* Row 1 */}
                 <tr className="bg-slate-50">
                   <td className="w-56 sticky left-0 z-10 bg-slate-50 px-5 py-4 border-b border-slate-100 text-sm text-slate-600">Doc-style sermon builder</td>
@@ -165,18 +158,10 @@ export function StackUp() {
                   <td className="px-4 py-4 text-center border-b border-slate-100"><CheckNeutral /></td>
                   <td className="px-4 py-4 text-center border-b border-slate-100"><CheckNeutral /></td>
                   <td className="px-4 py-4 text-center border-b border-slate-100"><CheckNeutral /></td>
-                  <td className="px-4 py-4 text-center border-b border-slate-100">
-                    <span
-                      className="inline-flex items-center gap-1 text-sm font-semibold text-slate-500 cursor-help"
-                      title="Pastor Center's Barnabas assistant can draft sermon content for you — a different philosophy than PreachingHub's coach-only approach."
-                    >
-                      <CheckNeutral /> Writes for you
-                      <span className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full border border-slate-300 text-slate-400 text-[9px] font-bold leading-none">i</span>
-                    </span>
-                  </td>
+                  <td className="px-4 py-4 text-center border-b border-slate-100"><CheckNeutral /></td>
                 </tr>
 
-                <Separator text="where PreachingHub goes further" emphasized />
+                <Separator text="Advanced AI Coaching Features" emphasized />
 
                 {/* Row 8 */}
                 <tr>
@@ -281,17 +266,6 @@ export function StackUp() {
                 {/* Row 13 */}
                 <tr>
                   <td className="w-56 sticky left-0 z-10 bg-white px-5 py-4 border-b border-slate-100 text-sm text-slate-600">Coach Mode with shareable PDF report</td>
-                  <td className="w-36 sticky left-56 z-10 px-4 py-4 text-center border-b border-slate-100" style={{ backgroundColor: "#eff6ff" }}><Check /></td>
-                  <td className="px-4 py-4 text-center border-b border-slate-100"><Cross /></td>
-                  <td className="px-4 py-4 text-center border-b border-slate-100"><Cross /></td>
-                  <td className="px-4 py-4 text-center border-b border-slate-100"><Cross /></td>
-                  <td className="px-4 py-4 text-center border-b border-slate-100"><Cross /></td>
-                  <td className="px-4 py-4 text-center border-b border-slate-100"><Cross /></td>
-                </tr>
-
-                {/* Row 14 */}
-                <tr>
-                  <td className="w-56 sticky left-0 z-10 bg-white px-5 py-4 border-b border-slate-100 text-sm text-slate-600">Group/1:1 coach dashboard</td>
                   <td className="w-36 sticky left-56 z-10 px-4 py-4 text-center border-b border-slate-100" style={{ backgroundColor: "#eff6ff" }}><Check /></td>
                   <td className="px-4 py-4 text-center border-b border-slate-100"><Cross /></td>
                   <td className="px-4 py-4 text-center border-b border-slate-100"><Cross /></td>
