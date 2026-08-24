@@ -13,7 +13,8 @@ export function Footer() {
         </div>
         <p className="text-slate-500 text-xs">
           &copy; 2026 PreachingHub. Built for preachers by preachers. &middot;{" "}
-          <a href="/privacy" className="hover:text-slate-300 transition-colors">Privacy Policy</a>
+          <a href="/privacy" className="hover:text-slate-300 transition-colors">Privacy Policy</a> &middot;{" "}
+          <a href="/terms" className="hover:text-slate-300 transition-colors">Terms of Service</a>
         </p>
       </div>
     </footer>

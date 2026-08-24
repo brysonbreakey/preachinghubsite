@@ -28,6 +28,7 @@ const TIERS: {
       "PDF Feedback Reports",
       "Pulpit Mode",
       "Research Library",
+      "Google Drive Integration",
     ],
     tier: "core",
     highlighted: false,
@@ -52,7 +53,8 @@ const TIERS: {
     tagline: "Best for senior pastors and preachers who want the full experience.",
     features: [
       "Everything in Pro",
-      "Visual Delivery Evaluation (BETA) — body language & facial expressions",
+      "Visual Delivery Evaluation (body language & facial expressions)",
+      "Tone & Volume Evaluation",
       "Preaching Fingerprint Report",
       "Quarterly Preaching Growth Report",
       "Early access to new features",
@@ -83,7 +85,7 @@ function Hero() {
 function PricingCards() {
   return (
     <section className="pb-24 px-6 bg-white">
-      <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-6 items-start">
+      <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-6">
         {TIERS.map((t, i) => (
           <div
             key={t.name}
