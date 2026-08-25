@@ -274,6 +274,59 @@ export function StackUp() {
                   <td className="px-4 py-4 text-center border-b border-slate-100"><Cross /></td>
                 </tr>
 
+                <Separator text="Built for Teams" emphasized />
+
+                {/* Row 14a */}
+                <tr>
+                  <td className="w-56 sticky left-0 z-10 bg-white px-5 py-5 border-b border-slate-100">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-semibold text-slate-900 text-sm">Shared preaching calendar</span>
+                      <span className="inline-flex items-center text-white text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full" style={{ backgroundColor: NAVY }}>
+                        Only PreachingHub
+                      </span>
+                    </div>
+                  </td>
+                  <td className="w-36 sticky left-56 z-10 px-4 py-5 text-center border-b border-slate-100" style={{ backgroundColor: "#eff6ff" }}><Check /></td>
+                  <td className="px-4 py-5 text-center border-b border-slate-100"><Cross /></td>
+                  <td className="px-4 py-5 text-center border-b border-slate-100"><Cross /></td>
+                  <td className="px-4 py-5 text-center border-b border-slate-100"><Cross /></td>
+                  <td className="px-4 py-5 text-center border-b border-slate-100"><Cross /></td>
+                  <td className="px-4 py-5 text-center border-b border-slate-100"><Cross /></td>
+                </tr>
+
+                {/* Row 14b */}
+                <tr>
+                  <td className="w-56 sticky left-0 z-10 bg-white px-5 py-4 border-b border-slate-100 text-sm text-slate-600">Assign sermons to team members</td>
+                  <td className="w-36 sticky left-56 z-10 px-4 py-4 text-center border-b border-slate-100" style={{ backgroundColor: "#eff6ff" }}><Check /></td>
+                  <td className="px-4 py-4 text-center border-b border-slate-100"><Cross /></td>
+                  <td className="px-4 py-4 text-center border-b border-slate-100"><Cross /></td>
+                  <td className="px-4 py-4 text-center border-b border-slate-100"><Cross /></td>
+                  <td className="px-4 py-4 text-center border-b border-slate-100"><Cross /></td>
+                  <td className="px-4 py-4 text-center border-b border-slate-100"><Cross /></td>
+                </tr>
+
+                {/* Row 14c */}
+                <tr>
+                  <td className="w-56 sticky left-0 z-10 bg-white px-5 py-4 border-b border-slate-100 text-sm text-slate-600">See team members&apos; prep progress</td>
+                  <td className="w-36 sticky left-56 z-10 px-4 py-4 text-center border-b border-slate-100" style={{ backgroundColor: "#eff6ff" }}><Check /></td>
+                  <td className="px-4 py-4 text-center border-b border-slate-100"><Cross /></td>
+                  <td className="px-4 py-4 text-center border-b border-slate-100"><Cross /></td>
+                  <td className="px-4 py-4 text-center border-b border-slate-100"><Cross /></td>
+                  <td className="px-4 py-4 text-center border-b border-slate-100"><Cross /></td>
+                  <td className="px-4 py-4 text-center border-b border-slate-100"><Cross /></td>
+                </tr>
+
+                {/* Row 14d */}
+                <tr>
+                  <td className="w-56 sticky left-0 z-10 bg-white px-5 py-4 border-b border-slate-100 text-sm text-slate-600">Shared team billing</td>
+                  <td className="w-36 sticky left-56 z-10 px-4 py-4 text-center border-b border-slate-100" style={{ backgroundColor: "#eff6ff" }}><Check /></td>
+                  <td className="px-4 py-4 text-center border-b border-slate-100"><Cross /></td>
+                  <td className="px-4 py-4 text-center border-b border-slate-100"><Cross /></td>
+                  <td className="px-4 py-4 text-center border-b border-slate-100"><Cross /></td>
+                  <td className="px-4 py-4 text-center border-b border-slate-100"><CheckNeutral /></td>
+                  <td className="px-4 py-4 text-center border-b border-slate-100"><Cross /></td>
+                </tr>
+
                 <Separator text="and the price" emphasized />
 
                 {/* Row 15 — pricing */}

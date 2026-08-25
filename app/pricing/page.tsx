@@ -41,7 +41,7 @@ const TIERS: {
       "Everything in Core",
       "Personalized AI Coaching with memory of past sermons",
       "Ongoing focused growth areas",
-      "Preaching Profile",
+      "Context-Specific Feedback",
       "Unlimited evaluations",
     ],
     tier: "pro",
