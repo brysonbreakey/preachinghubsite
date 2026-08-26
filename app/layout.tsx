@@ -15,6 +15,13 @@ export const metadata: Metadata = {
     url: "https://preachinghub.com",
     siteName: "PreachingHub",
     type: "website",
+    images: [{ url: "/og-image.jpg", width: 1200, height: 623 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "PreachingHub — Sermon Prep & Coaching for Preachers",
+    description: "Get coaching feedback on your last sermon. Free for 14 days.",
+    images: ["/og-image.jpg"],
   },
 };
 
