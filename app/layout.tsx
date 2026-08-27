@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import ScrollReveal from "@/components/ScrollReveal";
+import PostHogInit from "@/components/PostHogInit";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
@@ -78,6 +79,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <style dangerouslySetInnerHTML={{ __html: animationCSS }} />
       </head>
       <body className="min-h-full antialiased">
+        <PostHogInit />
         {children}
         <ScrollReveal />
       </body>
