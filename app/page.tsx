@@ -613,6 +613,42 @@ function ProcessCycle() {
   );
 }
 
+// ─── How It Works (video) ──────────────────────────────────────────────────────
+
+function HowItWorksVideo() {
+  return (
+    <section className="py-16 sm:py-24 px-6 bg-slate-50">
+      <div className="max-w-4xl mx-auto">
+        <div className="text-center mb-12" data-animate="fade-up">
+          <p className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: "#3760ad" }}>How It Works</p>
+          <h2 className="text-4xl sm:text-5xl font-extrabold text-slate-900 mb-4 tracking-tight">
+            See It In Action
+          </h2>
+          <p className="text-lg text-slate-500 max-w-xl mx-auto">
+            A 60-second look at prepping, rehearsing, and growing with every sermon.
+          </p>
+        </div>
+
+        <div
+          className="rounded-2xl overflow-hidden shadow-xl shadow-blue-100/50 border border-slate-200 bg-black"
+          data-animate="scale-up"
+          data-delay="100"
+        >
+          <video
+            className="w-full aspect-video"
+            controls
+            preload="metadata"
+            poster="/video/explainer-poster.jpg"
+            playsInline
+          >
+            <source src="/video/explainer.mp4" type="video/mp4" />
+          </video>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 // ─── Testimonials ─────────────────────────────────────────────────────────────
 
 function Testimonials() {
@@ -729,6 +765,7 @@ export default function Page() {
       <ProblemStatement />
       <Features />
       <ProcessCycle />
+      <HowItWorksVideo />
       <Testimonials />
       <AboutCompany />
       <FinalCTA />
