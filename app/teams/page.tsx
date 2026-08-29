@@ -3,10 +3,11 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Icon } from "@/components/Icon";
 import { TeamPricingCalculator } from "@/components/TeamPricingCalculator";
+import { FEATURES } from "@/lib/planFeatures";
 
 export const metadata: Metadata = {
   title: "PreachingHub for Teams — Shared Billing, Volume Discounts",
-  description: "Add every preacher on your staff to one team account, share the bill, and save up to 20% with volume pricing that gets better as your team grows.",
+  description: "Add every preacher on your staff to one team account, share the bill, and save up to 25% with volume pricing that gets better as your team grows.",
 };
 
 // ─── Hero ───────────────────────────────────────────────────────────────────
@@ -24,7 +25,7 @@ function Hero() {
       <div className="relative max-w-3xl mx-auto" data-animate="fade-up">
         <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 backdrop-blur text-white text-xs font-semibold px-3 py-1.5 rounded-full mb-8 uppercase tracking-wide">
           <span className="w-1.5 h-1.5 rounded-full bg-[#FBBF24] inline-block"></span>
-          Save up to 20% with Team Billing
+          Save up to 25% with Team Billing
         </div>
         <h1 className="text-4xl sm:text-5xl font-extrabold text-white leading-[1.1] tracking-tight mb-6">
           Take your team&apos;s preaching to new levels.
@@ -70,9 +71,9 @@ function WhyTeamBilling() {
     },
     {
       icon: ["M3 3h7v7H3z", "M14 3h7v7h-7z", "M14 14h7v7h-7z", "M3 14h7v7H3z"],
-      label: "Customized for Every Team",
-      title: "Not every seat has to match",
-      body: "Not all preaching roles have the same needs. Put each person on the tier that fits them — Core, Pro, or Max — all under one account.",
+      label: "One Plan for Everyone",
+      title: "No tiers to manage",
+      body: "Every teammate gets the full PreachingHub experience — the same sermon builder, AI coaching, and delivery analysis. You just add seats as your staff grows.",
       accent: "#10b981", bg: "#f0fdf4",
     },
   ];
@@ -105,99 +106,36 @@ function WhyTeamBilling() {
   );
 }
 
-// ─── Tier features ──────────────────────────────────────────────────────────
+// ─── Plan features ──────────────────────────────────────────────────────────
 
 function TierFeatures() {
-  const tiers = [
-    {
-      name: "Core",
-      price: "$29",
-      tagline: "Best for occasional preachers who want solid feedback on individual sermons.",
-      features: [
-        "Sermon Builder",
-        "AI Feedback Reports (text, audio, video, YouTube)",
-        "Sermon Briefs",
-        "PDF Feedback Reports",
-        "Pulpit Mode",
-        "Research Library",
-      ],
-      highlighted: false,
-    },
-    {
-      name: "Pro",
-      price: "$49",
-      tagline: "Best for regular preachers building an ongoing coaching relationship.",
-      features: [
-        "Everything in Core",
-        "Personalized AI Coaching with memory of past sermons",
-        "Ongoing focused growth areas",
-        "Preaching Profile",
-        "Unlimited evaluations",
-      ],
-      highlighted: true,
-    },
-    {
-      name: "Max",
-      price: "$99",
-      tagline: "Best for senior pastors and preachers who want the full experience.",
-      features: [
-        "Everything in Pro",
-        "Visual Delivery Evaluation (BETA) — body language & facial expressions",
-        "Preaching Fingerprint Report",
-        "Early access to new features",
-      ],
-      highlighted: false,
-    },
-  ];
-
   return (
-    <section className="py-24 px-6 bg-white">
-      <div className="max-w-5xl mx-auto">
+    <section className="pt-24 pb-8 px-6 bg-white">
+      <div className="max-w-3xl mx-auto">
         <div className="text-center mb-16" data-animate="fade-up">
           <h2 className="text-4xl sm:text-5xl font-extrabold text-slate-900 mb-4 tracking-tight">
-            Every tier, for every teammate
+            One plan. Every seat.
           </h2>
           <p className="text-lg text-slate-500 max-w-xl mx-auto">
-            Assign each person on your staff the plan that actually fits them — no full-team upgrade required.
+            No tiers to assign or manage &mdash; every teammate you add gets the full PreachingHub experience.
           </p>
         </div>
-        <div className="grid md:grid-cols-3 gap-6 items-start">
-          {tiers.map((t, i) => (
-            <div
-              key={t.name}
-              className={`relative rounded-2xl border p-7 flex flex-col ${
-                t.highlighted ? "border-2 shadow-xl shadow-blue-100/50" : "border-slate-200"
-              }`}
-              style={t.highlighted ? { borderColor: "#3760ad" } : undefined}
-              data-animate="fade-up"
-              data-delay={String(i * 100)}
-            >
-              {t.highlighted && (
-                <div
-                  className="absolute -top-4 left-1/2 -translate-x-1/2 inline-flex items-center gap-1 bg-white border rounded-full px-3 py-1.5 text-xs font-bold uppercase tracking-wide whitespace-nowrap"
-                  style={{ color: "#3760ad", borderColor: "#3760ad" }}
-                >
-                  Most Popular
-                </div>
-              )}
-              <h3 className="text-xl font-extrabold text-slate-900 mb-1 tracking-tight">{t.name}</h3>
-              <div className="flex items-end gap-1 mb-4">
-                <span className="text-3xl font-extrabold text-slate-900">{t.price}</span>
-                <span className="text-slate-500 mb-1 text-sm">/seat/mo</span>
-              </div>
-              <p className="text-sm text-slate-500 leading-relaxed mb-5 pb-5 border-b border-slate-100">{t.tagline}</p>
-              <ul className="space-y-2.5">
-                {t.features.map((f) => (
-                  <li key={f} className="flex items-start gap-2.5 text-sm text-slate-600 leading-relaxed">
-                    <span className="mt-0.5 shrink-0">
-                      <Icon d="M20 6 9 17l-5-5" size={15} color="#16a34a" strokeWidth={2.5} />
-                    </span>
-                    {f}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+        <div
+          className="rounded-2xl border-2 shadow-xl shadow-blue-100/50 p-8"
+          style={{ borderColor: "#3760ad" }}
+          data-animate="fade-up"
+          data-delay="100"
+        >
+          <ul className="grid sm:grid-cols-2 gap-x-6 gap-y-3">
+            {FEATURES.map((f) => (
+              <li key={f} className="flex items-start gap-2.5 text-sm text-slate-600 leading-relaxed">
+                <span className="mt-0.5 shrink-0">
+                  <Icon d="M20 6 9 17l-5-5" size={15} color="#16a34a" strokeWidth={2.5} />
+                </span>
+                {f}
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </section>
@@ -208,14 +146,14 @@ function TierFeatures() {
 
 function PricingCalculatorSection() {
   return (
-    <section id="calculator" className="py-24 px-6 bg-white">
+    <section id="calculator" className="pt-8 pb-24 px-6 bg-white">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-12" data-animate="fade-up">
           <h2 className="text-4xl sm:text-5xl font-extrabold text-slate-900 mb-4 tracking-tight">
             See exactly how much you&apos;d save
           </h2>
           <p className="text-lg text-slate-500 max-w-xl mx-auto">
-            Add seats for each tier and watch your discount update live.
+            Add seats and watch your discount update live.
           </p>
         </div>
         <div data-animate="fade-up" data-delay="100">

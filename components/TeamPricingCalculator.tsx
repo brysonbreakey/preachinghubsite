@@ -3,21 +3,14 @@
 import { useState } from "react";
 import { Icon } from "@/components/Icon";
 import { APP_URL } from "@/lib/urls";
-import {
-  TIER_PRICES,
-  TIER_LABELS,
-  discountPercent,
-  mixedSubtotal,
-  mixedMonthlyTotal,
-  totalSeats,
-  type SeatAllocation,
-} from "@/lib/teamPricing";
+import { SEAT_PRICES, discountPercent, seatSubtotal, seatMonthlyTotal, type BillingPeriod } from "@/lib/teamPricing";
 
-const TIER_ORDER: (keyof SeatAllocation)[] = ["core", "pro", "max"];
+const NAVY = "#3760ad";
+
 const DISCOUNT_TIERS = [
-  { min: 2, pct: 10 },
-  { min: 5, pct: 15 },
-  { min: 10, pct: 20 },
+  { min: 2, pct: 15 },
+  { min: 4, pct: 20 },
+  { min: 8, pct: 25 },
 ];
 
 function Stepper({
@@ -37,17 +30,17 @@ function Stepper({
         type="button"
         onClick={() => onChange(Math.max(min, value - 1))}
         disabled={value <= min}
-        className="w-8 h-8 rounded-full border border-slate-300 flex items-center justify-center text-slate-500 hover:border-[#3760ad] hover:text-[#3760ad] disabled:opacity-30 disabled:hover:border-slate-300 disabled:hover:text-slate-500 transition-colors"
+        className="w-9 h-9 rounded-full border border-slate-300 flex items-center justify-center text-slate-500 hover:border-[#3760ad] hover:text-[#3760ad] disabled:opacity-30 disabled:hover:border-slate-300 disabled:hover:text-slate-500 transition-colors"
         aria-label="Decrease seats"
       >
         <Icon d="M5 12h14" size={14} strokeWidth={2.5} />
       </button>
-      <span className="w-8 text-center font-bold text-slate-900 tabular-nums">{value}</span>
+      <span className="w-10 text-center text-lg font-bold text-slate-900 tabular-nums">{value}</span>
       <button
         type="button"
         onClick={() => onChange(Math.min(max, value + 1))}
         disabled={value >= max}
-        className="w-8 h-8 rounded-full border border-slate-300 flex items-center justify-center text-slate-500 hover:border-[#3760ad] hover:text-[#3760ad] disabled:opacity-30 transition-colors"
+        className="w-9 h-9 rounded-full border border-slate-300 flex items-center justify-center text-slate-500 hover:border-[#3760ad] hover:text-[#3760ad] disabled:opacity-30 transition-colors"
         aria-label="Increase seats"
       >
         <Icon d="M12 5v14M5 12h14" size={14} strokeWidth={2.5} />
@@ -57,17 +50,13 @@ function Stepper({
 }
 
 export function TeamPricingCalculator() {
-  const [allocation, setAllocation] = useState<SeatAllocation>({ core: 0, pro: 2, max: 0 });
+  const [seats, setSeats] = useState(2);
+  const [billing, setBilling] = useState<BillingPeriod>("annual");
 
-  const seats = totalSeats(allocation);
   const pct = discountPercent(seats);
-  const subtotal = mixedSubtotal(allocation);
-  const total = mixedMonthlyTotal(allocation);
+  const subtotal = seatSubtotal(seats, billing);
+  const total = seatMonthlyTotal(seats, billing);
   const savings = subtotal - total;
-
-  function setSeats(tier: keyof SeatAllocation, next: number) {
-    setAllocation((a) => ({ ...a, [tier]: next }));
-  }
 
   return (
     <div className="bg-white rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/60 p-6 sm:p-10">
@@ -80,7 +69,7 @@ export function TeamPricingCalculator() {
               className={`inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide px-3 py-1.5 rounded-full border transition-colors ${
                 active ? "text-white border-transparent" : "text-slate-400 border-slate-200 bg-white"
               }`}
-              style={active ? { backgroundColor: "#3760ad" } : undefined}
+              style={active ? { backgroundColor: NAVY } : undefined}
             >
               {t.min}+ seats &middot; {t.pct}% off
             </span>
@@ -88,18 +77,35 @@ export function TeamPricingCalculator() {
         })}
       </div>
 
-      <div className="grid md:grid-cols-3 gap-4 mb-8">
-        {TIER_ORDER.map((tier) => (
-          <div key={tier} className="rounded-xl border border-slate-200 p-5">
-            <div className="flex items-center justify-between mb-1">
-              <span className="font-extrabold text-slate-900 tracking-tight">{TIER_LABELS[tier]}</span>
-              <span className="text-sm text-slate-500">${TIER_PRICES[tier]}/seat</span>
-            </div>
-            <p className="text-xs text-slate-400 mb-4">seats</p>
-            <Stepper value={allocation[tier]} onChange={(next) => setSeats(tier, next)} />
+      <div className="flex flex-col sm:flex-row items-center justify-center gap-8 mb-8">
+        <div className="text-center">
+          <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3">Seats</p>
+          <Stepper value={seats} onChange={setSeats} min={1} />
+        </div>
+        <div className="text-center">
+          <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3">Billing</p>
+          <div className="inline-flex items-center bg-slate-100 rounded-full p-1 text-sm font-semibold">
+            <button
+              type="button"
+              onClick={() => setBilling("annual")}
+              className={`px-4 py-2 rounded-full transition-colors ${billing === "annual" ? "bg-white shadow text-slate-900" : "text-slate-500"}`}
+            >
+              Annual
+            </button>
+            <button
+              type="button"
+              onClick={() => setBilling("monthly")}
+              className={`px-4 py-2 rounded-full transition-colors ${billing === "monthly" ? "bg-white shadow text-slate-900" : "text-slate-500"}`}
+            >
+              Monthly
+            </button>
           </div>
-        ))}
+        </div>
       </div>
+
+      <p className="text-center text-sm text-slate-400 mb-8">
+        ${SEAT_PRICES[billing]}/seat/month, {billing === "annual" ? "billed annually" : "billed monthly"} &mdash; every seat gets the full PreachingHub plan.
+      </p>
 
       <div className="rounded-xl bg-slate-50 border border-slate-100 p-6">
         <div className="flex items-center justify-between mb-3">
@@ -113,33 +119,36 @@ export function TeamPricingCalculator() {
           )}
         </div>
 
-        {subtotal > 0 && (
-          <div className="space-y-1.5 mb-4 pb-4 border-b border-slate-200">
-            <div className="flex items-center justify-between text-sm text-slate-500">
-              <span>Subtotal</span>
-              <span>${subtotal.toFixed(0)}/mo</span>
-            </div>
-            {pct > 0 && (
-              <div className="flex items-center justify-between text-sm text-green-600">
-                <span>Team discount ({pct}%)</span>
-                <span>&minus;${savings.toFixed(0)}/mo</span>
-              </div>
-            )}
+        <div className="space-y-1.5 mb-4 pb-4 border-b border-slate-200">
+          <div className="flex items-center justify-between text-sm text-slate-500">
+            <span>Subtotal</span>
+            <span>${subtotal.toFixed(0)}/mo</span>
           </div>
-        )}
+          {pct > 0 && (
+            <div className="flex items-center justify-between text-sm text-green-600">
+              <span>Team discount ({pct}%)</span>
+              <span>&minus;${savings.toFixed(0)}/mo</span>
+            </div>
+          )}
+        </div>
 
         <div className="flex items-end justify-between mb-6">
           <span className="font-semibold text-slate-900">Total</span>
           <div className="text-right">
-            <span className="text-4xl font-extrabold text-slate-900 tracking-tight">${total.toFixed(0)}</span>
-            <span className="text-slate-500">/month</span>
+            <div>
+              <span className="text-4xl font-extrabold text-slate-900 tracking-tight">${total.toFixed(0)}</span>
+              <span className="text-slate-500">/month</span>
+            </div>
+            {billing === "annual" && (
+              <p className="text-xs text-slate-400 mt-0.5">billed at ${(Math.round(total) * 12).toFixed(0)}/year</p>
+            )}
           </div>
         </div>
 
         <a
           href={`${APP_URL}/teams/new`}
           className="w-full inline-flex items-center justify-center gap-2 text-white font-semibold px-6 py-4 rounded-xl text-base transition-colors"
-          style={{ backgroundColor: "#3760ad" }}
+          style={{ backgroundColor: NAVY }}
         >
           Get Started
           <Icon d="M5 12h14M12 5l7 7-7 7" size={16} color="white" strokeWidth={2.5} />

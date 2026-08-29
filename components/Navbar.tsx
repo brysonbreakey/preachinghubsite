@@ -20,20 +20,20 @@ export function Navbar() {
     <header className="fixed top-0 inset-x-0 z-50 bg-white/95 backdrop-blur border-b border-slate-200">
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
         <a href="/" onClick={() => setOpen(false)}><PHLogo height={28} /></a>
-        <nav className="hidden md:flex items-center gap-8 text-sm text-slate-600">
+        <nav className="hidden lg:flex items-center gap-8 text-sm text-slate-600">
           {NAV_LINKS.map((link) => (
             <a key={link.href} href={link.href} className="hover:text-slate-900 transition-colors">{link.label}</a>
           ))}
         </nav>
         <div className="flex items-center gap-3">
-          <a href={`${APP_URL}/auth/login`} className="hidden md:block text-sm text-slate-600 hover:text-slate-900 transition-colors">Sign in</a>
+          <a href={`${APP_URL}/auth/login`} className="hidden lg:block text-sm text-slate-600 hover:text-slate-900 transition-colors">Sign in</a>
           <a href={SIGNUP_URL} className="text-xs sm:text-sm bg-[#3760ad] hover:bg-blue-700 text-white font-medium px-3 py-2 sm:px-4 rounded-lg transition-colors whitespace-nowrap">
-            <span className="hidden sm:inline">Start Your </span>Free Trial
+            <span className="hidden sm:inline">Start </span>Free Trial
           </a>
           <button
             type="button"
             onClick={() => setOpen((v) => !v)}
-            className="md:hidden inline-flex items-center justify-center w-9 h-9 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors shrink-0"
+            className="lg:hidden inline-flex items-center justify-center w-9 h-9 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors shrink-0"
             aria-label={open ? "Close menu" : "Open menu"}
             aria-expanded={open}
           >
@@ -43,7 +43,7 @@ export function Navbar() {
       </div>
 
       {open && (
-        <div className="md:hidden border-t border-slate-200 bg-white px-6 py-4">
+        <div className="lg:hidden border-t border-slate-200 bg-white px-6 py-4">
           <nav className="flex flex-col gap-1">
             {NAV_LINKS.map((link) => (
               <a
