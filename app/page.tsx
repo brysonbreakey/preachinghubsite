@@ -3,6 +3,7 @@ import { PHLogo } from "@/components/Logo";
 import { Icon } from "@/components/Icon";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { PricingTeaser } from "@/components/PricingTeaser";
 import { SIGNUP_URL } from "@/lib/urls";
 
 // ─── Cartoon mockups ──────────────────────────────────────────────────────────
@@ -300,7 +301,7 @@ function Hero() {
         <div className="text-center lg:text-left min-w-0">
           <div className="hero-badge inline-flex items-center gap-2 bg-white/10 border border-white/20 backdrop-blur text-white text-xs font-semibold px-3 py-1.5 rounded-full mb-8 uppercase tracking-wide">
             <span className="w-1.5 h-1.5 rounded-full bg-[#FBBF24] inline-block"></span>
-            14-Day Free Trial &middot; No Card Required
+            14-Day Free Trial &middot; Cancel Anytime
           </div>
           <h1 className="hero-h1 text-5xl sm:text-6xl font-black text-white leading-[1.05] tracking-tight mb-6">
             Preach better.<br />Every week.
@@ -317,7 +318,7 @@ function Hero() {
               See what&apos;s included
             </a>
           </div>
-          <p className="hero-cta text-xs text-blue-100/60 mb-6" style={{ animationDelay: "0.48s" }}>No card required.</p>
+          <p className="hero-cta text-xs text-blue-100/60 mb-6" style={{ animationDelay: "0.48s" }}>Card required. Cancel anytime.</p>
           <div className="hero-cta flex flex-wrap items-center justify-center lg:justify-start gap-2" style={{ animationDelay: "0.52s" }}>
             {["Customizable workflows", "AI coaching", "Proven frameworks"].map((tag) => (
               <span key={tag} className="text-xs text-blue-100/70 bg-white/5 border border-white/10 rounded-full px-3 py-1.5">
@@ -737,7 +738,7 @@ function FinalCTA() {
       <div className="relative max-w-2xl mx-auto" data-animate="fade-up">
         <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 backdrop-blur text-white text-xs font-semibold px-3 py-1.5 rounded-full mb-8 uppercase tracking-wide">
           <span className="w-1.5 h-1.5 rounded-full bg-[#FBBF24] inline-block"></span>
-          14-Day Free Trial &middot; No Card Required
+          14-Day Free Trial &middot; Cancel Anytime
         </div>
         <h2 className="text-4xl sm:text-5xl font-black text-white leading-[1.05] tracking-tight mb-6">
           Ready to make your next sermon your best one yet?
@@ -749,7 +750,7 @@ function FinalCTA() {
           Start Your Free Trial
           <Icon d="M5 12h14M12 5l7 7-7 7" size={16} color="#0b1230" strokeWidth={2.5} />
         </a>
-        <p className="text-blue-100/60 text-xs mt-5">No credit card required. Plans start at $29/month.</p>
+        <p className="text-blue-100/60 text-xs mt-5">Card required to start. $39/month billed annually.</p>
       </div>
     </section>
   );
@@ -768,6 +769,7 @@ export default function Page() {
       <HowItWorksVideo />
       <Testimonials />
       <AboutCompany />
+      <PricingTeaser />
       <FinalCTA />
       <Footer />
     </main>

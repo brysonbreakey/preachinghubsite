@@ -144,7 +144,6 @@ function TierFeatures() {
         "Everything in Pro",
         "Visual Delivery Evaluation (BETA) — body language & facial expressions",
         "Preaching Fingerprint Report",
-        "Quarterly Preaching Growth Report",
         "Early access to new features",
       ],
       highlighted: false,

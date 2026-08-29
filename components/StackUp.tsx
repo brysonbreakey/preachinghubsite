@@ -333,7 +333,10 @@ export function StackUp() {
                 <tr>
                   <td className="w-56 sticky left-0 z-10 bg-white px-5 py-4 border-b border-slate-100 text-sm text-slate-600">Monthly price</td>
                   <td className="w-36 sticky left-56 z-10 px-4 py-4 text-center border-b border-slate-100" style={{ backgroundColor: "#eff6ff" }}>
-                    <span className="font-bold text-sm" style={{ color: NAVY }}>$29+/mo</span>
+                    <div className="flex flex-col items-center gap-0.5">
+                      <span className="font-bold text-sm" style={{ color: NAVY }}>$39/mo</span>
+                      <span className="text-[10px] text-slate-400">billed annually ($49/mo monthly)</span>
+                    </div>
                   </td>
                   <td className="px-4 py-4 text-center border-b border-slate-100 text-sm text-slate-400">$49+/mo</td>
                   <td className="px-4 py-4 text-center border-b border-slate-100 text-sm text-slate-400">$14.99+/mo</td>
@@ -351,13 +354,13 @@ export function StackUp() {
                 <tr>
                   <td className="w-56 sticky left-0 z-10 bg-white px-5 py-4 border-b border-slate-100 text-sm text-slate-600">Free trial</td>
                   <td className="w-36 sticky left-56 z-10 px-4 py-4 text-center border-b border-slate-100" style={{ backgroundColor: "#eff6ff" }}>
-                    <span className="font-bold text-sm" style={{ color: NAVY }}>14 days — no card</span>
+                    <span className="font-bold text-sm" style={{ color: NAVY }}>14 days</span>
                   </td>
-                  <td className="px-4 py-4 text-center border-b border-slate-100 text-sm text-slate-400">14 days (card required)</td>
-                  <td className="px-4 py-4 text-center border-b border-slate-100 text-sm text-slate-400">7 days (card required)</td>
+                  <td className="px-4 py-4 text-center border-b border-slate-100 text-sm text-slate-400">14 days</td>
+                  <td className="px-4 py-4 text-center border-b border-slate-100 text-sm text-slate-400">7 days</td>
                   <td className="px-4 py-4 text-center border-b border-slate-100 text-sm text-slate-400">7 days</td>
                   <td className="px-4 py-4 text-center border-b border-slate-100 text-sm text-slate-400">30 days</td>
-                  <td className="px-4 py-4 text-center border-b border-slate-100 text-sm text-slate-400">7 days (card required)</td>
+                  <td className="px-4 py-4 text-center border-b border-slate-100 text-sm text-slate-400">7 days</td>
                 </tr>
 
                 {/* Row 17 — sub-row */}

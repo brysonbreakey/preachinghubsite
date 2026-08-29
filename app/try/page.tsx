@@ -237,7 +237,7 @@ export default function TryPage() {
             >
               Start Your Free Trial →
             </a>
-            <p className="text-xs text-slate-400">Plans start at $29/month after your trial. No card required to start.</p>
+            <p className="text-xs text-slate-400">$39/month (billed annually) after your trial. Card required to start.</p>
           </div>
         </section>
         <Footer />
@@ -420,7 +420,7 @@ export default function TryPage() {
             >
               See Everything PreachingHub Does →
             </a>
-            <p className="text-xs text-slate-400">14 days free. No card required. Cancel anytime.</p>
+            <p className="text-xs text-slate-400">14 days free. Card required to start. Cancel anytime.</p>
           </div>
         </div>
         </section>
