@@ -32,6 +32,7 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function TryPage() {
   const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [sermonTitle, setSermonTitle] = useState("");
   const [inputType, setInputType] = useState<InputType>("video");
@@ -57,6 +58,7 @@ export default function TryPage() {
   function validate(): Record<string, string> {
     const errs: Record<string, string> = {};
     if (!firstName.trim()) errs.firstName = "First name is required.";
+    if (!lastName.trim()) errs.lastName = "Last name is required.";
     if (!email.trim()) errs.email = "Email address is required.";
     else if (!EMAIL_RE.test(email.trim())) errs.email = "Enter a valid email address.";
 
@@ -131,6 +133,7 @@ export default function TryPage() {
       const payload: Record<string, unknown> = {
         email: email.trim(),
         first_name: firstName.trim(),
+        last_name: lastName.trim(),
         sermon_title: sermonTitle.trim(),
         source: "marketing_try",
       };
@@ -254,7 +257,7 @@ export default function TryPage() {
             )}
 
             {/* Name & email */}
-            <div className="grid sm:grid-cols-2 gap-4">
+            <div className="grid sm:grid-cols-2 gap-4 [&>*:last-child]:sm:col-span-2">
               <div>
                 <label htmlFor="firstName" className="block text-sm font-medium text-slate-700 mb-1.5">
                   First name
@@ -271,6 +274,23 @@ export default function TryPage() {
                   }`}
                 />
                 {errors.firstName && <p className="text-xs text-red-600 mt-1.5">{errors.firstName}</p>}
+              </div>
+              <div>
+                <label htmlFor="lastName" className="block text-sm font-medium text-slate-700 mb-1.5">
+                  Last name
+                </label>
+                <input
+                  id="lastName"
+                  name="lastName"
+                  type="text"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  placeholder="Last name"
+                  className={`w-full rounded-lg border px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#3760ad] ${
+                    errors.lastName ? "border-red-300" : "border-slate-300 focus:border-[#3760ad]"
+                  }`}
+                />
+                {errors.lastName && <p className="text-xs text-red-600 mt-1.5">{errors.lastName}</p>}
               </div>
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-1.5">
