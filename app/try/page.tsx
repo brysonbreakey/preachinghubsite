@@ -8,41 +8,8 @@ import { Footer } from "@/components/Footer";
 import { APP_URL, SIGNUP_URL } from "@/lib/urls";
 
 type InputType = "video" | "text" | "audio";
-type View = "form" | "processing" | "ineligible" | "success";
+type View = "form" | "processing" | "ineligible";
 
-type EvalCategory = {
-  key: string;
-  label: string;
-  strength: string;
-  growth_area?: string;
-};
-
-type PacingInterval = {
-  time_marker: string;
-  wpm: number;
-  flag: "rushed" | "slow" | null;
-  label?: string;
-};
-
-type PacingSection = {
-  label: string;
-  time_marker: string;
-};
-
-type Pacing = {
-  average_wpm: number;
-  intervals: PacingInterval[];
-  sections?: PacingSection[];
-};
-
-type EvalResult = {
-  categories: EvalCategory[];
-  overall_summary: string;
-  top_coaching_priorities: string[];
-  one_thing_to_keep: string;
-  questions_worth_considering?: string[];
-  pacing?: Pacing;
-};
 
 const INPUT_OPTIONS: { value: InputType; label: string; icon: string | string[] }[] = [
   { value: "video", label: "Paste Video Link", icon: ["M23 7l-7 5 7 5V7z", "M14 5H3a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2z"] },
@@ -79,7 +46,6 @@ export default function TryPage() {
   const [view, setView] = useState<View>("form");
   const [ineligibleDate, setIneligibleDate] = useState<string | null>(null);
   const [processingMessage, setProcessingMessage] = useState("");
-  const [result, setResult] = useState<EvalResult | null>(null);
 
   const messageInterval = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -195,18 +161,17 @@ export default function TryPage() {
         payload.storage_path = storagePath;
       }
 
-      const submitRes = await fetch(`${APP_URL}/api/free-evaluation/submit`, {
+      const startRes = await fetch(`${APP_URL}/api/free-evaluation/start`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      const submitData = await submitRes.json().catch(() => null);
+      const startData = await startRes.json().catch(() => null);
 
-      if (!submitRes.ok || !submitData?.result) throw new Error("submit_failed");
+      if (!startRes.ok || !startData?.token) throw new Error("start_failed");
 
       stopProcessingMessages();
-      setResult(submitData.result);
-      setView("success");
+      window.location.href = `${APP_URL}/try/${startData.token}`;
     } catch {
       stopProcessingMessages();
       setSubmitError("Something went wrong on our end — this won't count as your free evaluation. Please try again.");
@@ -255,174 +220,6 @@ export default function TryPage() {
             <div className="w-14 h-14 rounded-full border-4 border-slate-200 mx-auto mb-6" style={{ borderTopColor: "#3760ad", animation: "spin 0.9s linear infinite" }} />
             <p className="text-lg font-medium text-slate-700">{processingMessage}</p>
           </div>
-        </section>
-        <Footer />
-      </main>
-    );
-  }
-
-  // ─── Results ──────────────────────────────────────────────────────────────
-  if (view === "success" && result) {
-    return (
-      <main>
-        <Navbar />
-        <section className="bg-slate-50 pt-32 pb-16 px-6">
-        <div className="max-w-3xl mx-auto">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 leading-tight mb-2 tracking-tight">
-              Here&apos;s your coaching report, {firstName.trim()}.
-            </h1>
-            <p className="text-slate-500">We&apos;ve sent a copy to {email.trim()}.</p>
-          </div>
-
-          {/* Overall Summary */}
-          <div className="rounded-xl border border-slate-200 bg-white p-6 mb-6">
-            <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "#3760ad" }}>
-              Overall Summary
-            </p>
-            <p className="text-slate-600 leading-relaxed">{result.overall_summary}</p>
-          </div>
-
-          {/* Breakdown by Area */}
-          <p className="text-sm font-medium text-slate-500 mb-3 px-1">Breakdown by Area</p>
-          <div className="space-y-3 mb-6">
-            {result.categories?.map((cat, i) => (
-              <div key={cat.key ?? i} className="rounded-xl border border-slate-200 bg-white p-6">
-                <div className="flex items-center gap-2 mb-4">
-                  <h3 className="font-semibold text-slate-900">{cat.label}</h3>
-                  {!cat.growth_area && (
-                    <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-green-50 text-green-700">Strong</span>
-                  )}
-                </div>
-
-                <div className={`flex items-start gap-2.5 ${cat.growth_area ? "mb-4" : ""}`}>
-                  <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center shrink-0 mt-0.5">
-                    <Icon d="M20 6 9 17l-5-5" size={11} color="#16a34a" strokeWidth={3} />
-                  </div>
-                  <div>
-                    <p className="text-xs font-bold uppercase tracking-widest text-green-600 mb-1">Strength</p>
-                    <p className="text-slate-600 leading-relaxed">{cat.strength}</p>
-                  </div>
-                </div>
-
-                {cat.growth_area && (
-                  <div className="flex items-start gap-2.5">
-                    <div className="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center shrink-0 mt-0.5">
-                      <Icon d={["M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z", "M12 16v-4", "M12 8h.01"]} size={11} color="#3760ad" strokeWidth={2.5} />
-                    </div>
-                    <div>
-                      <p className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#3760ad" }}>Growth Area</p>
-                      <p className="text-slate-600 leading-relaxed">{cat.growth_area}</p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-
-          {/* Pacing Analysis (audio/video submissions with word-level timing only) */}
-          {result.pacing && result.pacing.intervals.length > 0 && (
-            <div className="rounded-xl border border-slate-200 bg-white p-6 mb-6">
-              <p className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: "#3760ad" }}>Pacing Analysis</p>
-              <div className="flex items-end gap-1 h-16 mb-2">
-                {result.pacing.intervals.map((interval, i) => {
-                  const maxWpm = Math.max(...result.pacing!.intervals.map((iv) => iv.wpm), 1);
-                  const color = interval.flag === "rushed" ? "#f59e0b" : interval.flag === "slow" ? "#93c5fd" : "#3760ad";
-                  const heightPct = Math.max(8, (interval.wpm / maxWpm) * 100);
-                  return (
-                    <div
-                      key={i}
-                      className="flex-1 rounded-sm"
-                      style={{ height: `${heightPct}%`, backgroundColor: color }}
-                      title={`${interval.time_marker} — ${interval.wpm} wpm`}
-                    />
-                  );
-                })}
-              </div>
-              <div className="flex items-center justify-between text-xs text-slate-400 mb-4">
-                <span>{result.pacing.intervals[0]?.time_marker}</span>
-                <span>{result.pacing.intervals[result.pacing.intervals.length - 1]?.time_marker}</span>
-              </div>
-              <div className="flex flex-wrap items-center gap-4 text-xs text-slate-500">
-                <div className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-sm shrink-0" style={{ backgroundColor: "#3760ad" }} />Steady pace</div>
-                <div className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-sm shrink-0" style={{ backgroundColor: "#f59e0b" }} />Rushed</div>
-                <div className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-sm shrink-0" style={{ backgroundColor: "#93c5fd" }} />Slow</div>
-                <div className="ml-auto font-semibold text-slate-700">Avg {result.pacing.average_wpm} wpm</div>
-              </div>
-              {result.pacing.sections && result.pacing.sections.length > 0 && (
-                <div className="mt-5 pt-5 border-t border-slate-100">
-                  <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3">Sermon Sections</p>
-                  <div className="flex flex-wrap gap-2">
-                    {result.pacing.sections.map((s, i) => (
-                      <span key={i} className="text-xs bg-slate-50 border border-slate-200 rounded-full px-2.5 py-1 text-slate-600">
-                        <span className="text-slate-400">{s.time_marker}</span> {s.label}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Top Coaching Priorities */}
-          <div className="rounded-xl border border-slate-200 bg-white p-6 mb-6">
-            <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4">Top Coaching Priorities</p>
-            <ol className="space-y-4">
-              {result.top_coaching_priorities?.map((priority, i) => (
-                <li key={i} className="flex gap-3">
-                  <span className="font-bold shrink-0" style={{ color: "#3760ad" }}>{i + 1}.</span>
-                  <span className="text-slate-600 leading-relaxed">{priority}</span>
-                </li>
-              ))}
-            </ol>
-          </div>
-
-          {/* Biggest Win */}
-          <div className="rounded-xl border border-slate-200 bg-white p-6 mb-6">
-            <p className="text-xs font-bold uppercase tracking-widest text-green-600 mb-3">Biggest Win</p>
-            <p className="text-slate-600 leading-relaxed">{result.one_thing_to_keep}</p>
-          </div>
-
-          {/* Questions Worth Considering */}
-          {result.questions_worth_considering && result.questions_worth_considering.length > 0 && (
-            <div className="rounded-xl border border-slate-200 bg-white p-6 mb-6">
-              <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4">Questions Worth Considering</p>
-              <ul className="space-y-4">
-                {result.questions_worth_considering.map((q, i) => (
-                  <li key={i} className="flex gap-3">
-                    <span className="text-slate-300 shrink-0">—</span>
-                    <span className="text-slate-600 leading-relaxed">{q}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {/* Conversion prompt */}
-          <div className="rounded-xl border border-slate-200 bg-white p-6 sm:p-10 mt-10 text-center">
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-4 tracking-tight">
-              Want coaching like this on every sermon you preach?
-            </h2>
-            <p className="text-slate-600 leading-relaxed max-w-xl mx-auto mb-8">
-              PreachingHub gives you a structured prep process, unlimited AI coaching on your notes and audio, pacing analysis on rehearsal recordings, a series planner, and a library of every sermon you&apos;ve prepared — with plans starting at $29/month.
-            </p>
-            <a
-              href={SIGNUP_URL}
-              className="cta-btn w-full inline-flex items-center justify-center gap-2 font-semibold px-6 py-4 rounded-xl text-base text-white mb-3"
-              style={{ backgroundColor: "#3760ad" }}
-            >
-              Start Your Free Trial →
-            </a>
-            <a
-              href="/#features"
-              className="w-full inline-flex items-center justify-center gap-2 font-semibold px-6 py-4 rounded-xl text-base border-2 mb-4 transition-colors hover:bg-blue-50"
-              style={{ borderColor: "#3760ad", color: "#3760ad" }}
-            >
-              See Everything PreachingHub Does →
-            </a>
-            <p className="text-xs text-slate-400">14 days free. Card required to start. Cancel anytime.</p>
-          </div>
-        </div>
         </section>
         <Footer />
       </main>
