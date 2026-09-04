@@ -93,6 +93,9 @@ export default function ChecklistPage() {
               >
                 Download the Checklist
               </a>
+              <a href="https://preachinghub.com" className="block text-sm text-slate-400 hover:text-slate-600 mt-5 transition-colors">
+                preachinghub.com
+              </a>
             </div>
           ) : (
             <>
