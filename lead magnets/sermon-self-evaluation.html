@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Sermon Self-Evaluation — PreachingHub</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;500;600;700&display=swap');
+
+  :root{
+    --ink: #1B2635;
+    --ink-soft: #4A5568;
+    --line: #C9CFD8;
+    --line-light: #E4E8EE;
+    --paper: #FBFAF7;
+    --blue: #2F4FD1;
+    --blue-soft: #EDF0FC;
+    --gold: #B8862E;
+    --gold-soft: #FBF3E4;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html, body{
+    margin:0; padding:0;
+    background:#DEDEDA;
+    font-family:'Inter', sans-serif;
+    color: var(--ink);
+  }
+
+  .page{
+    width: 8.5in;
+    min-height: 11in;
+    margin: 0.4in auto;
+    background: var(--paper);
+    padding: 0.5in 0.62in 0.42in 0.62in;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+  }
+
+  /* ---------- Header ---------- */
+  .masthead{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 10px;
+    margin-bottom: 4px;
+  }
+  .brand{
+    display:flex;
+    align-items:flex-end;
+  }
+  .doc-title{
+    text-align:right;
+  }
+  .doc-title h1{
+    font-family:'Source Serif 4', serif;
+    font-weight:600;
+    font-size: 22px;
+    margin:0;
+    line-height:1.15;
+  }
+  .doc-title p{
+    margin: 2px 0 0 0;
+    font-size: 11px;
+    color: var(--ink-soft);
+  }
+
+  .intro{
+    font-family:'Source Serif 4', serif;
+    font-style: italic;
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    margin: 10px 0 16px 0;
+    line-height: 1.5;
+    max-width: 5.8in;
+  }
+
+  .meta-row{
+    display:flex;
+    gap: 26px;
+    margin-bottom: 18px;
+    font-size: 11px;
+    color: var(--ink-soft);
+  }
+  .meta-field{
+    display:flex;
+    align-items:baseline;
+    gap:6px;
+    flex:1;
+  }
+  .meta-field .fill-line{
+    flex:1;
+    border-bottom: 1px solid var(--line);
+    height: 14px;
+  }
+
+  /* ---------- Categories ---------- */
+  .categories{
+    display:flex;
+    flex-direction:column;
+  }
+
+  .cat{
+    display:grid;
+    grid-template-columns: 20px 1fr 118px;
+    column-gap: 12px;
+    align-items:start;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--line-light);
+  }
+  .cat:first-child{ padding-top:0; }
+
+  .cat-num{
+    font-family:'Source Serif 4', serif;
+    font-weight:600;
+    font-size: 13px;
+    color: var(--blue);
+    padding-top:1px;
+  }
+
+  .cat-name{
+    font-weight:600;
+    font-size: 12.5px;
+    margin: 0 0 2px 0;
+    color: var(--ink);
+  }
+  .cat-prompt{
+    font-size: 11px;
+    color: var(--ink-soft);
+    margin: 0 0 5px 0;
+    line-height:1.35;
+  }
+  .cat-line{
+    border-bottom: 1px solid var(--line);
+    height: 15px;
+  }
+
+  .rating{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-end;
+    padding-top: 1px;
+  }
+  .rating-label{
+    font-size: 9px;
+    letter-spacing: 0.3px;
+    color: var(--ink-soft);
+    margin-bottom: 5px;
+  }
+  .dots{
+    display:flex;
+    gap: 6px;
+  }
+  .dot{
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    border: 1.4px solid var(--ink-soft);
+  }
+  .dot-num{
+    font-size: 8px;
+    text-align:center;
+    color: var(--ink-soft);
+    width:15px;
+  }
+
+  /* ---------- Reflection footer blocks ---------- */
+  .reflect-row{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 16px;
+  }
+  .reflect-box{
+    border: 1.4px solid var(--ink);
+    border-radius: 3px;
+    padding: 10px 12px 14px 12px;
+  }
+  .reflect-box.win{
+    background: var(--gold-soft);
+    border-color: var(--gold);
+  }
+  .reflect-box.work{
+    background: var(--blue-soft);
+    border-color: var(--blue);
+  }
+  .reflect-box h3{
+    font-family:'Source Serif 4', serif;
+    font-size: 12.5px;
+    margin: 0 0 8px 0;
+  }
+  .reflect-box.win h3{ color: #8A6215; }
+  .reflect-box.work h3{ color: var(--blue); }
+  .reflect-box .fill-line{
+    border-bottom: 1px solid rgba(0,0,0,0.28);
+    height: 17px;
+  }
+
+  /* ---------- Footer ---------- */
+  .footer{
+    margin-top: 18px;
+    padding-top: 10px;
+    border-top: 1px solid var(--line);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+  }
+  .footer-note{
+    font-size: 10.5px;
+    color: var(--ink-soft);
+    font-style: italic;
+  }
+  .footer-note a{
+    color: var(--blue);
+    font-weight: 600;
+    text-decoration:none;
+  }
+  .footer-mark{
+    font-size: 9px;
+    color: #9AA3AF;
+    letter-spacing: 0.3px;
+  }
+
+  /* ---------- Print controls ---------- */
+  .print-bar{
+    max-width: 8.5in;
+    margin: 14px auto 0 auto;
+    text-align:center;
+  }
+  .print-bar button{
+    font-family:'Inter', sans-serif;
+    font-size: 13px;
+    font-weight:600;
+    padding: 9px 20px;
+    background: var(--blue);
+    color: #fff;
+    border:none;
+    border-radius: 5px;
+    cursor:pointer;
+  }
+  .print-bar button:hover{ background:#2540A8; }
+
+  @media print{
+    html, body{ background: #fff; }
+    .page{
+      box-shadow:none;
+      margin:0;
+      width:auto;
+      min-height:auto;
+    }
+    .print-bar{ display:none; }
+    @page{ size: letter; margin: 0.35in; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="page">
+
+    <div class="masthead">
+      <div class="brand">
+        <svg viewBox="0 0 497.76 76.9" xmlns="http://www.w3.org/2000/svg" style="height:26px; width:auto; display:block;">
+          <path fill="#221f20" d="M86.09,53.25V5.17h19.23c5.78,0,10.3,1.4,13.58,4.2,3.27,2.8,4.91,6.64,4.91,11.51,0,3.21-.73,5.99-2.2,8.36-1.47,2.37-3.59,4.2-6.36,5.48-2.78,1.29-6.08,1.93-9.92,1.93h-8.94v16.59h-10.29ZM96.38,24.04c0,2.18,1.77,3.95,3.95,3.95h4.38c2.71,0,4.81-.6,6.3-1.79,1.49-1.2,2.23-2.97,2.23-5.31s-.73-4.05-2.2-5.25c-1.47-1.2-3.58-1.79-6.33-1.79h-4.38c-2.18,0-3.95,1.77-3.95,3.95v6.25Z"/>
+          <path fill="#221f20" d="M125.03,53.25V16.95h9.61l.34,10.56-.74-.2c.59-3.66,1.62-6.3,3.11-7.92,1.49-1.62,3.54-2.44,6.16-2.44h3.32v8.4h-3.32c-1.9,0-3.45.25-4.67.74-1.22.5-2.13,1.29-2.74,2.37-.61,1.08-.91,2.55-.91,4.4v20.38h-10.16Z"/>
+          <path fill="#221f20" d="M163.36,54.06c-3.7,0-6.92-.78-9.65-2.34-2.73-1.56-4.85-3.76-6.36-6.6-1.51-2.84-2.27-6.18-2.27-10.02s.76-7.17,2.27-9.99c1.51-2.82,3.62-5.02,6.33-6.6,2.71-1.58,5.91-2.37,9.61-2.37s6.75.79,9.41,2.37c2.66,1.58,4.73,3.84,6.2,6.77,1.47,2.93,2.2,6.43,2.2,10.49v2.03h-25.53c.14,2.89.91,5.03,2.34,6.43,1.42,1.4,3.31,2.1,5.65,2.1,1.71,0,3.15-.36,4.3-1.08,1.15-.72,1.97-1.83,2.47-3.32l10.22.61c-.95,3.61-2.96,6.43-6.03,8.46-3.07,2.03-6.79,3.05-11.17,3.05ZM155.57,31.58h15.1c-.14-2.66-.87-4.65-2.2-5.96-1.33-1.31-3.06-1.96-5.18-1.96s-3.87.69-5.25,2.07-2.2,3.33-2.47,5.86Z"/>
+          <path fill="#221f20" d="M194.43,54.06c-3.75,0-6.8-.87-9.17-2.61-2.37-1.74-3.55-4.16-3.55-7.28s1-5.68,3.01-7.41c2.01-1.74,4.98-3.01,8.9-3.83l11.71-2.3c0-2.35-.53-4.12-1.59-5.32-1.06-1.2-2.58-1.79-4.57-1.79s-3.45.44-4.54,1.32c-1.08.88-1.78,2.18-2.1,3.89l-10.22-.47c.68-3.97,2.47-6.98,5.38-9.04,2.91-2.05,6.74-3.08,11.48-3.08,5.42,0,9.49,1.29,12.22,3.86,2.73,2.57,4.1,6.34,4.1,11.31v12.39c0,1.04.17,1.73.51,2.07.34.34.85.51,1.52.51h1.02v6.97c-.32.09-.82.18-1.52.27-.7.09-1.39.14-2.07.14-1.45,0-2.79-.25-4.03-.74-1.24-.5-2.25-1.34-3.01-2.54-.77-1.2-1.15-2.9-1.15-5.11l.88.68c-.45,1.62-1.25,3.05-2.4,4.27s-2.64,2.17-4.47,2.84-3.94,1.02-6.33,1.02ZM196.87,47.08c1.67,0,3.14-.33,4.4-.98,1.26-.65,2.26-1.61,2.98-2.88.72-1.26,1.08-2.75,1.08-4.47v-1.76l-8.26,1.76c-1.62.32-2.86.85-3.69,1.59-.84.74-1.25,1.7-1.25,2.88s.41,2.17,1.22,2.84,1.99,1.02,3.52,1.02Z"/>
+          <path fill="#221f20" d="M235.6,54.06c-3.7,0-6.93-.78-9.68-2.34-2.75-1.56-4.9-3.76-6.43-6.6-1.54-2.84-2.3-6.18-2.3-10.02s.77-7.17,2.3-9.99c1.53-2.82,3.68-5.02,6.43-6.6,2.75-1.58,5.98-2.37,9.68-2.37,3.2,0,6.08.57,8.63,1.69,2.55,1.13,4.61,2.75,6.2,4.87,1.58,2.12,2.55,4.67,2.91,7.65l-10.49.47c-.32-2.26-1.12-3.96-2.4-5.11-1.29-1.15-2.9-1.73-4.84-1.73-2.53,0-4.49.97-5.89,2.91-1.4,1.94-2.1,4.67-2.1,8.19s.7,6.26,2.1,8.23c1.4,1.96,3.36,2.95,5.89,2.95,1.94,0,3.57-.6,4.88-1.79,1.31-1.2,2.1-3.01,2.37-5.45l10.49.41c-.32,2.98-1.25,5.56-2.81,7.75-1.56,2.19-3.61,3.88-6.16,5.08-2.55,1.2-5.47,1.79-8.77,1.79Z"/>
+          <path fill="#221f20" d="M254.9,53.25V5.17h10.16v20.24h-1.35c.36-2.12,1.07-3.86,2.13-5.21,1.06-1.35,2.39-2.37,3.99-3.05,1.6-.68,3.35-1.02,5.25-1.02,2.71,0,4.96.59,6.77,1.76,1.8,1.17,3.17,2.8,4.1,4.87.92,2.08,1.39,4.45,1.39,7.11v23.36h-10.16v-20.92c0-2.71-.42-4.74-1.25-6.09-.84-1.35-2.25-2.03-4.23-2.03s-3.7.7-4.87,2.1c-1.17,1.4-1.76,3.5-1.76,6.3v20.65h-10.16Z"/>
+          <path fill="#221f20" d="M291.39,12.49V4.36h10.49v8.12h-10.49ZM291.59,53.25V16.95h10.16v36.29h-10.16Z"/>
+          <path fill="#221f20" d="M307.03,53.25V16.95h9.14l.41,10.63-1.29-.34c.36-2.71,1.09-4.87,2.2-6.5,1.11-1.62,2.49-2.8,4.16-3.52,1.67-.72,3.5-1.08,5.48-1.08,2.62,0,4.84.57,6.67,1.69,1.83,1.13,3.23,2.72,4.2,4.77.97,2.05,1.46,4.48,1.46,7.28v23.36h-10.16v-19.97c0-1.94-.16-3.59-.47-4.94-.32-1.35-.88-2.38-1.69-3.08-.81-.7-1.94-1.05-3.39-1.05-2.12,0-3.75.78-4.87,2.34-1.13,1.56-1.69,3.8-1.69,6.74v19.97h-10.16Z"/>
+          <path fill="#221f20" d="M359.71,64.21c-3.48,0-6.38-.43-8.7-1.29-2.33-.86-4.18-2.05-5.55-3.59-1.38-1.54-2.34-3.3-2.88-5.28l10.43-.74c.36,1.17,1.05,2.1,2.07,2.78s2.56,1.02,4.64,1.02c2.44,0,4.3-.58,5.59-1.73,1.29-1.15,1.93-2.99,1.93-5.52v-3.86c-.86,1.67-2.23,3.01-4.13,4.03s-4.02,1.52-6.36,1.52c-2.98,0-5.62-.73-7.92-2.2-2.3-1.47-4.1-3.52-5.38-6.16s-1.93-5.74-1.93-9.31.64-6.54,1.93-9.21c1.29-2.66,3.07-4.75,5.35-6.26,2.28-1.51,4.89-2.27,7.82-2.27,2.66,0,4.91.59,6.74,1.76,1.83,1.17,3.22,2.73,4.16,4.67v-5.62h9.95v32.7c0,3.25-.74,5.95-2.23,8.09-1.49,2.14-3.57,3.76-6.23,4.84-2.66,1.08-5.75,1.62-9.28,1.62ZM359.64,44.04c2.35,0,4.21-.9,5.59-2.71,1.38-1.8,2.07-4.31,2.07-7.52,0-2.12-.3-3.95-.91-5.48-.61-1.53-1.49-2.71-2.64-3.52s-2.52-1.22-4.1-1.22c-2.44,0-4.33.93-5.69,2.78-1.35,1.85-2.03,4.33-2.03,7.45s.7,5.65,2.1,7.48c1.4,1.83,3.27,2.74,5.62,2.74Z"/>
+          <path fill="#415fa7" d="M382.32,53.25V5.17h10.29v22.82l-4.54-3.25h27.35l-4.6,3.25V5.17h10.29v48.07h-10.29v-23.09l4.6,3.25h-27.35l4.54-3.25v23.09h-10.29Z"/>
+          <path fill="#415fa7" d="M437.23,54.06c-3.75,0-6.67-1.21-8.77-3.62-2.1-2.41-3.15-5.79-3.15-10.12v-23.36h10.16v20.99c0,2.8.43,4.84,1.29,6.13.86,1.29,2.21,1.93,4.06,1.93,2.08,0,3.69-.71,4.84-2.13,1.15-1.42,1.73-3.55,1.73-6.4v-20.52h10.16v36.29h-9.28l-.27-10.43,1.29.27c-.54,3.61-1.83,6.34-3.86,8.19-2.03,1.85-4.76,2.78-8.19,2.78Z"/>
+          <path fill="#415fa7" d="M482.67,54.06c-2.53,0-4.73-.54-6.6-1.62-1.87-1.08-3.33-2.6-4.37-4.54l-.2,5.35h-9.68V5.17h10.16v16.93c.95-1.67,2.35-3.08,4.2-4.23,1.85-1.15,4.02-1.73,6.5-1.73,3.07,0,5.73.78,7.99,2.34,2.26,1.56,4.01,3.76,5.25,6.6,1.24,2.84,1.86,6.18,1.86,10.02s-.62,7.18-1.86,10.02c-1.24,2.84-2.99,5.04-5.25,6.6-2.26,1.56-4.92,2.34-7.99,2.34ZM479.82,46.27c2.26,0,4.07-.98,5.45-2.95,1.38-1.96,2.07-4.71,2.07-8.23s-.68-6.26-2.03-8.23c-1.35-1.96-3.16-2.95-5.42-2.95-1.67,0-3.1.44-4.3,1.32-1.2.88-2.1,2.16-2.71,3.83-.61,1.67-.91,3.68-.91,6.03s.3,4.29.91,5.96c.61,1.67,1.51,2.96,2.71,3.86,1.2.9,2.61,1.35,4.23,1.35Z"/>
+          <path fill="#415fa7" d="M12.61,60.77v.05h.1v-.13l-.1.08ZM36.39,48.11v.03h6.84v-.03h-6.84ZM12.61,60.83h.1v-.13l-.1.08v.05ZM36.39,48.11v.03h6.84v-.03h-6.84Z"/>
+          <polygon fill="#415fa7" points="75.17 0 75.17 60.83 36.39 60.83 36.39 60.88 12.61 76.9 12.61 60.83 12.71 60.83 12.71 60.7 16.83 57.93 31.38 48.14 43.23 48.14 43.23 48.11 62.45 48.11 62.45 12.71 12.71 12.71 12.71 60.7 12.61 60.77 12.61 60.83 0 60.83 0 0 75.17 0"/>
+        </svg>
+      </div>
+      <div class="doc-title">
+        <h1>Sermon Self-Evaluation</h1>
+        <p>A weekly checkpoint, not a report card</p>
+      </div>
+    </div>
+
+    <p class="intro">
+      Monday morning, coffee in hand — take five minutes to look back honestly at Sunday.
+      This isn't about grading yourself. It's about noticing one thing that's growing and one thing worth tending, so next week's sermon is a little clearer than this one.
+    </p>
+
+    <div class="meta-row">
+      <div class="meta-field">Sermon title <span class="fill-line"></span></div>
+      <div class="meta-field" style="flex:0 0 130px;">Date <span class="fill-line"></span></div>
+      <div class="meta-field" style="flex:0 0 140px;">Text / passage <span class="fill-line"></span></div>
+    </div>
+
+    <div class="categories">
+
+      <div class="cat">
+        <div class="cat-num">1</div>
+        <div>
+          <p class="cat-name">Textual Faithfulness</p>
+          <p class="cat-prompt">Did my sermon stay grounded in what the text actually says?</p>
+          <div class="cat-line"></div>
+        </div>
+        <div class="rating">
+          <div class="rating-label">1 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5</div>
+          <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+        </div>
+      </div>
+
+      <div class="cat">
+        <div class="cat-num">2</div>
+        <div>
+          <p class="cat-name">Big Idea Clarity</p>
+          <p class="cat-prompt">Could my listener state the main point in one sentence?</p>
+          <div class="cat-line"></div>
+        </div>
+        <div class="rating">
+          <div class="rating-label">1 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5</div>
+          <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+        </div>
+      </div>
+
+      <div class="cat">
+        <div class="cat-num">3</div>
+        <div>
+          <p class="cat-name">Introduction Strength</p>
+          <p class="cat-prompt">Did my opening create genuine curiosity or tension?</p>
+          <div class="cat-line"></div>
+        </div>
+        <div class="rating">
+          <div class="rating-label">1 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5</div>
+          <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+        </div>
+      </div>
+
+      <div class="cat">
+        <div class="cat-num">4</div>
+        <div>
+          <p class="cat-name">Movement &amp; Structure</p>
+          <p class="cat-prompt">Did the sermon flow logically from one point to the next?</p>
+          <div class="cat-line"></div>
+        </div>
+        <div class="rating">
+          <div class="rating-label">1 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5</div>
+          <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+        </div>
+      </div>
+
+      <div class="cat">
+        <div class="cat-num">5</div>
+        <div>
+          <p class="cat-name">Illustration &amp; Clarity</p>
+          <p class="cat-prompt">Did my illustrations clarify the point or distract from it?</p>
+          <div class="cat-line"></div>
+        </div>
+        <div class="rating">
+          <div class="rating-label">1 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5</div>
+          <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+        </div>
+      </div>
+
+      <div class="cat">
+        <div class="cat-num">6</div>
+        <div>
+          <p class="cat-name">Application Design</p>
+          <p class="cat-prompt">Did I give my listener one concrete, specific thing to act on?</p>
+          <div class="cat-line"></div>
+        </div>
+        <div class="rating">
+          <div class="rating-label">1 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5</div>
+          <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+        </div>
+      </div>
+
+      <div class="cat">
+        <div class="cat-num">7</div>
+        <div>
+          <p class="cat-name">Conclusion &amp; Tension Resolution</p>
+          <p class="cat-prompt">Did the close land emotionally and call for a response?</p>
+          <div class="cat-line"></div>
+        </div>
+        <div class="rating">
+          <div class="rating-label">1 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5</div>
+          <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+        </div>
+      </div>
+
+      <div class="cat">
+        <div class="cat-num">8</div>
+        <div>
+          <p class="cat-name">Gospel Faithfulness</p>
+          <p class="cat-prompt">Was the grace and gospel of Jesus clearly present?</p>
+          <div class="cat-line"></div>
+        </div>
+        <div class="rating">
+          <div class="rating-label">1 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5</div>
+          <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="reflect-row">
+      <div class="reflect-box win">
+        <h3>Biggest Win</h3>
+        <div class="fill-line"></div>
+      </div>
+      <div class="reflect-box work">
+        <h3>One Thing to Work On</h3>
+        <div class="fill-line"></div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <div class="footer-note">
+        Want an in-depth expert-level coaching report after every sermon? Start your free 14 day trial at <a href="https://preachinghub.com">preachinghub.com</a>
+      </div>
+      <div class="footer-mark">We don't write sermons. We build preachers.</div>
+    </div>
+
+  </div>
+
+  <div class="print-bar">
+    <button onclick="window.print()">Print / Save as PDF</button>
+  </div>
+
+</body>
+</html>

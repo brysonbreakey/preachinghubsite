@@ -304,10 +304,10 @@ function Hero() {
             14-Day Free Trial &middot; Cancel Anytime
           </div>
           <h1 className="hero-h1 text-5xl sm:text-6xl font-black text-white leading-[1.05] tracking-tight mb-6">
-            Preach better.<br />Every week.
+            What if every sermon made you a better preacher?
           </h1>
           <p className="hero-sub text-xl text-blue-100/80 max-w-xl mx-auto lg:mx-0 mb-10 leading-relaxed">
-            PreachingHub gives you structured sermon prep, coaching-quality feedback on every message, and team tools built for the rhythm of weekly ministry.
+            PreachingHub gives every preacher what most can only get from an expensive coach &mdash; structured prep from text to pulpit, plus detailed feedback on your content, voice, and delivery for every sermon in minutes.
           </p>
           <div className="hero-cta flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-3 mb-3">
             <a href={SIGNUP_URL} className="cta-btn w-full sm:w-auto inline-flex items-center justify-center gap-2 text-[#0b1230] font-bold px-7 py-4 rounded-full text-base shadow-lg bg-white hover:bg-blue-50">
@@ -318,14 +318,7 @@ function Hero() {
               See what&apos;s included
             </a>
           </div>
-          <p className="hero-cta text-xs text-blue-100/60 mb-6" style={{ animationDelay: "0.48s" }}>Card required. Cancel anytime.</p>
-          <div className="hero-cta flex flex-wrap items-center justify-center lg:justify-start gap-2" style={{ animationDelay: "0.52s" }}>
-            {["Customizable workflows", "AI coaching", "Proven frameworks"].map((tag) => (
-              <span key={tag} className="text-xs text-blue-100/70 bg-white/5 border border-white/10 rounded-full px-3 py-1.5">
-                {tag}
-              </span>
-            ))}
-          </div>
+          <p className="hero-cta text-xs text-blue-100/60" style={{ animationDelay: "0.48s" }}>Card required. Cancel anytime.</p>
         </div>
 
         {/* Mockup */}
