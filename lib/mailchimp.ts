@@ -39,13 +39,13 @@ export async function addChecklistContact({
   const tags = ['checklist', ...(src ? [`src:${src}`] : [])]
   const tagPayload = tags.map((name) => ({ name, status: 'active' as const }))
   const merge_fields = { FNAME: firstName, LNAME: lastName }
+  const hash = subscriberHash(email)
 
   try {
     await (mailchimp.lists as any).addListMember(audienceId, {
       email_address: email,
       status: 'subscribed',
       merge_fields,
-      tags,
     })
   } catch (err: any) {
     const isAlreadyMember =
@@ -54,8 +54,9 @@ export async function addChecklistContact({
         err?.response?.text?.includes('Member Exists'))
     if (!isAlreadyMember) throw err
 
-    const hash = subscriberHash(email)
     await (mailchimp.lists as any).updateListMember(audienceId, hash, { merge_fields })
-    await (mailchimp.lists as any).updateListMemberTags(audienceId, hash, { tags: tagPayload })
   }
+
+  // Always apply tags in a dedicated call — the tags field on addListMember is unreliable
+  await (mailchimp.lists as any).updateListMemberTags(audienceId, hash, { tags: tagPayload })
 }
