@@ -1,8 +1,8 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { PHMark } from "@/components/Logo";
 import { Icon } from "@/components/Icon";
+import { YouTubeSearchInput } from "@/components/YouTubeSearchInput";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { APP_URL, SIGNUP_URL } from "@/lib/urls";
@@ -10,12 +10,38 @@ import { APP_URL, SIGNUP_URL } from "@/lib/urls";
 type InputType = "video" | "text" | "audio";
 type View = "form" | "processing" | "ineligible";
 
+function YouTubeIcon({ size = 15 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <rect x="1" y="4" width="22" height="16" rx="5" fill="#FF0000" />
+      <path d="M10 8.5 16 12l-6 3.5v-7Z" fill="white" />
+    </svg>
+  );
+}
 
-const INPUT_OPTIONS: { value: InputType; label: string; icon: string | string[] }[] = [
-  { value: "video", label: "Paste Video Link", icon: ["M23 7l-7 5 7 5V7z", "M14 5H3a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2z"] },
-  { value: "text", label: "Paste Text", icon: ["M4 7V4h16v3", "M9 20h6", "M12 4v16"] },
-  { value: "audio", label: "Upload File", icon: ["M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4", "M17 8l-5-5-5 5", "M12 3v12"] },
+const INPUT_OPTIONS: { value: InputType; shortLabel: string; label: string }[] = [
+  { value: "video", shortLabel: "YouTube", label: "YouTube" },
+  { value: "text", shortLabel: "Paste", label: "Paste Text" },
+  { value: "audio", shortLabel: "Upload", label: "Upload File" },
 ];
+
+const NON_VIDEO_ICONS: Record<string, string | string[]> = {
+  text: ["M4 7V4h16v3", "M9 20h6", "M12 4v16"],
+  audio: ["M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4", "M17 8l-5-5-5 5", "M12 3v12"],
+};
+
+function formatPhone(value: string): string {
+  const digits = value.replace(/\D/g, "").slice(0, 10);
+  const parts = [digits.slice(0, 3), digits.slice(3, 6), digits.slice(6, 10)].filter(Boolean);
+  return parts.join("-");
+}
+
+function splitName(fullName: string): { firstName: string; lastName: string } {
+  const trimmed = fullName.trim().replace(/\s+/g, " ");
+  const idx = trimmed.indexOf(" ");
+  if (idx === -1) return { firstName: trimmed, lastName: "" };
+  return { firstName: trimmed.slice(0, idx), lastName: trimmed.slice(idx + 1) };
+}
 
 const RECEIVE_ITEMS = [
   { icon: ["M12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2Z"], label: "Your Biggest Wins", body: "The one thing to protect and develop" },
@@ -31,15 +57,16 @@ const AV_MESSAGES = ["Grabbing the audio...", "Listening to your sermon...", "Wr
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function TryPage() {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [sermonTitle, setSermonTitle] = useState("");
   const [inputType, setInputType] = useState<InputType>("video");
   const [transcript, setTranscript] = useState("");
   const [videoUrl, setVideoUrl] = useState("");
   const [permissionChecked, setPermissionChecked] = useState(false);
   const [audioFile, setAudioFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -52,20 +79,20 @@ export default function TryPage() {
 
   function selectInputType(value: InputType) {
     setInputType(value);
-    setErrors((prev) => ({ firstName: prev.firstName, email: prev.email }));
+    setErrors((prev) => ({ name: prev.name, email: prev.email }));
   }
 
   function validate(): Record<string, string> {
     const errs: Record<string, string> = {};
-    if (!firstName.trim()) errs.firstName = "First name is required.";
-    if (!lastName.trim()) errs.lastName = "Last name is required.";
+    if (!name.trim()) errs.name = "Name is required.";
     if (!email.trim()) errs.email = "Email address is required.";
     else if (!EMAIL_RE.test(email.trim())) errs.email = "Enter a valid email address.";
+    if (phone.replace(/\D/g, "").length !== 10) errs.phone = "Enter a valid 10-digit phone number.";
 
     if (inputType === "text" && !transcript.trim()) {
       errs.transcript = "Please paste your notes or transcript.";
     } else if (inputType === "audio" && !audioFile) {
-      errs.audioFile = "Please choose an audio file.";
+      errs.audioFile = "Please choose an audio or video file.";
     } else if (inputType === "video") {
       if (!videoUrl.trim()) errs.videoUrl = "Please paste a video URL.";
       if (!permissionChecked) errs.permission = "Please confirm you have permission to use this content.";
@@ -102,6 +129,21 @@ export default function TryPage() {
     setErrors(errs);
     if (Object.keys(errs).length > 0) return;
 
+    const { firstName, lastName } = splitName(name);
+
+    // Side-channel lead capture (Mailchimp + holding spreadsheet for phone
+    // numbers) — fire-and-forget, must never block the actual eval flow.
+    fetch("/api/try-lead-capture", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        first_name: firstName,
+        last_name: lastName,
+        email: email.trim(),
+        phone: phone.trim(),
+      }),
+    }).catch((err) => console.error("try-lead-capture failed", err));
+
     setIsChecking(true);
     let eligible = true;
     try {
@@ -132,8 +174,8 @@ export default function TryPage() {
     try {
       const payload: Record<string, unknown> = {
         email: email.trim(),
-        first_name: firstName.trim(),
-        last_name: lastName.trim(),
+        first_name: firstName,
+        last_name: lastName,
         sermon_title: sermonTitle.trim(),
         source: "marketing_try",
       };
@@ -145,6 +187,8 @@ export default function TryPage() {
         payload.input_type = "video_url";
         payload.video_url = videoUrl.trim();
       } else {
+        const isVideoFile = audioFile!.type.startsWith("video/") || /\.(mp4|mov)$/i.test(audioFile!.name);
+
         const uploadUrlRes = await fetch(`${APP_URL}/api/free-evaluation/upload-url`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -160,7 +204,7 @@ export default function TryPage() {
         });
         if (!putRes.ok) throw new Error("audio_upload_failed");
 
-        payload.input_type = "audio";
+        payload.input_type = isVideoFile ? "video" : "audio";
         payload.storage_path = storagePath;
       }
 
@@ -255,40 +299,23 @@ export default function TryPage() {
             )}
 
             {/* Name & email */}
-            <div className="grid sm:grid-cols-2 gap-4 [&>*:last-child]:sm:col-span-2">
+            <div className="grid sm:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="firstName" className="block text-sm font-medium text-slate-700 mb-1.5">
-                  First name
+                <label htmlFor="name" className="block text-sm font-medium text-slate-700 mb-1.5">
+                  Name
                 </label>
                 <input
-                  id="firstName"
-                  name="firstName"
+                  id="name"
+                  name="name"
                   type="text"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  placeholder="First name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="John Smith"
                   className={`w-full rounded-lg border px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#3760ad] ${
-                    errors.firstName ? "border-red-300" : "border-slate-300 focus:border-[#3760ad]"
+                    errors.name ? "border-red-300" : "border-slate-300 focus:border-[#3760ad]"
                   }`}
                 />
-                {errors.firstName && <p className="text-xs text-red-600 mt-1.5">{errors.firstName}</p>}
-              </div>
-              <div>
-                <label htmlFor="lastName" className="block text-sm font-medium text-slate-700 mb-1.5">
-                  Last name
-                </label>
-                <input
-                  id="lastName"
-                  name="lastName"
-                  type="text"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  placeholder="Last name"
-                  className={`w-full rounded-lg border px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#3760ad] ${
-                    errors.lastName ? "border-red-300" : "border-slate-300 focus:border-[#3760ad]"
-                  }`}
-                />
-                {errors.lastName && <p className="text-xs text-red-600 mt-1.5">{errors.lastName}</p>}
+                {errors.name && <p className="text-xs text-red-600 mt-1.5">{errors.name}</p>}
               </div>
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-1.5">
@@ -305,59 +332,54 @@ export default function TryPage() {
                     errors.email ? "border-red-300" : "border-slate-300 focus:border-[#3760ad]"
                   }`}
                 />
-                {errors.email ? (
-                  <p className="text-xs text-red-600 mt-1.5">{errors.email}</p>
-                ) : (
-                  <p className="text-xs text-slate-400 mt-1.5">So we can send you your report.</p>
-                )}
+                {errors.email && <p className="text-xs text-red-600 mt-1.5">{errors.email}</p>}
               </div>
-            </div>
-
-            {/* Sermon title */}
-            <div>
-              <label htmlFor="sermonTitle" className="block text-sm font-medium text-slate-700 mb-1.5">
-                Sermon title
-              </label>
-              <input
-                id="sermonTitle"
-                name="sermonTitle"
-                type="text"
-                value={sermonTitle}
-                onChange={(e) => setSermonTitle(e.target.value)}
-                placeholder="Optional — helps personalize your report"
-                className="w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#3760ad] focus:border-[#3760ad]"
-              />
+              <div className="sm:col-span-2">
+                <label htmlFor="phone" className="block text-sm font-medium text-slate-700 mb-1.5">
+                  Phone number
+                </label>
+                <input
+                  id="phone"
+                  name="phone"
+                  type="tel"
+                  inputMode="numeric"
+                  value={phone}
+                  onChange={(e) => setPhone(formatPhone(e.target.value))}
+                  placeholder="xxx-xxx-xxxx"
+                  className={`w-full rounded-lg border px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#3760ad] ${
+                    errors.phone ? "border-red-300" : "border-slate-300 focus:border-[#3760ad]"
+                  }`}
+                />
+                {errors.phone && <p className="text-xs text-red-600 mt-1.5">{errors.phone}</p>}
+              </div>
             </div>
 
             {/* Sermon submission */}
             <div>
-              <p className="block text-sm font-medium text-slate-700 mb-3">
-                How would you like to submit your sermon?
+              <p className="block text-lg font-bold text-slate-900 mb-3">
+                Submit your sermon
               </p>
 
               <div className="rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 p-5 sm:p-6">
-                <div className="flex flex-col items-center gap-2 text-center mb-5">
-                  <div className="w-10 h-10 rounded-full bg-[#3760ad]/10 flex items-center justify-center">
-                    <PHMark size={18} color="#3760ad" />
-                  </div>
-                  <div className="font-semibold text-slate-700 text-sm">Drop your sermon here</div>
-                  <div className="text-xs text-slate-400">Upload a file, paste your notes, or link a video</div>
-                </div>
-
                 <div className="flex gap-2 mb-5">
-                  {INPUT_OPTIONS.map(({ value, label, icon }) => (
+                  {INPUT_OPTIONS.map(({ value, shortLabel, label }) => (
                     <button
                       key={value}
                       type="button"
                       onClick={() => selectInputType(value)}
-                      className={`flex-1 inline-flex items-center justify-center gap-1.5 rounded-lg border px-2 py-2.5 text-xs sm:text-sm font-medium transition-colors ${
+                      className={`flex-1 inline-flex items-center justify-center gap-1.5 rounded-lg border px-2 py-2.5 text-xs sm:text-sm font-medium whitespace-nowrap transition-colors ${
                         inputType === value
                           ? "border-[#3760ad] bg-blue-50 text-[#3760ad]"
                           : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"
                       }`}
                     >
-                      <Icon d={icon} size={15} color={inputType === value ? "#3760ad" : "#64748b"} strokeWidth={2} />
-                      {label}
+                      {value === "video" ? (
+                        <YouTubeIcon size={15} />
+                      ) : (
+                        <Icon d={NON_VIDEO_ICONS[value]} size={15} color={inputType === value ? "#3760ad" : "#64748b"} strokeWidth={2} className="shrink-0" />
+                      )}
+                      <span className="hidden min-[420px]:inline">{label}</span>
+                      <span className="min-[420px]:hidden">{shortLabel}</span>
                     </button>
                   ))}
                 </div>
@@ -381,13 +403,47 @@ export default function TryPage() {
                 {inputType === "audio" && (
                   <div>
                     <input
+                      ref={fileInputRef}
                       type="file"
+                      id="audioFile"
                       name="audioFile"
-                      accept=".mp3,.m4a,.wav"
+                      accept=".mp3,.m4a,.wav,.mp4,.mov"
                       onChange={(e) => setAudioFile(e.target.files?.[0] ?? null)}
-                      className="w-full text-sm text-slate-600 file:mr-4 file:rounded-lg file:border-0 file:bg-[#3760ad] file:text-white file:text-sm file:font-medium file:px-4 file:py-2.5 file:cursor-pointer hover:file:bg-blue-700"
+                      className="hidden"
                     />
-                    <p className="text-xs text-slate-400 mt-2">Audio file up to 90 minutes. Sermon or rehearsal recording.</p>
+                    {audioFile ? (
+                      <div className="flex items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white px-4 py-3">
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <div className="w-9 h-9 rounded-lg bg-[#3760ad]/10 flex items-center justify-center shrink-0">
+                            <Icon d={NON_VIDEO_ICONS.audio} size={15} color="#3760ad" strokeWidth={2} />
+                          </div>
+                          <div className="min-w-0">
+                            <div className="text-sm font-medium text-slate-700 truncate">{audioFile.name}</div>
+                            <div className="text-xs text-slate-400">{(audioFile.size / (1024 * 1024)).toFixed(1)} MB</div>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setAudioFile(null);
+                            if (fileInputRef.current) fileInputRef.current.value = "";
+                          }}
+                          className="text-slate-400 hover:text-slate-600 shrink-0 p-1"
+                          aria-label="Remove file"
+                        >
+                          <Icon d="M18 6 6 18M6 6l12 12" size={16} strokeWidth={2} />
+                        </button>
+                      </div>
+                    ) : (
+                      <label
+                        htmlFor="audioFile"
+                        className="flex flex-col items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white py-6 cursor-pointer hover:border-[#3760ad] hover:bg-blue-50/40 transition-colors"
+                      >
+                        <Icon d={["M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4", "M17 8l-5-5-5 5", "M12 3v12"]} size={20} color="#94a3b8" strokeWidth={2} />
+                        <span className="text-sm font-medium text-slate-600">Click to upload</span>
+                        <span className="text-xs text-slate-400">Sermon or rehearsal &mdash; audio or video</span>
+                      </label>
+                    )}
                     {errors.audioFile && <p className="text-xs text-red-600 mt-1.5">{errors.audioFile}</p>}
                   </div>
                 )}
@@ -395,16 +451,7 @@ export default function TryPage() {
                 {inputType === "video" && (
                   <div className="space-y-3">
                     <div>
-                      <input
-                        type="text"
-                        name="videoUrl"
-                        value={videoUrl}
-                        onChange={(e) => setVideoUrl(e.target.value)}
-                        placeholder="Paste a YouTube or video URL"
-                        className={`w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#3760ad] ${
-                          errors.videoUrl ? "border-red-300" : "border-slate-300 focus:border-[#3760ad]"
-                        }`}
-                      />
+                      <YouTubeSearchInput value={videoUrl} onChange={setVideoUrl} error={errors.videoUrl} />
                       {errors.videoUrl && <p className="text-xs text-red-600 mt-1.5">{errors.videoUrl}</p>}
                     </div>
                     <div>
@@ -424,14 +471,31 @@ export default function TryPage() {
               </div>
             </div>
 
+            {/* Sermon title */}
+            <div>
+              <label htmlFor="sermonTitle" className="block text-sm font-medium text-slate-700 mb-1.5">
+                Sermon title
+              </label>
+              <input
+                id="sermonTitle"
+                name="sermonTitle"
+                type="text"
+                value={sermonTitle}
+                onChange={(e) => setSermonTitle(e.target.value)}
+                placeholder="Optional"
+                className="w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#3760ad] focus:border-[#3760ad]"
+              />
+            </div>
+
             <button
               type="submit"
               disabled={isChecking}
-              className="cta-btn w-full inline-flex items-center justify-center gap-2 font-semibold px-6 py-4 rounded-xl text-base text-white disabled:opacity-60"
+              className="cta-btn w-full inline-flex items-center justify-center gap-2 font-semibold px-4 sm:px-6 py-4 rounded-xl text-sm sm:text-base text-white disabled:opacity-60 whitespace-nowrap"
               style={{ backgroundColor: "#3760ad" }}
             >
-              <Icon d="M13 2 3 14h9l-1 8 10-12h-9z" size={17} color="white" strokeWidth={2} />
-              {isChecking ? "Checking..." : "Get My Free Coaching Report →"}
+              <Icon d="M13 2 3 14h9l-1 8 10-12h-9z" size={17} color="white" strokeWidth={2} className="shrink-0" />
+              <span>{isChecking ? "Checking..." : "Get My Free Report"}</span>
+              {!isChecking && <Icon d="M5 12h14M12 5l7 7-7 7" size={16} color="white" strokeWidth={2.5} className="shrink-0" />}
             </button>
           </form>
 
