@@ -146,7 +146,7 @@ function FeedbackInputMockup() {
             <div className="rounded-xl border border-slate-200 p-2.5">
               <div className="font-semibold text-slate-700 mb-1.5 text-[9px]">What you&apos;ll receive</div>
               {[
-                { icon: "★", label: "Your Biggest Win" },
+                { icon: "★", label: "Your Biggest Wins" },
                 { icon: "◉", label: "Category Breakdown" },
                 { icon: "↑", label: "Top Growth Areas" },
                 { icon: "?", label: "Reflection Questions" },
@@ -194,9 +194,9 @@ function FeedbackReportMockup() {
       </div>
 
       <div className="p-4 space-y-3.5">
-        {/* Your Biggest Win */}
+        {/* Your Biggest Wins */}
         <div className="rounded-xl bg-green-50 border border-green-100 p-3">
-          <div className="text-[7px] font-bold uppercase tracking-widest text-green-600 mb-1">Your Biggest Win</div>
+          <div className="text-[7px] font-bold uppercase tracking-widest text-green-600 mb-1">Your Biggest Wins</div>
           <div className="text-[9px] text-slate-700 leading-snug font-medium">Gospel clarity in the third movement.</div>
           <div className="text-[8px] text-slate-500 leading-snug mt-0.5">Your gospel turn was theologically grounded and emotionally resonant. Protect this instinct — it&apos;s the heart of your preaching.</div>
         </div>

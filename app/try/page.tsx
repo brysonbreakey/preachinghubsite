@@ -18,7 +18,7 @@ const INPUT_OPTIONS: { value: InputType; label: string; icon: string | string[] 
 ];
 
 const RECEIVE_ITEMS = [
-  { icon: ["M12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2Z"], label: "Your Biggest Win", body: "The one thing to protect and develop" },
+  { icon: ["M12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2Z"], label: "Your Biggest Wins", body: "The one thing to protect and develop" },
   { icon: ["M9 11l3 3L22 4", "M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"], label: "Category Breakdown", body: "Feedback across 7 preaching areas" },
   { icon: ["M23 6l-9.5 9.5-5-5L1 18", "M17 6h6v6"], label: "Top Growth Areas", body: "Specific, actionable coaching priorities" },
   { icon: ["M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z", "M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3", "M12 17h.01"], label: "Questions to Consider", body: "Questions to help deepen your preaching" },
@@ -241,7 +241,7 @@ export default function TryPage() {
           </h1>
           <p className="text-lg text-slate-500 max-w-xl mx-auto leading-relaxed">
             Submit a YouTube link, paste your notes, or upload audio.{" "}
-            <strong className="font-semibold text-slate-700">In minutes</strong>{" "}
+            <strong className="font-semibold text-slate-700">In minutes</strong>,{" "}
             you&apos;ll receive helpful sermon feedback to take your preaching to the next level. No account needed.
           </p>
         </div>
