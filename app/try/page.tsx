@@ -240,11 +240,9 @@ export default function TryPage() {
             Get a free coaching report on your last sermon
           </h1>
           <p className="text-lg text-slate-500 max-w-xl mx-auto leading-relaxed">
-            Submit a YouTube link, paste your notes, or upload audio. In minutes you&apos;ll receive helpful sermon feedback to take your preaching to the next level.
-            <br />
-            No account needed. No card required.
-            <br />
-            Get your report in minutes. No long wait. No demo call. No account needed.
+            Submit a YouTube link, paste your notes, or upload audio.{" "}
+            <strong className="font-semibold text-slate-700">In minutes</strong>{" "}
+            you&apos;ll receive helpful sermon feedback to take your preaching to the next level. No account needed.
           </p>
         </div>
 
