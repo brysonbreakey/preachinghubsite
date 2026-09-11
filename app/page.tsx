@@ -318,7 +318,6 @@ function Hero() {
               See what&apos;s included
             </a>
           </div>
-          <p className="hero-cta text-xs text-blue-100/60" style={{ animationDelay: "0.48s" }}>Card required. Cancel anytime.</p>
         </div>
 
         {/* Mockup */}
