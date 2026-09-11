@@ -304,7 +304,7 @@ function Hero() {
             14-Day Free Trial &middot; Cancel Anytime
           </div>
           <h1 className="hero-h1 text-5xl sm:text-6xl font-black text-white leading-[1.05] tracking-tight mb-6">
-            What if every sermon made you a better preacher?
+            What if every sermon was better than your last?
           </h1>
           <p className="hero-sub text-xl text-blue-100/80 max-w-xl mx-auto lg:mx-0 mb-10 leading-relaxed">
             PreachingHub gives every preacher what most can only get from an expensive coach &mdash; structured prep from text to pulpit, plus detailed feedback on your content, voice, and delivery for every sermon in minutes.
