@@ -87,7 +87,7 @@ export default function ChecklistPage() {
   return (
     <main className="min-h-screen bg-slate-50 flex flex-col">
       <div className="flex-1 flex items-center justify-center px-6 py-10 sm:py-16">
-        <div className="w-full max-w-md lg:max-w-6xl">
+        <div className="w-full max-w-md lg:max-w-4xl">
           <div className="flex justify-center mb-6 lg:hidden">
             <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{ backgroundColor: NAVY }}>
               <PHMark size={22} color="#fff" />
@@ -120,7 +120,7 @@ export default function ChecklistPage() {
               </a>
             </div>
           ) : (
-            <div className="lg:grid lg:grid-cols-2 lg:gap-16 lg:items-center">
+            <div className="lg:grid lg:grid-cols-2 lg:gap-8 lg:items-center">
               {/* Left column — headline, subheadline, creative */}
               <div className="text-center lg:text-left">
                 <p className="text-sm font-bold uppercase tracking-wide mb-3" style={{ color: NAVY }}>
