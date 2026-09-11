@@ -192,7 +192,9 @@ export default function ChecklistPage() {
                   </button>
                 </form>
                 <p className="text-xs text-slate-400 text-center mt-4">
-                  We will only email you about preaching. Unsubscribe any time. No spam, ever.
+                  We&apos;ll only email you about preaching.
+                  <br />
+                  Unsubscribe any time.
                 </p>
               </div>
             </div>
