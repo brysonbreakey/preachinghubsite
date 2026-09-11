@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pre-Preaching Checklist — PreachingHub</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;500;600;700&display=swap');
+
+  :root{
+    --ink: #1B2635;
+    --ink-soft: #4A5568;
+    --line: #C9CFD8;
+    --line-light: #E4E8EE;
+    --paper: #FFFFFF;
+    --blue: #2F4FD1;
+    --blue-deep: #2540A8;
+    --blue-soft: #EDF0FC;
+    --green: #1E7A4C;
+    --green-soft: #E7F4ED;
+    --gold: #C08A2E;
+    --radius: 10px;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html{ -webkit-text-size-adjust: 100%; }
+
+  body{
+    margin:0;
+    background: #F3F1EC;
+    font-family:'Inter', sans-serif;
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap{
+    max-width: 480px;
+    margin: 0 auto;
+    min-height: 100vh;
+    background: var(--paper);
+    box-shadow: 0 0 40px rgba(0,0,0,0.06);
+    padding-bottom: 64px;
+  }
+
+  a{ color: var(--blue); }
+
+  /* ---------- Sticky header / progress ---------- */
+  .head{
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: var(--paper);
+    border-bottom: 1px solid var(--line-light);
+    padding: 14px 18px 12px;
+  }
+  .head-row{
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .logo-mark{ height: 20px; width: auto; display:block; }
+  .save-pill{
+    font-family:'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--blue);
+    background: var(--blue-soft);
+    border: none;
+    border-radius: 999px;
+    padding: 7px 13px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .save-pill:active{ background: #DFE4F9; }
+
+  .progress-row{
+    display:flex;
+    align-items:center;
+    gap: 10px;
+    margin-top: 12px;
+  }
+  .bar-track{
+    flex:1;
+    height: 6px;
+    border-radius: 4px;
+    background: var(--line-light);
+    overflow: hidden;
+  }
+  .bar-fill{
+    height: 100%;
+    width: 0%;
+    background: var(--blue);
+    border-radius: 4px;
+    transition: width 0.4s cubic-bezier(.4,0,.2,1);
+  }
+  .bar-fill.is-complete{ background: var(--green); }
+  .count-label{
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---------- Intro ---------- */
+  .intro-block{ padding: 20px 18px 4px; }
+  h1.title{
+    font-family:'Source Serif 4', serif;
+    font-weight: 600;
+    font-size: 25px;
+    line-height: 1.15;
+    margin: 0 0 8px;
+  }
+  .intro-text{
+    font-family:'Source Serif 4', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+    margin: 0 0 20px;
+  }
+
+  .meta-fields{
+    display:flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+  .meta-fields input{
+    width: 100%;
+    font-family:'Inter', sans-serif;
+    font-size: 15px;
+    padding: 11px 13px;
+    border: 1.4px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--paper);
+    color: var(--ink);
+  }
+  .meta-fields input::placeholder{ color: #9AA3B0; }
+  .meta-fields input:focus{ outline: 2px solid var(--blue); outline-offset: 1px; border-color: var(--blue); }
+  .date-relative{
+    display: block;
+    margin: 6px 2px 0;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--blue);
+    min-height: 15px;
+  }
+
+  /* ---------- Sections ---------- */
+  .sections{ padding: 8px 18px 4px; }
+  .section{ margin-top: 26px; }
+  .section-head{
+    display:flex;
+    align-items: baseline;
+    gap: 9px;
+    margin-bottom: 10px;
+  }
+  .section-num{
+    font-family:'Source Serif 4', serif;
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--blue);
+  }
+  .section-title{
+    font-family:'Source Serif 4', serif;
+    font-weight: 600;
+    font-size: 16px;
+  }
+  .section-rule{
+    flex:1;
+    height: 1px;
+    background: var(--line-light);
+    transform: translateY(3px);
+  }
+
+  .item{
+    border-top: 1px solid var(--line-light);
+    padding: 13px 0;
+  }
+  .section .item:first-of-type{ border-top: none; }
+
+  .item-row{
+    display:flex;
+    align-items: flex-start;
+    gap: 12px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .box{
+    flex: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2.4px solid var(--line);
+    margin-top: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+  .box svg{
+    width: 14px; height: 14px;
+    opacity: 0;
+    transform: scale(0.6);
+    transition: opacity 0.15s ease, transform 0.15s cubic-bezier(.34,1.56,.64,1);
+  }
+  .item.checked .box{
+    background: var(--green);
+    border-color: var(--green);
+  }
+  .item.checked .box svg{ opacity: 1; transform: scale(1); }
+
+  .item-text{
+    font-size: 14.5px;
+    line-height: 1.4;
+    padding-top: 2px;
+  }
+  .item.checked .item-text{ color: var(--ink-soft); }
+
+  .item-input{
+    margin: 10px 0 2px 36px;
+    width: calc(100% - 36px);
+    font-family:'Source Serif 4', serif;
+    font-style: italic;
+    font-size: 14px;
+    padding: 9px 11px;
+    border: 1.4px solid var(--line-light);
+    border-radius: 8px;
+    background: #FAFAF8;
+    color: var(--ink);
+  }
+  .item-input::placeholder{ color: #A7ADB8; font-style: italic; }
+  .item-input:focus{ outline: 2px solid var(--blue); outline-offset: 1px; background: var(--paper); }
+
+  /* ---------- Footer ---------- */
+  .footer{
+    margin: 34px 18px 0;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+  }
+  .footer-note{ font-size: 12px; color: var(--ink-soft); }
+  .tagline{
+    margin-top: 6px;
+    font-family:'Source Serif 4', serif;
+    font-style: italic;
+    font-size: 12.5px;
+  }
+  .reset-link{
+    display:inline-block;
+    margin-top: 14px;
+    font-size: 12px;
+    color: var(--ink-soft);
+    text-decoration: underline;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+  }
+
+  /* ---------- Overlay shared ---------- */
+  .overlay{
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    background: rgba(27,38,53,0.44);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+  .overlay.is-open{ opacity: 1; pointer-events: auto; }
+  canvas#confetti{
+    position: fixed;
+    inset: 0;
+    z-index: 101;
+    pointer-events: none;
+    width: 100%;
+    height: 100%;
+  }
+
+  .sheet{
+    width: 100%;
+    max-width: 480px;
+    background: var(--paper);
+    border-radius: 20px 20px 0 0;
+    padding: 28px 22px 30px;
+    transform: translateY(24px);
+    transition: transform 0.3s cubic-bezier(.32,.72,0,1);
+    text-align: center;
+  }
+  .overlay.is-open .sheet{ transform: translateY(0); }
+
+  .check-badge{
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    background: var(--green-soft);
+    display:flex; align-items:center; justify-content:center;
+    margin: 0 auto 16px;
+  }
+  .check-badge svg{ width: 30px; height: 30px; }
+
+  .sheet h2{
+    font-family:'Source Serif 4', serif;
+    font-weight: 600;
+    font-size: 21px;
+    margin: 0 0 8px;
+  }
+  .sheet p.sub{
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+    margin: 0 0 22px;
+  }
+
+  .primary-btn{
+    width: 100%;
+    background: var(--blue);
+    color: #fff;
+    border: none;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    padding: 14px;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  .primary-btn:active{ background: var(--blue-deep); }
+  .ghost-btn{
+    width: 100%;
+    background: none;
+    border: none;
+    color: var(--ink-soft);
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    padding: 12px;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+  .email-row{ text-align: left; margin-bottom: 14px; }
+  .email-row label{
+    display:block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
+  }
+  .email-row input{
+    width: 100%;
+    font-size: 16px;
+    padding: 13px 14px;
+    border: 1.6px solid var(--line);
+    border-radius: 10px;
+    font-family: 'Inter', sans-serif;
+  }
+  .email-row input:focus{ outline: 2px solid var(--blue); outline-offset: 1px; border-color: var(--blue); }
+  .fine-print{
+    font-size: 11px;
+    color: #9AA3B0;
+    margin-top: 14px;
+    line-height: 1.45;
+  }
+
+  .success-state{ display:none; }
+  .success-state.show{ display:block; }
+  .form-state.hide{ display:none; }
+
+  @media (prefers-reduced-motion: reduce){
+    .bar-fill, .box, .box svg, .sheet, .overlay{ transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="head">
+    <div class="head-row">
+      <svg class="logo-mark" viewBox="0 0 497.76 76.9" xmlns="http://www.w3.org/2000/svg">
+        <path fill="#221f20" d="M86.09,53.25V5.17h19.23c5.78,0,10.3,1.4,13.58,4.2,3.27,2.8,4.91,6.64,4.91,11.51,0,3.21-.73,5.99-2.2,8.36-1.47,2.37-3.59,4.2-6.36,5.48-2.78,1.29-6.08,1.93-9.92,1.93h-8.94v16.59h-10.29ZM96.38,24.04c0,2.18,1.77,3.95,3.95,3.95h4.38c2.71,0,4.81-.6,6.3-1.79,1.49-1.2,2.23-2.97,2.23-5.31s-.73-4.05-2.2-5.25c-1.47-1.2-3.58-1.79-6.33-1.79h-4.38c-2.18,0-3.95,1.77-3.95,3.95v6.25Z"/>
+        <path fill="#221f20" d="M125.03,53.25V16.95h9.61l.34,10.56-.74-.2c.59-3.66,1.62-6.3,3.11-7.92,1.49-1.62,3.54-2.44,6.16-2.44h3.32v8.4h-3.32c-1.9,0-3.45.25-4.67.74-1.22.5-2.13,1.29-2.74,2.37-.61,1.08-.91,2.55-.91,4.4v20.38h-10.16Z"/>
+        <path fill="#221f20" d="M163.36,54.06c-3.7,0-6.92-.78-9.65-2.34-2.73-1.56-4.85-3.76-6.36-6.6-1.51-2.84-2.27-6.18-2.27-10.02s.76-7.17,2.27-9.99c1.51-2.82,3.62-5.02,6.33-6.6,2.71-1.58,5.91-2.37,9.61-2.37s6.75.79,9.41,2.37c2.66,1.58,4.73,3.84,6.2,6.77,1.47,2.93,2.2,6.43,2.2,10.49v2.03h-25.53c.14,2.89.91,5.03,2.34,6.43,1.42,1.4,3.31,2.1,5.65,2.1,1.71,0,3.15-.36,4.3-1.08,1.15-.72,1.97-1.83,2.47-3.32l10.22.61c-.95,3.61-2.96,6.43-6.03,8.46-3.07,2.03-6.79,3.05-11.17,3.05ZM155.57,31.58h15.1c-.14-2.66-.87-4.65-2.2-5.96-1.33-1.31-3.06-1.96-5.18-1.96s-3.87.69-5.25,2.07-2.2,3.33-2.47,5.86Z"/>
+        <path fill="#221f20" d="M194.43,54.06c-3.75,0-6.8-.87-9.17-2.61-2.37-1.74-3.55-4.16-3.55-7.28s1-5.68,3.01-7.41c2.01-1.74,4.98-3.01,8.9-3.83l11.71-2.3c0-2.35-.53-4.12-1.59-5.32-1.06-1.2-2.58-1.79-4.57-1.79s-3.45.44-4.54,1.32c-1.08.88-1.78,2.18-2.1,3.89l-10.22-.47c.68-3.97,2.47-6.98,5.38-9.04,2.91-2.05,6.74-3.08,11.48-3.08,5.42,0,9.49,1.29,12.22,3.86,2.73,2.57,4.1,6.34,4.1,11.31v12.39c0,1.04.17,1.73.51,2.07.34.34.85.51,1.52.51h1.02v6.97c-.32.09-.82.18-1.52.27-.7.09-1.39.14-2.07.14-1.45,0-2.79-.25-4.03-.74-1.24-.5-2.25-1.34-3.01-2.54-.77-1.2-1.15-2.9-1.15-5.11l.88.68c-.45,1.62-1.25,3.05-2.4,4.27s-2.64,2.17-4.47,2.84-3.94,1.02-6.33,1.02ZM196.87,47.08c1.67,0,3.14-.33,4.4-.98,1.26-.65,2.26-1.61,2.98-2.88.72-1.26,1.08-2.75,1.08-4.47v-1.76l-8.26,1.76c-1.62.32-2.86.85-3.69,1.59-.84.74-1.25,1.7-1.25,2.88s.41,2.17,1.22,2.84,1.99,1.02,3.52,1.02Z"/>
+        <path fill="#221f20" d="M235.6,54.06c-3.7,0-6.93-.78-9.68-2.34-2.75-1.56-4.9-3.76-6.43-6.6-1.54-2.84-2.3-6.18-2.3-10.02s.77-7.17,2.3-9.99c1.53-2.82,3.68-5.02,6.43-6.6,2.75-1.58,5.98-2.37,9.68-2.37,3.2,0,6.08.57,8.63,1.69,2.55,1.13,4.61,2.75,6.2,4.87,1.58,2.12,2.55,4.67,2.91,7.65l-10.49.47c-.32-2.26-1.12-3.96-2.4-5.11-1.29-1.15-2.9-1.73-4.84-1.73-2.53,0-4.49.97-5.89,2.91-1.4,1.94-2.1,4.67-2.1,8.19s.7,6.26,2.1,8.23c1.4,1.96,3.36,2.95,5.89,2.95,1.94,0,3.57-.6,4.88-1.79,1.31-1.2,2.1-3.01,2.37-5.45l10.49.41c-.32,2.98-1.25,5.56-2.81,7.75-1.56,2.19-3.61,3.88-6.16,5.08-2.55,1.2-5.47,1.79-8.77,1.79Z"/>
+        <path fill="#221f20" d="M254.9,53.25V5.17h10.16v20.24h-1.35c.36-2.12,1.07-3.86,2.13-5.21,1.06-1.35,2.39-2.37,3.99-3.05,1.6-.68,3.35-1.02,5.25-1.02,2.71,0,4.96.59,6.77,1.76,1.8,1.17,3.17,2.8,4.1,4.87.92,2.08,1.39,4.45,1.39,7.11v23.36h-10.16v-20.92c0-2.71-.42-4.74-1.25-6.09-.84-1.35-2.25-2.03-4.23-2.03s-3.7.7-4.87,2.1c-1.17,1.4-1.76,3.5-1.76,6.3v20.65h-10.16Z"/>
+        <path fill="#221f20" d="M291.39,12.49V4.36h10.49v8.12h-10.49ZM291.59,53.25V16.95h10.16v36.29h-10.16Z"/>
+        <path fill="#221f20" d="M307.03,53.25V16.95h9.14l.41,10.63-1.29-.34c.36-2.71,1.09-4.87,2.2-6.5,1.11-1.62,2.49-2.8,4.16-3.52,1.67-.72,3.5-1.08,5.48-1.08,2.62,0,4.84.57,6.67,1.69,1.83,1.13,3.23,2.72,4.2,4.77.97,2.05,1.46,4.48,1.46,7.28v23.36h-10.16v-19.97c0-1.94-.16-3.59-.47-4.94-.32-1.35-.88-2.38-1.69-3.08-.81-.7-1.94-1.05-3.39-1.05-2.12,0-3.75.78-4.87,2.34-1.13,1.56-1.69,3.8-1.69,6.74v19.97h-10.16Z"/>
+        <path fill="#221f20" d="M359.71,64.21c-3.48,0-6.38-.43-8.7-1.29-2.33-.86-4.18-2.05-5.55-3.59-1.38-1.54-2.34-3.3-2.88-5.28l10.43-.74c.36,1.17,1.05,2.1,2.07,2.78s2.56,1.02,4.64,1.02c2.44,0,4.3-.58,5.59-1.73,1.29-1.15,1.93-2.99,1.93-5.52v-3.86c-.86,1.67-2.23,3.01-4.13,4.03s-4.02,1.52-6.36,1.52c-2.98,0-5.62-.73-7.92-2.2-2.3-1.47-4.1-3.52-5.38-6.16s-1.93-5.74-1.93-9.31.64-6.54,1.93-9.21c1.29-2.66,3.07-4.75,5.35-6.26,2.28-1.51,4.89-2.27,7.82-2.27,2.66,0,4.91.59,6.74,1.76,1.83,1.17,3.22,2.73,4.16,4.67v-5.62h9.95v32.7c0,3.25-.74,5.95-2.23,8.09-1.49,2.14-3.57,3.76-6.23,4.84-2.66,1.08-5.75,1.62-9.28,1.62ZM359.64,44.04c2.35,0,4.21-.9,5.59-2.71,1.38-1.8,2.07-4.31,2.07-7.52,0-2.12-.3-3.95-.91-5.48-.61-1.53-1.49-2.71-2.64-3.52s-2.52-1.22-4.1-1.22c-2.44,0-4.33.93-5.69,2.78-1.35,1.85-2.03,4.33-2.03,7.45s.7,5.65,2.1,7.48c1.4,1.83,3.27,2.74,5.62,2.74Z"/>
+        <path fill="#415fa7" d="M382.32,53.25V5.17h10.29v22.82l-4.54-3.25h27.35l-4.6,3.25V5.17h10.29v48.07h-10.29v-23.09l4.6,3.25h-27.35l4.54-3.25v23.09h-10.29Z"/>
+        <path fill="#415fa7" d="M437.23,54.06c-3.75,0-6.67-1.21-8.77-3.62-2.1-2.41-3.15-5.79-3.15-10.12v-23.36h10.16v20.99c0,2.8.43,4.84,1.29,6.13.86,1.29,2.21,1.93,4.06,1.93,2.08,0,3.69-.71,4.84-2.13,1.15-1.42,1.73-3.55,1.73-6.4v-20.52h10.16v36.29h-9.28l-.27-10.43,1.29.27c-.54,3.61-1.83,6.34-3.86,8.19-2.03,1.85-4.76,2.78-8.19,2.78Z"/>
+        <path fill="#415fa7" d="M482.67,54.06c-2.53,0-4.73-.54-6.6-1.62-1.87-1.08-3.33-2.6-4.37-4.54l-.2,5.35h-9.68V5.17h10.16v16.93c.95-1.67,2.35-3.08,4.2-4.23,1.85-1.15,4.02-1.73,6.5-1.73,3.07,0,5.73.78,7.99,2.34,2.26,1.56,4.01,3.76,5.25,6.6,1.24,2.84,1.86,6.18,1.86,10.02s-.62,7.18-1.86,10.02c-1.24,2.84-2.99,5.04-5.25,6.6-2.26,1.56-4.92,2.34-7.99,2.34ZM479.82,46.27c2.26,0,4.07-.98,5.45-2.95,1.38-1.96,2.07-4.71,2.07-8.23s-.68-6.26-2.03-8.23c-1.35-1.96-3.16-2.95-5.42-2.95-1.67,0-3.1.44-4.3,1.32-1.2.88-2.1,2.16-2.71,3.83-.61,1.67-.91,3.68-.91,6.03s.3,4.29.91,5.96c.61,1.67,1.51,2.96,2.71,3.86,1.2.9,2.61,1.35,4.23,1.35Z"/>
+        <path fill="#415fa7" d="M12.61,60.77v.05h.1v-.13l-.1.08ZM36.39,48.11v.03h6.84v-.03h-6.84ZM12.61,60.83h.1v-.13l-.1.08v.05ZM36.39,48.11v.03h6.84v-.03h-6.84Z"/>
+        <polygon fill="#415fa7" points="75.17 0 75.17 60.83 36.39 60.83 36.39 60.88 12.61 76.9 12.61 60.83 12.71 60.83 12.71 60.7 16.83 57.93 31.38 48.14 43.23 48.14 43.23 48.11 62.45 48.11 62.45 12.71 12.71 12.71 12.71 60.7 12.61 60.77 12.61 60.83 0 60.83 0 0 75.17 0"/>
+      </svg>
+      <button class="save-pill" id="saveTrigger" type="button">Save progress</button>
+    </div>
+    <div class="progress-row">
+      <div class="bar-track"><div class="bar-fill" id="barFill"></div></div>
+      <span class="count-label" id="countLabel">0 of 13 ready</span>
+    </div>
+  </header>
+
+  <div class="intro-block">
+    <h1 class="title">Pre-Preaching Checklist</h1>
+    <p class="intro-text">You've done the work. Before you step into the pulpit, walk through this once more — not to second-guess your prep, but to settle into it.</p>
+    <div class="meta-fields">
+      <input type="text" id="sermonTitle" placeholder="Sermon title">
+      <div>
+        <input type="date" id="sermonDate" aria-label="Preaching date">
+        <span class="date-relative" id="dateRelative"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="sections">
+
+    <div class="section">
+      <div class="section-head"><span class="section-num">1</span><span class="section-title">Message Clarity</span><span class="section-rule"></span></div>
+
+      <div class="item" data-key="big-idea">
+        <div class="item-row"><div class="box"><svg viewBox="0 0 16 16"><path d="M2 8l4 4 8-8" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">I can state my big idea in one sentence from memory</div></div>
+        <input class="item-input" type="text" placeholder="What's the one sentence?" data-note-for="big-idea">
+      </div>
+
+      <div class="item" data-key="gospel">
+        <div class="item-row"><div class="box"><svg viewBox="0 0 16 16"><path d="M2 8l4 4 8-8" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">I know exactly where the gospel appears in this sermon</div></div>
+        <input class="item-input" type="text" placeholder="Where does it appear?" data-note-for="gospel">
+      </div>
+
+      <div class="item" data-key="application">
+        <div class="item-row"><div class="box"><svg viewBox="0 0 16 16"><path d="M2 8l4 4 8-8" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">My application is specific — not just "trust God more" but a concrete action</div></div>
+        <input class="item-input" type="text" placeholder="What's the concrete action?" data-note-for="application">
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><span class="section-num">2</span><span class="section-title">Opening &amp; Closing</span><span class="section-rule"></span></div>
+
+      <div class="item" data-key="opening">
+        <div class="item-row"><div class="box"><svg viewBox="0 0 16 16"><path d="M2 8l4 4 8-8" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">My first 60 seconds are memorized or nearly memorized</div></div>
+      </div>
+
+      <div class="item" data-key="closing">
+        <div class="item-row"><div class="box"><svg viewBox="0 0 16 16"><path d="M2 8l4 4 8-8" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">My closing lands on a clear call to response</div></div>
+        <input class="item-input" type="text" placeholder="What's the call to response?" data-note-for="closing">
+      </div>
+
+      <div class="item" data-key="ending">
+        <div class="item-row"><div class="box"><svg viewBox="0 0 16 16"><path d="M2 8l4 4 8-8" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">I know how I'm ending before I start</div></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><span class="section-num">3</span><span class="section-title">Flow &amp; Transitions</span><span class="section-rule"></span></div>
+
+      <div class="item" data-key="flow">
+        <div class="item-row"><div class="box"><svg viewBox="0 0 16 16"><path d="M2 8l4 4 8-8" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">I can move from point to point without looking at my notes</div></div>
+      </div>
+
+      <div class="item" data-key="illustrations">
+        <div class="item-row"><div class="box"><svg viewBox="0 0 16 16"><path d="M2 8l4 4 8-8" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">My illustrations support the point — they don't replace it</div></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><span class="section-num">4</span><span class="section-title">Delivery Readiness</span><span class="section-rule"></span></div>
+
+      <div class="item" data-key="aloud">
+        <div class="item-row"><div class="box"><svg viewBox="0 0 16 16"><path d="M2 8l4 4 8-8" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">I've read this sermon aloud at least once</div></div>
+      </div>
+
+      <div class="item" data-key="rush-spots">
+        <div class="item-row"><div class="box"><svg viewBox="0 0 16 16"><path d="M2 8l4 4 8-8" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">I know where I tend to rush and have marked those spots</div></div>
+      </div>
+
+      <div class="item" data-key="prayed">
+        <div class="item-row"><div class="box"><svg viewBox="0 0 16 16"><path d="M2 8l4 4 8-8" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">I've prayed over this message and the people who will hear it</div></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><span class="section-num">5</span><span class="section-title">Logistics</span><span class="section-rule"></span></div>
+
+      <div class="item" data-key="notes-ready">
+        <div class="item-row"><div class="box"><svg viewBox="0 0 16 16"><path d="M2 8l4 4 8-8" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Notes or outline are ready and accessible</div></div>
+      </div>
+
+      <div class="item" data-key="tech">
+        <div class="item-row"><div class="box"><svg viewBox="0 0 16 16"><path d="M2 8l4 4 8-8" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="item-text">Any tech (slides, mic) is confirmed</div></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    <p class="footer-note">Want a full coaching report after you preach? Get your first one free at <a href="https://preachinghub.com/try">preachinghub.com/try</a></p>
+    <p class="tagline">We don't write sermons. We build preachers.</p>
+    <button class="reset-link" id="resetLink" type="button">Start over for a new sermon</button>
+  </div>
+
+</div>
+
+<!-- Completion celebration -->
+<div class="overlay" id="celebrateOverlay">
+  <div class="sheet">
+    <div class="check-badge">
+      <svg viewBox="0 0 24 24"><path d="M4 12.5l5.2 5.2L20 6" stroke="#1E7A4C" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <h2>Ready to preach.</h2>
+    <p class="sub">Every box is checked. Take a breath — you're not guessing your way up there today.</p>
+    <button class="primary-btn" id="celebrateContinue" type="button">Save my checklist</button>
+    <button class="ghost-btn" id="celebrateDismiss" type="button">Not now</button>
+  </div>
+</div>
+<canvas id="confetti"></canvas>
+
+<!-- Save progress / email capture -->
+<div class="overlay" id="saveOverlay">
+  <div class="sheet">
+    <div class="form-state" id="formState">
+      <h2 id="saveHeading">Save your progress</h2>
+      <p class="sub" id="saveSub">Enter your email and we'll set up your PreachingHub account automatically — no password to create. Pick up right where you left off, and your free trial is ready when you are.</p>
+      <div class="email-row">
+        <label for="emailInput">Email address</label>
+        <input type="email" id="emailInput" placeholder="you@church.org" autocomplete="email" inputmode="email">
+      </div>
+      <button class="primary-btn" id="emailSubmit" type="button">Save &amp; start my free trial</button>
+      <button class="ghost-btn" id="saveDismiss" type="button">Maybe later</button>
+      <p class="fine-print">We'll email you a secure link to log in — no password to remember. Unsubscribe anytime.</p>
+    </div>
+    <div class="success-state" id="successState">
+      <div class="check-badge">
+        <svg viewBox="0 0 24 24"><path d="M4 12.5l5.2 5.2L20 6" stroke="#1E7A4C" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <h2>You're all set.</h2>
+      <p class="sub">Check your inbox for your login link. Your checklist will be right where you left it.</p>
+      <button class="primary-btn" id="successClose" type="button">Done</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var STORAGE_KEY = "ph_checklist_state_v1";
+  var items = Array.prototype.slice.call(document.querySelectorAll(".item"));
+  var checkableItems = items; // every item counts toward readiness
+  var barFill = document.getElementById("barFill");
+  var countLabel = document.getElementById("countLabel");
+  var celebrateOverlay = document.getElementById("celebrateOverlay");
+  var saveOverlay = document.getElementById("saveOverlay");
+  var sermonTitle = document.getElementById("sermonTitle");
+  var sermonDate = document.getElementById("sermonDate");
+  var dateRelative = document.getElementById("dateRelative");
+  var hasCelebrated = false;
+  var emailAlreadySaved = false;
+  var autoPromptShown = false;
+  var ENGAGEMENT_THRESHOLD = 5;
+
+  function updateDateRelative(){
+    if(!sermonDate.value){ dateRelative.textContent = ""; return; }
+    var parts = sermonDate.value.split("-"); // YYYY-MM-DD, parsed as local to avoid TZ drift
+    var picked = new Date(parseInt(parts[0],10), parseInt(parts[1],10)-1, parseInt(parts[2],10));
+    var today = new Date();
+    today.setHours(0,0,0,0);
+    picked.setHours(0,0,0,0);
+    var diffDays = Math.round((picked - today) / 86400000);
+    if(diffDays === 0) dateRelative.textContent = "Today";
+    else if(diffDays === 1) dateRelative.textContent = "Tomorrow";
+    else if(diffDays === -1) dateRelative.textContent = "Yesterday";
+    else if(diffDays > 1) dateRelative.textContent = diffDays + " days away";
+    else dateRelative.textContent = Math.abs(diffDays) + " days ago";
+  }
+  sermonDate.addEventListener("input", updateDateRelative);
+
+  // Pull a first name from the URL if the gated landing page passed one along,
+  // e.g. pre-preaching-checklist.html?name=Marcus
+  var params = new URLSearchParams(window.location.search);
+  var firstName = (params.get("name") || "").trim();
+
+  function loadState(){
+    try{
+      var raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch(e){ return {}; }
+  }
+  function saveState(state){
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e){}
+  }
+
+  function currentState(){
+    var state = { title: sermonTitle.value, date: sermonDate.value, items: {}, emailSaved: emailAlreadySaved, autoPromptShown: autoPromptShown };
+    items.forEach(function(item){
+      var key = item.getAttribute("data-key");
+      var input = item.querySelector(".item-input");
+      state.items[key] = {
+        checked: item.classList.contains("checked"),
+        note: input ? input.value : ""
+      };
+    });
+    return state;
+  }
+
+  function persist(){ saveState(currentState()); }
+
+  function engagementCount(){
+    var count = 0;
+    items.forEach(function(item){
+      if(item.classList.contains("checked")) count++;
+      var input = item.querySelector(".item-input");
+      if(input && input.value.trim().length > 0) count++;
+    });
+    return count;
+  }
+
+  function updateProgress(){
+    var checkedCount = items.filter(function(i){ return i.classList.contains("checked"); }).length;
+    var total = checkableItems.length;
+    var pct = Math.round((checkedCount / total) * 100);
+    barFill.style.width = pct + "%";
+    barFill.classList.toggle("is-complete", checkedCount === total);
+    countLabel.textContent = checkedCount + " of " + total + " ready";
+    persist();
+    if(checkedCount === total && !hasCelebrated){
+      hasCelebrated = true;
+      setTimeout(openCelebration, 200);
+      return; // let the celebration have the moment; skip the auto-prompt check this round
+    }
+    maybeAutoPrompt();
+  }
+
+  function maybeAutoPrompt(){
+    if(autoPromptShown || emailAlreadySaved) return;
+    if(engagementCount() >= ENGAGEMENT_THRESHOLD){
+      autoPromptShown = true;
+      persist();
+      setTimeout(function(){ openSaveModal("auto"); }, 150);
+    }
+  }
+
+  items.forEach(function(item){
+    var row = item.querySelector(".item-row");
+    var input = item.querySelector(".item-input");
+    row.addEventListener("click", function(){
+      item.classList.toggle("checked");
+      updateProgress();
+    });
+    if(input){
+      input.addEventListener("click", function(e){ e.stopPropagation(); });
+      input.addEventListener("input", function(){
+        persist();
+        maybeAutoPrompt();
+      });
+    }
+  });
+  sermonTitle.addEventListener("input", persist);
+  sermonDate.addEventListener("input", persist);
+
+  function restoreState(){
+    var state = loadState();
+    if(!state || !state.items) return;
+    if(state.title) sermonTitle.value = state.title;
+    if(state.date) sermonDate.value = state.date;
+    if(state.emailSaved) emailAlreadySaved = true;
+    items.forEach(function(item){
+      var key = item.getAttribute("data-key");
+      var saved = state.items[key];
+      if(!saved) return;
+      if(saved.checked) item.classList.add("checked");
+      var input = item.querySelector(".item-input");
+      if(input && saved.note) input.value = saved.note;
+    });
+    if(state.autoPromptShown) autoPromptShown = true;
+    var checkedCount = items.filter(function(i){ return i.classList.contains("checked"); }).length;
+    if(checkedCount === items.length) hasCelebrated = true; // don't re-celebrate on a returning, already-complete visit
+    updateDateRelative();
+    updateProgress();
+  }
+
+  function resetChecklist(){
+    if(!window.confirm("Start a new checklist? This clears today's answers.")) return;
+    items.forEach(function(item){
+      item.classList.remove("checked");
+      var input = item.querySelector(".item-input");
+      if(input) input.value = "";
+    });
+    sermonTitle.value = "";
+    sermonDate.value = "";
+    hasCelebrated = false;
+    updateProgress();
+  }
+  document.getElementById("resetLink").addEventListener("click", resetChecklist);
+
+  /* ---------------- Celebration overlay + confetti ---------------- */
+  var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function openCelebration(){
+    celebrateOverlay.classList.add("is-open");
+    if(!reduceMotion) runConfetti();
+  }
+  function closeCelebration(){ celebrateOverlay.classList.remove("is-open"); }
+
+  document.getElementById("celebrateDismiss").addEventListener("click", closeCelebration);
+  document.getElementById("celebrateContinue").addEventListener("click", function(){
+    closeCelebration();
+    openSaveModal("celebration");
+  });
+
+  var canvas = document.getElementById("confetti");
+  var ctx = canvas.getContext("2d");
+  var confettiPieces = [];
+  var confettiRunning = false;
+  var brandColors = ["#2F4FD1", "#C08A2E", "#1E7A4C", "#1B2635"];
+
+  function resizeCanvas(){
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  window.addEventListener("resize", resizeCanvas);
+  resizeCanvas();
+
+  function runConfetti(){
+    confettiPieces = [];
+    var count = 90;
+    for(var i=0;i<count;i++){
+      confettiPieces.push({
+        x: canvas.width/2 + (Math.random()-0.5)*60,
+        y: canvas.height*0.35,
+        vx: (Math.random()-0.5)*8,
+        vy: -(Math.random()*9+4),
+        size: Math.random()*6+4,
+        color: brandColors[i % brandColors.length],
+        rot: Math.random()*360,
+        vr: (Math.random()-0.5)*14,
+        gravity: 0.28 + Math.random()*0.12
+      });
+    }
+    confettiRunning = true;
+    requestAnimationFrame(stepConfetti);
+    setTimeout(function(){ confettiRunning = false; }, 1700);
+  }
+
+  function stepConfetti(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    var alive = false;
+    confettiPieces.forEach(function(p){
+      p.vy += p.gravity;
+      p.x += p.vx;
+      p.y += p.vy;
+      p.rot += p.vr;
+      if(p.y < canvas.height + 20) alive = true;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot * Math.PI/180);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.size/2, -p.size/3, p.size, p.size*0.66);
+      ctx.restore();
+    });
+    if(confettiRunning || alive){
+      requestAnimationFrame(stepConfetti);
+    } else {
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+    }
+  }
+
+  /* ---------------- Save-progress / account modal ---------------- */
+  var formState = document.getElementById("formState");
+  var successState = document.getElementById("successState");
+  var saveHeading = document.getElementById("saveHeading");
+  var saveSub = document.getElementById("saveSub");
+  var emailInput = document.getElementById("emailInput");
+
+  function openSaveModal(source){
+    formState.classList.remove("hide");
+    successState.classList.remove("show");
+    var greeting = firstName ? ("Nice work, " + firstName + ".") : "Save your progress";
+    if(source === "celebration"){
+      saveHeading.textContent = greeting;
+      saveSub.textContent = "Enter your email and we'll set up your PreachingHub account automatically — no password to create. This checklist (and your free trial) will be waiting for you.";
+    } else if(source === "auto"){
+      saveHeading.textContent = firstName ? ("You're on a roll, " + firstName + ".") : "You're on a roll.";
+      saveSub.textContent = "Save your progress so you don't lose it — enter your email and we'll set up your account automatically. No password, no losing your notes.";
+    } else {
+      saveHeading.textContent = "Save your progress";
+      saveSub.textContent = "Enter your email and we'll set up your PreachingHub account automatically — no password to create. Come back anytime and pick up where you left off.";
+    }
+    saveOverlay.classList.add("is-open");
+    setTimeout(function(){ emailInput.focus(); }, 250);
+  }
+  function closeSaveModal(){ saveOverlay.classList.remove("is-open"); }
+
+  document.getElementById("saveTrigger").addEventListener("click", function(){ openSaveModal("manual"); });
+  document.getElementById("saveDismiss").addEventListener("click", closeSaveModal);
+  document.getElementById("successClose").addEventListener("click", closeSaveModal);
+
+  document.getElementById("emailSubmit").addEventListener("click", function(){
+    var email = emailInput.value.trim();
+    var isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    if(!isValid){
+      emailInput.style.borderColor = "#C0392B";
+      emailInput.focus();
+      return;
+    }
+    emailInput.style.borderColor = "";
+
+    fetch("/api/checklist-save", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: email, first_name: firstName })
+    }).catch(function(){ /* Mailchimp submission is best-effort; don't block the local success state */ });
+
+    emailAlreadySaved = true;
+    persist();
+    formState.classList.add("hide");
+    successState.classList.add("show");
+  });
+
+  /* ---------------- Prefill from an upstream lead (name/email) ---------------- */
+  // If this page is reached from a follow-up text/email after the gated lead
+  // form, the link carries an opaque lead token — NOT the raw phone number —
+  // e.g. /checklist/interactive?lead=8f2ac1. /api/lead-lookup is a same-origin
+  // Next.js route backed by Supabase (service role key stays server-side);
+  // it returns { email, first_name } on a match or a bare 404 otherwise.
+  var leadToken = params.get("lead");
+  if(leadToken){
+    fetch("/api/lead-lookup?token=" + encodeURIComponent(leadToken))
+      .then(function(res){ return res.ok ? res.json() : null; })
+      .then(function(data){
+        if(!data) return;
+        if(data.email) emailInput.value = data.email;
+        if(data.first_name && !firstName) firstName = data.first_name;
+      })
+      .catch(function(){ /* fail silently — this is a nice-to-have, not a blocker */ });
+  }
+
+  restoreState();
+})();
+</script>
+
+</body>
+</html>

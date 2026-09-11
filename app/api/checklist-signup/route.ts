@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { resolveMx } from "dns/promises";
+import { randomBytes } from "crypto";
 import { addChecklistContact } from "@/lib/mailchimp";
+import { supabaseAdmin } from "@/lib/supabase";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
+const SITE_URL = "https://preachinghub.com";
 
 async function hasMailServer(email: string): Promise<boolean> {
   const domain = email.split("@")[1];
@@ -35,8 +38,30 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "That email address doesn't look like it can receive mail. Double-check it and try again." }, { status: 400 });
   }
 
+  // Generate the public lead token separately from any database id, and
+  // upsert it into Supabase before sending it to Mailchimp — the token in
+  // the email is only useful if the row it points to already exists.
+  const leadToken = randomBytes(24).toString("hex");
   try {
-    await addChecklistContact({ email, firstName, lastName, phone, src });
+    const { error } = await supabaseAdmin()
+      .from("leads")
+      .upsert(
+        { lead_token: leadToken, email, first_name: firstName, phone },
+        { onConflict: "lead_token" }
+      );
+    if (error) throw error;
+  } catch (err) {
+    console.error("checklist-signup: supabase upsert failed", err);
+    return NextResponse.json(
+      { error: "Something went wrong on our end. Please try again." },
+      { status: 500 }
+    );
+  }
+
+  const checklistLink = `${SITE_URL}/checklist/interactive?lead=${leadToken}`;
+
+  try {
+    await addChecklistContact({ email, firstName, lastName, phone, src, checklistLink });
   } catch (err) {
     console.error("checklist-signup: mailchimp failed", err);
     return NextResponse.json(

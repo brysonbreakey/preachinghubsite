@@ -55,7 +55,9 @@ async function upsertContact({
 
 /**
  * Adds a contact to the Mailchimp audience tagged "checklist" (plus an
- * optional source tag from a ?src= param).
+ * optional source tag from a ?src= param). checklistLink, when provided, is
+ * written to the CHECKLINK merge field so an automation can email the
+ * person their personalized interactive-checklist link.
  */
 export async function addChecklistContact({
   email,
@@ -63,17 +65,42 @@ export async function addChecklistContact({
   lastName,
   phone,
   src,
+  checklistLink,
 }: {
   email: string
   firstName: string
   lastName: string
   phone?: string
   src?: string
+  checklistLink?: string
 }): Promise<void> {
   await upsertContact({
     email,
     tags: ['checklist', ...(src ? [`src:${src}`] : [])],
-    mergeFields: { FNAME: firstName, LNAME: lastName, ...(phone ? { PHONE: phone } : {}) },
+    mergeFields: {
+      FNAME: firstName,
+      LNAME: lastName,
+      ...(phone ? { PHONE: phone } : {}),
+      ...(checklistLink ? { CHECKLINK: checklistLink } : {}),
+    },
+  })
+}
+
+/**
+ * Adds/updates a contact tagged "checklist-interactive-save" — fired when
+ * someone uses the mobile interactive checklist's "save progress" flow.
+ */
+export async function addChecklistSaveContact({
+  email,
+  firstName,
+}: {
+  email: string
+  firstName?: string
+}): Promise<void> {
+  await upsertContact({
+    email,
+    tags: ['checklist-interactive-save'],
+    mergeFields: firstName ? { FNAME: firstName } : {},
   })
 }
 
