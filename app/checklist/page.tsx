@@ -182,9 +182,6 @@ export default function ChecklistPage() {
                   {status === "error" && (
                     <p className="text-xs text-red-600">{errorMessage}</p>
                   )}
-                  <p className="text-xs font-bold uppercase tracking-wide text-center pt-1" style={{ color: NAVY }}>
-                    100% Free &mdash; Instant Download
-                  </p>
                   <button
                     type="submit"
                     disabled={status === "loading"}
