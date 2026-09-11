@@ -126,7 +126,7 @@ export default function ChecklistPage() {
                 <p className="text-sm font-bold uppercase tracking-wide mb-3" style={{ color: NAVY }}>
                   (Free Download)
                 </p>
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 mb-8 tracking-tight leading-[1.05]">
+                <h1 className="text-4xl sm:text-5xl lg:text-7xl font-extrabold text-slate-900 mb-8 tracking-tight leading-[1.05]">
                   The Pre-Preaching Checklist
                 </h1>
 
@@ -136,7 +136,7 @@ export default function ChecklistPage() {
                   <img
                     src="/images/checklist-ipad.png"
                     alt="The Pre-Preaching Checklist shown on an iPad"
-                    className="w-full max-w-md"
+                    className="w-full max-w-xs"
                   />
                 </div>
               </div>
