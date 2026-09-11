@@ -118,7 +118,7 @@ export function YouTubeSearchInput({
         value={query}
         onChange={(e) => handleChange(e.target.value)}
         placeholder="Search YouTube, or paste a link"
-        className={`w-full rounded-lg border bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#3760ad] ${
+        className={`w-full rounded-lg border bg-white px-3.5 py-3.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#3760ad] ${
           error ? "border-red-300" : "border-slate-300 focus:border-[#3760ad]"
         }`}
       />
