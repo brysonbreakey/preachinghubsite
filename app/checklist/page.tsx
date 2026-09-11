@@ -87,7 +87,7 @@ export default function ChecklistPage() {
   return (
     <main className="min-h-screen bg-slate-50 flex flex-col">
       <div className="flex-1 flex items-center justify-center px-6 py-10 sm:py-16">
-        <div className="w-full max-w-md lg:max-w-4xl">
+        <div className="w-full max-w-md lg:max-w-6xl">
           <div className="flex justify-center mb-6 lg:hidden">
             <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{ backgroundColor: NAVY }}>
               <PHMark size={22} color="#fff" />
@@ -120,32 +120,32 @@ export default function ChecklistPage() {
               </a>
             </div>
           ) : (
-            <div className="lg:grid lg:grid-cols-2 lg:gap-12 lg:items-center">
-              {/* Creative — desktop only, left column */}
-              <div className="hidden lg:flex justify-center">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/images/checklist-ipad.png"
-                  alt="The Pre-Preaching Checklist shown on an iPad"
-                  className="w-full max-w-md"
-                />
+            <div className="lg:grid lg:grid-cols-2 lg:gap-16 lg:items-center">
+              {/* Left column — headline, subheadline, creative */}
+              <div className="text-center lg:text-left">
+                <p className="text-sm font-bold uppercase tracking-wide mb-3" style={{ color: NAVY }}>
+                  (Free Download)
+                </p>
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 mb-5 tracking-tight leading-[1.05]">
+                  The Pre-Preaching Checklist
+                </h1>
+                <p className="text-lg text-slate-500 leading-relaxed mb-8 max-w-lg mx-auto lg:mx-0">
+                  Most sermons don&apos;t fail Sunday morning. They fail Thursday afternoon &mdash; in the gap between &ldquo;the outline is done&rdquo; and &ldquo;I know this like the back of my hand.&rdquo; This free checklist closes that gap.
+                </p>
+
+                {/* Creative — desktop only */}
+                <div className="hidden lg:flex justify-start">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="/images/checklist-ipad.png"
+                    alt="The Pre-Preaching Checklist shown on an iPad"
+                    className="w-full max-w-md"
+                  />
+                </div>
               </div>
 
               {/* Form */}
-              <div className="relative bg-white rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/60 p-8">
-                <div
-                  className="absolute -top-3 -right-3 rotate-6 text-white text-[10px] font-bold uppercase tracking-wide px-2.5 py-1 rounded-full shadow-md"
-                  style={{ backgroundColor: NAVY }}
-                >
-                  Free PDF
-                </div>
-                <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-3 tracking-tight leading-tight text-center">
-                  The Pre-Preaching Checklist
-                </h1>
-                <p className="text-slate-500 leading-relaxed mb-6 text-center">
-                  Ready on paper isn&apos;t the same as ready to preach. Five quick checks to run before you step into the pulpit &mdash; so you preach with a clarity and confidence.
-                </p>
-
+              <div className="bg-white rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/60 p-8">
                 <form onSubmit={handleSubmit} noValidate className="space-y-3">
                   <input
                     type="text"
@@ -181,17 +181,20 @@ export default function ChecklistPage() {
                   {status === "error" && (
                     <p className="text-xs text-red-600">{errorMessage}</p>
                   )}
+                  <p className="text-xs font-bold uppercase tracking-wide text-center pt-1" style={{ color: NAVY }}>
+                    100% Free &mdash; Instant Download
+                  </p>
                   <button
                     type="submit"
                     disabled={status === "loading"}
                     className="w-full inline-flex items-center justify-center gap-2 text-white font-semibold px-6 py-4 rounded-xl text-base transition-colors disabled:opacity-60"
                     style={{ backgroundColor: NAVY }}
                   >
-                    {status === "loading" ? "Sending..." : "Send Me the Checklist"}
+                    {status === "loading" ? "Sending..." : "Get the Checklist"}
                   </button>
                 </form>
                 <p className="text-xs text-slate-400 text-center mt-4">
-                  We&apos;ll only email you about preaching. Unsubscribe anytime.
+                  We will only email you about preaching. Unsubscribe any time.
                 </p>
               </div>
             </div>
