@@ -61,17 +61,19 @@ export async function addChecklistContact({
   email,
   firstName,
   lastName,
+  phone,
   src,
 }: {
   email: string
   firstName: string
   lastName: string
+  phone?: string
   src?: string
 }): Promise<void> {
   await upsertContact({
     email,
     tags: ['checklist', ...(src ? [`src:${src}`] : [])],
-    mergeFields: { FNAME: firstName, LNAME: lastName },
+    mergeFields: { FNAME: firstName, LNAME: lastName, ...(phone ? { PHONE: phone } : {}) },
   })
 }
 

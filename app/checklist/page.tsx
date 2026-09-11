@@ -7,10 +7,23 @@ const NAVY = "#3760ad";
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PDF_HREF = "/downloads/pre-preaching-checklist.pdf";
 
+function splitName(fullName: string): { firstName: string; lastName: string } {
+  const trimmed = fullName.trim().replace(/\s+/g, " ");
+  const idx = trimmed.indexOf(" ");
+  if (idx === -1) return { firstName: trimmed, lastName: "" };
+  return { firstName: trimmed.slice(0, idx), lastName: trimmed.slice(idx + 1) };
+}
+
+function formatPhone(value: string): string {
+  const digits = value.replace(/\D/g, "").slice(0, 10);
+  const parts = [digits.slice(0, 3), digits.slice(3, 6), digits.slice(6, 10)].filter(Boolean);
+  return parts.join("-");
+}
+
 export default function ChecklistPage() {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [src, setSrc] = useState<string | undefined>(undefined);
   const [status, setStatus] = useState<"form" | "loading" | "success" | "error">("form");
   const [errorMessage, setErrorMessage] = useState("");
@@ -24,9 +37,9 @@ export default function ChecklistPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!firstName.trim() || !lastName.trim()) {
+    if (!name.trim()) {
       setStatus("error");
-      setErrorMessage("Enter your first and last name.");
+      setErrorMessage("Enter your name.");
       return;
     }
     if (!EMAIL_RE.test(email.trim())) {
@@ -34,16 +47,23 @@ export default function ChecklistPage() {
       setErrorMessage("Enter a valid email address.");
       return;
     }
+    if (phone.replace(/\D/g, "").length !== 10) {
+      setStatus("error");
+      setErrorMessage("Enter a valid 10-digit phone number.");
+      return;
+    }
 
     setStatus("loading");
+    const { firstName, lastName } = splitName(name);
     try {
       const res = await fetch("/api/checklist-signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          first_name: firstName.trim(),
-          last_name: lastName.trim(),
+          first_name: firstName,
+          last_name: lastName,
           email: email.trim(),
+          phone: phone.trim(),
           src,
         }),
       });
@@ -62,25 +82,27 @@ export default function ChecklistPage() {
     }
   }
 
+  const firstName = splitName(name).firstName;
+
   return (
     <main className="min-h-screen bg-slate-50 flex flex-col">
-      <div className="flex-1 flex items-center justify-center px-6 py-12 sm:py-16">
-        <div className="w-full max-w-md">
-          <div className="flex justify-center mb-6">
+      <div className="flex-1 flex items-center justify-center px-6 py-10 sm:py-16">
+        <div className="w-full max-w-md lg:max-w-4xl">
+          <div className="flex justify-center mb-6 lg:hidden">
             <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{ backgroundColor: NAVY }}>
               <PHMark size={22} color="#fff" />
             </div>
           </div>
 
           {status === "success" ? (
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/60 p-8 text-center">
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/60 p-8 text-center max-w-md mx-auto">
               <div className="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center mx-auto mb-5">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M20 6 9 17l-5-5" />
                 </svg>
               </div>
               <h1 className="text-2xl font-extrabold text-slate-900 mb-2 tracking-tight">
-                Your checklist is ready, {firstName.trim()}.
+                Your checklist is ready, {firstName}.
               </h1>
               <p className="text-slate-500 leading-relaxed mb-6">
                 Tap below to download the Pre-Preaching Checklist now.
@@ -98,7 +120,18 @@ export default function ChecklistPage() {
               </a>
             </div>
           ) : (
-            <>
+            <div className="lg:grid lg:grid-cols-2 lg:gap-12 lg:items-center">
+              {/* Creative — desktop only, left column */}
+              <div className="hidden lg:flex justify-center">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/images/checklist-ipad.png"
+                  alt="The Pre-Preaching Checklist shown on an iPad"
+                  className="w-full max-w-md"
+                />
+              </div>
+
+              {/* Form */}
               <div className="relative bg-white rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/60 p-8">
                 <div
                   className="absolute -top-3 -right-3 rotate-6 text-white text-[10px] font-bold uppercase tracking-wide px-2.5 py-1 rounded-full shadow-md"
@@ -109,42 +142,38 @@ export default function ChecklistPage() {
                 <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-3 tracking-tight leading-tight text-center">
                   The Pre-Preaching Checklist
                 </h1>
-                <p className="text-slate-500 leading-relaxed mb-5 text-center">
-                  Ready on paper isn&apos;t the same as ready to preach. Five quick checks to run before you step into the pulpit &mdash; so you preach with a clear mind and an open hand.
-                </p>
-                <p className="text-slate-500 leading-relaxed mb-6 text-center text-sm">
-                  Built by PreachingHub, this one-page checklist walks you through message clarity, opening and closing, flow, delivery readiness, and logistics &mdash; the last pass before Sunday.
+                <p className="text-slate-500 leading-relaxed mb-6 text-center">
+                  Ready on paper isn&apos;t the same as ready to preach. Five quick checks to run before you step into the pulpit &mdash; so you preach with a clarity and confidence.
                 </p>
 
                 <form onSubmit={handleSubmit} noValidate className="space-y-3">
-                  <div className="grid grid-cols-2 gap-3">
-                    <input
-                      type="text"
-                      name="firstName"
-                      value={firstName}
-                      onChange={(e) => setFirstName(e.target.value)}
-                      placeholder="First name"
-                      className={`w-full rounded-lg border px-3.5 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#3760ad] ${
-                        status === "error" ? "border-red-300" : "border-slate-300 focus:border-[#3760ad]"
-                      }`}
-                    />
-                    <input
-                      type="text"
-                      name="lastName"
-                      value={lastName}
-                      onChange={(e) => setLastName(e.target.value)}
-                      placeholder="Last name"
-                      className={`w-full rounded-lg border px-3.5 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#3760ad] ${
-                        status === "error" ? "border-red-300" : "border-slate-300 focus:border-[#3760ad]"
-                      }`}
-                    />
-                  </div>
+                  <input
+                    type="text"
+                    name="name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Name"
+                    className={`w-full rounded-lg border px-3.5 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#3760ad] ${
+                      status === "error" ? "border-red-300" : "border-slate-300 focus:border-[#3760ad]"
+                    }`}
+                  />
                   <input
                     type="email"
                     name="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Email address"
+                    className={`w-full rounded-lg border px-3.5 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#3760ad] ${
+                      status === "error" ? "border-red-300" : "border-slate-300 focus:border-[#3760ad]"
+                    }`}
+                  />
+                  <input
+                    type="tel"
+                    name="phone"
+                    inputMode="numeric"
+                    value={phone}
+                    onChange={(e) => setPhone(formatPhone(e.target.value))}
+                    placeholder="xxx-xxx-xxxx"
                     className={`w-full rounded-lg border px-3.5 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#3760ad] ${
                       status === "error" ? "border-red-300" : "border-slate-300 focus:border-[#3760ad]"
                     }`}
@@ -165,7 +194,7 @@ export default function ChecklistPage() {
                   We&apos;ll only email you about preaching. Unsubscribe anytime.
                 </p>
               </div>
-            </>
+            </div>
           )}
         </div>
       </div>

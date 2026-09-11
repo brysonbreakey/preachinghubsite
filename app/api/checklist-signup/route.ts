@@ -19,20 +19,24 @@ export async function POST(req: NextRequest) {
   const firstName = typeof body?.first_name === "string" ? body.first_name.trim() : "";
   const lastName = typeof body?.last_name === "string" ? body.last_name.trim() : "";
   const email = typeof body?.email === "string" ? body.email.trim() : "";
+  const phone = typeof body?.phone === "string" ? body.phone.trim() : "";
   const src = typeof body?.src === "string" ? body.src.trim().slice(0, 100) : undefined;
 
-  if (!firstName || !lastName) {
-    return NextResponse.json({ error: "Enter your first and last name." }, { status: 400 });
+  if (!firstName) {
+    return NextResponse.json({ error: "Enter your name." }, { status: 400 });
   }
   if (!email || !EMAIL_RE.test(email)) {
     return NextResponse.json({ error: "Enter a valid email address." }, { status: 400 });
+  }
+  if (phone.replace(/\D/g, "").length !== 10) {
+    return NextResponse.json({ error: "Enter a valid 10-digit phone number." }, { status: 400 });
   }
   if (!(await hasMailServer(email))) {
     return NextResponse.json({ error: "That email address doesn't look like it can receive mail. Double-check it and try again." }, { status: 400 });
   }
 
   try {
-    await addChecklistContact({ email, firstName, lastName, src });
+    await addChecklistContact({ email, firstName, lastName, phone, src });
   } catch (err) {
     console.error("checklist-signup: mailchimp failed", err);
     return NextResponse.json(
