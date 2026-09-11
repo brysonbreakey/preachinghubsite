@@ -126,12 +126,9 @@ export default function ChecklistPage() {
                 <p className="text-sm font-bold uppercase tracking-wide mb-3" style={{ color: NAVY }}>
                   (Free Download)
                 </p>
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 mb-5 tracking-tight leading-[1.05]">
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 mb-8 tracking-tight leading-[1.05]">
                   The Pre-Preaching Checklist
                 </h1>
-                <p className="text-lg text-slate-500 leading-relaxed mb-8 max-w-lg mx-auto lg:mx-0">
-                  Most sermons don&apos;t fail Sunday morning. They fail Thursday afternoon &mdash; in the gap between &ldquo;the outline is done&rdquo; and &ldquo;I know this like the back of my hand.&rdquo; This free checklist closes that gap.
-                </p>
 
                 {/* Creative — desktop only */}
                 <div className="hidden lg:flex justify-start">
@@ -146,6 +143,9 @@ export default function ChecklistPage() {
 
               {/* Form */}
               <div className="bg-white rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/60 p-8">
+                <p className="text-slate-500 leading-relaxed mb-6">
+                  Most sermons don&apos;t fail Sunday morning. They fail Thursday afternoon &mdash; in the gap between &ldquo;the outline is done&rdquo; and &ldquo;I know this like the back of my hand.&rdquo; This free checklist contains 5 things that will close that gap.
+                </p>
                 <form onSubmit={handleSubmit} noValidate className="space-y-3">
                   <input
                     type="text"
