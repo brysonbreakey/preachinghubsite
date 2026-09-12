@@ -32,6 +32,7 @@
     font-family:'Inter', sans-serif;
     color: var(--ink);
     -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
   }
 
   .wrap{
@@ -41,6 +42,7 @@
     background: var(--paper);
     box-shadow: 0 0 40px rgba(0,0,0,0.06);
     padding-bottom: 64px;
+    overflow-x: hidden;
   }
 
   a{ color: var(--blue); }
@@ -131,6 +133,9 @@
   }
   .meta-fields input{
     width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
     font-family:'Inter', sans-serif;
     font-size: 15px;
     padding: 11px 13px;
@@ -138,6 +143,10 @@
     border-radius: var(--radius);
     background: var(--paper);
     color: var(--ink);
+  }
+  .meta-fields input[type="date"]{
+    -webkit-appearance: none;
+    appearance: none;
   }
   .meta-fields input::placeholder{ color: #9AA3B0; }
   .meta-fields input:focus{ outline: 2px solid var(--blue); outline-offset: 1px; border-color: var(--blue); }
