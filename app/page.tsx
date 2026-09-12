@@ -688,7 +688,11 @@ function AboutCompany() {
       <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-12 items-center">
         <div data-animate="fade-up">
           <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-slate-300/50" style={{ aspectRatio: "4/5" }}>
-            <Image src="/images/founder/founder-blazer.jpg" alt="A pastor preaching" fill sizes="(min-width: 768px) 40vw, 90vw" className="object-cover" />
+            <Image src="/images/founder/founder-blazer.jpg" alt="Bryson Breakey preaching" fill sizes="(min-width: 768px) 40vw, 90vw" className="object-cover" />
+            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent pt-16 pb-5 px-6">
+              <p className="text-white font-bold text-lg leading-tight">Bryson Breakey</p>
+              <p className="text-white/70 text-sm">Founder</p>
+            </div>
           </div>
         </div>
         <div data-animate="fade-up" data-delay="100">
