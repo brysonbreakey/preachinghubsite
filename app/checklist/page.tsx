@@ -173,12 +173,12 @@ export default function ChecklistPage() {
                     inputMode="numeric"
                     value={phone}
                     onChange={(e) => setPhone(formatPhone(e.target.value))}
-                    placeholder="xxx-xxx-xxxx"
+                    placeholder="Phone number"
                     className={`w-full rounded-lg border px-3.5 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#3760ad] ${
                       status === "error" ? "border-red-300" : "border-slate-300 focus:border-[#3760ad]"
                     }`}
                   />
-                  <p className="text-xs text-slate-400 -mt-1.5">We&apos;ll send the mobile version as well.</p>
+                  <p className="text-xs text-slate-400 -mt-1.5">We&apos;ll send the interactive mobile version to your phone.</p>
                   {status === "error" && (
                     <p className="text-xs text-red-600">{errorMessage}</p>
                   )}
