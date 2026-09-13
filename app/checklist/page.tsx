@@ -136,7 +136,7 @@ export default function ChecklistPage() {
                   <img
                     src="/images/Checklist 2 Part Mockup.png"
                     alt="The Pre-Preaching Checklist as a printable PDF and on the mobile interactive version"
-                    className="w-full max-w-xs"
+                    className="w-full max-w-sm"
                   />
                 </div>
               </div>
