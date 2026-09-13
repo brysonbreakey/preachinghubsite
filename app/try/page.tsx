@@ -187,24 +187,34 @@ export default function TryPage() {
         payload.input_type = "video_url";
         payload.video_url = videoUrl.trim();
       } else {
-        const isVideoFile = audioFile!.type.startsWith("video/") || /\.(mp4|mov)$/i.test(audioFile!.name);
+        const name = audioFile!.name.toLowerCase();
+        const isDocument = name.endsWith(".pdf") || name.endsWith(".doc") || name.endsWith(".docx");
+        const isVideoFile = !isDocument && (audioFile!.type.startsWith("video/") || /\.(mp4|mov)$/i.test(name));
+
+        // Use a safe content type for uploads (browser sometimes sends empty string for docs)
+        let contentType = audioFile!.type;
+        if (!contentType) {
+          if (name.endsWith(".pdf")) contentType = "application/pdf";
+          else if (name.endsWith(".docx")) contentType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+          else if (name.endsWith(".doc")) contentType = "application/msword";
+        }
 
         const uploadUrlRes = await fetch(`${APP_URL}/api/free-evaluation/upload-url`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ filename: audioFile!.name, contentType: audioFile!.type }),
+          body: JSON.stringify({ filename: audioFile!.name, contentType }),
         });
         if (!uploadUrlRes.ok) throw new Error("upload_url_failed");
         const { uploadUrl, storagePath } = await uploadUrlRes.json();
 
         const putRes = await fetch(uploadUrl, {
           method: "PUT",
-          headers: { "Content-Type": audioFile!.type || "application/octet-stream" },
+          headers: { "Content-Type": contentType || "application/octet-stream" },
           body: audioFile!,
         });
         if (!putRes.ok) throw new Error("audio_upload_failed");
 
-        payload.input_type = isVideoFile ? "video" : "audio";
+        payload.input_type = isDocument ? "document" : isVideoFile ? "video" : "audio";
         payload.storage_path = storagePath;
       }
 
@@ -284,7 +294,7 @@ export default function TryPage() {
             Get a free coaching report on your last sermon
           </h1>
           <p className="text-lg text-slate-500 max-w-xl mx-auto leading-relaxed">
-            Submit a YouTube link, paste your notes, or upload audio.{" "}
+            Submit a YouTube link, paste your notes, or upload audio, video, or a PDF/Word doc.{" "}
             <strong className="font-semibold text-slate-700">In minutes</strong>,{" "}
             you&apos;ll receive helpful sermon feedback to take your preaching to the next level. No account needed.
           </p>
@@ -407,7 +417,7 @@ export default function TryPage() {
                       type="file"
                       id="audioFile"
                       name="audioFile"
-                      accept=".mp3,.m4a,.wav,.mp4,.mov"
+                      accept=".mp3,.m4a,.wav,.mp4,.mov,.pdf,.doc,.docx"
                       onChange={(e) => setAudioFile(e.target.files?.[0] ?? null)}
                       className="hidden"
                     />
@@ -441,7 +451,7 @@ export default function TryPage() {
                       >
                         <Icon d={["M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4", "M17 8l-5-5-5 5", "M12 3v12"]} size={20} color="#94a3b8" strokeWidth={2} />
                         <span className="text-sm font-medium text-slate-600">Click to upload</span>
-                        <span className="text-xs text-slate-400">Sermon or rehearsal &mdash; audio or video</span>
+                        <span className="text-xs text-slate-400">Audio, video, PDF, or Word doc</span>
                       </label>
                     )}
                     {errors.audioFile && <p className="text-xs text-red-600 mt-1.5">{errors.audioFile}</p>}
