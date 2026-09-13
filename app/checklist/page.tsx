@@ -134,8 +134,8 @@ export default function ChecklistPage() {
                 <div className="hidden lg:flex justify-start">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src="/images/checklist-ipad.png"
-                    alt="The Pre-Preaching Checklist shown on an iPad"
+                    src="/images/Checklist 2 Part Mockup.png"
+                    alt="The Pre-Preaching Checklist as a printable PDF and on the mobile interactive version"
                     className="w-full max-w-xs"
                   />
                 </div>
