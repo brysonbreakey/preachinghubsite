@@ -419,7 +419,7 @@
 
   <div class="intro-block">
     <h1 class="title">Pre-Preaching Checklist</h1>
-    <p class="intro-text">You've done the work. Before you step into the pulpit, walk through this once more — not to second-guess your prep, but to settle into it.</p>
+    <p class="intro-text" id="introText">You've done the work. Before you step into the pulpit, walk through this once more — not to second-guess your prep, but to settle into it.</p>
     <div class="meta-fields">
       <input type="text" id="sermonTitle" placeholder="Sermon title">
       <div>
@@ -595,6 +595,14 @@
   // e.g. pre-preaching-checklist.html?name=Marcus
   var params = new URLSearchParams(window.location.search);
   var firstName = (params.get("name") || "").trim();
+  var introText = document.getElementById("introText");
+  var introTextDefault = introText.textContent;
+
+  function applyGreeting(){
+    if(!firstName) return;
+    introText.textContent = "Hey " + firstName + " — " + introTextDefault.charAt(0).toLowerCase() + introTextDefault.slice(1);
+  }
+  applyGreeting();
 
   function loadState(){
     try{
@@ -846,7 +854,10 @@
       .then(function(data){
         if(!data) return;
         if(data.email) emailInput.value = data.email;
-        if(data.first_name && !firstName) firstName = data.first_name;
+        if(data.first_name && !firstName){
+          firstName = data.first_name;
+          applyGreeting();
+        }
       })
       .catch(function(){ /* fail silently — this is a nice-to-have, not a blocker */ });
   }
