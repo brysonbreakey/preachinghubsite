@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
   // Generate the public lead token separately from any database id, and
   // upsert it into Supabase before sending it to Mailchimp — the token in
   // the email is only useful if the row it points to already exists.
-  const leadToken = randomBytes(24).toString("hex");
+  const leadToken = randomBytes(10).toString("hex");
   try {
     const { error } = await supabaseAdmin()
       .from("leads")
@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const checklistLink = `${SITE_URL}/checklist/interactive?lead=${leadToken}`;
+  const checklistLink = `${SITE_URL}/c/${leadToken}`;
 
   try {
     await addChecklistContact({ email, firstName, lastName, phone, src, checklistLink });

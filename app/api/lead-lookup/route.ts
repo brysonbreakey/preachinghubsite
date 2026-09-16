@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 
-const TOKEN_RE = /^[a-f0-9]{32,64}$/;
+const TOKEN_RE = /^[a-f0-9]{20,64}$/;
 const TOKEN_TTL_DAYS = 30;
 
 export async function GET(req: NextRequest) {

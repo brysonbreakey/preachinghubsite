@@ -37,6 +37,7 @@ const nextConfig: NextConfig = {
       { source: "/ingest/array/:path*", destination: "https://us-assets.i.posthog.com/array/:path*" },
       { source: "/ingest/:path*", destination: "https://us.i.posthog.com/:path*" },
       { source: "/checklist/interactive", destination: "/checklist-interactive.html" },
+      { source: "/c/:token", destination: "/checklist-interactive.html?lead=:token" },
     ];
   },
   skipTrailingSlashRedirect: true,
