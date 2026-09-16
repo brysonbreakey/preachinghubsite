@@ -39,19 +39,29 @@ export async function POST(req: NextRequest) {
   }
 
   // Generate the public lead token separately from any database id, and
-  // upsert it into Supabase before sending it to Mailchimp — the token in
+  // insert it into Supabase before sending it to Mailchimp — the token in
   // the email is only useful if the row it points to already exists.
-  const leadToken = randomBytes(10).toString("hex");
+  // At 8 hex chars the token space is small enough that a collision is
+  // possible at scale, so this inserts (rather than upserts) and retries
+  // with a fresh token on a unique-constraint hit, instead of silently
+  // overwriting a different lead's row.
+  let leadToken = "";
+  let inserted = false;
   try {
-    const { error } = await supabaseAdmin()
-      .from("leads")
-      .upsert(
-        { lead_token: leadToken, email, first_name: firstName, phone },
-        { onConflict: "lead_token" }
-      );
-    if (error) throw error;
+    for (let attempt = 0; attempt < 5 && !inserted; attempt++) {
+      leadToken = randomBytes(4).toString("hex");
+      const { error } = await supabaseAdmin()
+        .from("leads")
+        .insert({ lead_token: leadToken, email, first_name: firstName, phone });
+      if (!error) {
+        inserted = true;
+      } else if (error.code !== "23505") {
+        throw error;
+      }
+    }
+    if (!inserted) throw new Error("could not generate a unique lead token");
   } catch (err) {
-    console.error("checklist-signup: supabase upsert failed", err);
+    console.error("checklist-signup: supabase insert failed", err);
     return NextResponse.json(
       { error: "Something went wrong on our end. Please try again." },
       { status: 500 }
