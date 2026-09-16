@@ -178,7 +178,7 @@ export default function ChecklistPage() {
                       status === "error" ? "border-red-300" : "border-slate-300 focus:border-[#3760ad]"
                     }`}
                   />
-                  <p className="text-xs text-slate-400 -mt-1.5">We&apos;ll send the interactive mobile version to your phone.</p>
+                  <p className="text-xs font-semibold text-slate-600 -mt-1.5">📲 We&apos;ll send the interactive mobile version to your phone.</p>
                   {status === "error" && (
                     <p className="text-xs text-red-600">{errorMessage}</p>
                   )}
