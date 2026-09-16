@@ -70,5 +70,19 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // Side channel to Zapier (Textla contact + SMS with the checklist link).
+  // Best-effort only — a Zapier/Textla hiccup must never fail the signup
+  // the visitor is actually waiting on.
+  const zapierWebhookUrl = process.env.ZAPIER_CHECKLIST_WEBHOOK_URL;
+  if (zapierWebhookUrl) {
+    fetch(zapierWebhookUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ phone, first_name: firstName, checklistLink }),
+    }).catch((err) => {
+      console.error("checklist-signup: zapier webhook failed", err);
+    });
+  }
+
   return NextResponse.json({ ok: true });
 }
