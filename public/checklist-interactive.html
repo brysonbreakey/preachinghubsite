@@ -598,9 +598,15 @@
   var introText = document.getElementById("introText");
   var introTextDefault = introText.textContent;
 
+  function escapeHtml(s){
+    return s.replace(/[&<>"']/g, function(c){
+      return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c];
+    });
+  }
   function applyGreeting(){
     if(!firstName) return;
-    introText.textContent = "Hey " + firstName + " — " + introTextDefault.charAt(0).toLowerCase() + introTextDefault.slice(1);
+    var rest = introTextDefault.charAt(0).toLowerCase() + introTextDefault.slice(1);
+    introText.innerHTML = "<strong>Hey " + escapeHtml(firstName) + " —</strong> " + rest;
   }
   applyGreeting();
 
