@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { resolveMx } from "dns/promises";
 import { randomBytes } from "crypto";
-import { addChecklistContact } from "@/lib/mailchimp";
+import { addChecklistContact } from "@/lib/kit";
 import { supabaseAdmin } from "@/lib/supabase";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
@@ -20,10 +20,8 @@ async function hasMailServer(email: string): Promise<boolean> {
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => null);
   const firstName = typeof body?.first_name === "string" ? body.first_name.trim() : "";
-  const lastName = typeof body?.last_name === "string" ? body.last_name.trim() : "";
   const email = typeof body?.email === "string" ? body.email.trim() : "";
   const phone = typeof body?.phone === "string" ? body.phone.trim() : "";
-  const src = typeof body?.src === "string" ? body.src.trim().slice(0, 100) : undefined;
 
   if (!firstName) {
     return NextResponse.json({ error: "Enter your name." }, { status: 400 });
@@ -39,8 +37,8 @@ export async function POST(req: NextRequest) {
   }
 
   // Generate the public lead token separately from any database id, and
-  // insert it into Supabase before sending it to Mailchimp — the token in
-  // the email is only useful if the row it points to already exists.
+  // insert it into Supabase before sending it to Kit/Zapier — the token in
+  // the link is only useful if the row it points to already exists.
   // At 8 hex chars the token space is small enough that a collision is
   // possible at scale, so this inserts (rather than upserts) and retries
   // with a fresh token on a unique-constraint hit, instead of silently
@@ -71,9 +69,9 @@ export async function POST(req: NextRequest) {
   const checklistLink = `${SITE_URL}/c/${leadToken}`;
 
   try {
-    await addChecklistContact({ email, firstName, lastName, phone, src, checklistLink });
+    await addChecklistContact({ email, firstName });
   } catch (err) {
-    console.error("checklist-signup: mailchimp failed", err);
+    console.error("checklist-signup: kit failed", err);
     return NextResponse.json(
       { error: "Something went wrong on our end. Please try again." },
       { status: 500 }
