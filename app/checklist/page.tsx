@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import posthog from "posthog-js";
 import { PHMark } from "@/components/Logo";
 
 const NAVY = "#3760ad";
@@ -70,6 +71,8 @@ export default function ChecklistPage() {
         const data = await res.json().catch(() => null);
         throw new Error(data?.error || "submit_failed");
       }
+      posthog.capture("checklist_signup_submitted");
+
       // The checklist is emailed (via Kit) and texted (via Zapier/Textla) —
       // this page's job is done, so hand off to the VSL thank-you page.
       // Name/email carry over via sessionStorage (not a URL query param) so

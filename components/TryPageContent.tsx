@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import posthog from "posthog-js";
 import { Icon } from "@/components/Icon";
 import { YouTubeSearchInput } from "@/components/YouTubeSearchInput";
 import { Navbar } from "@/components/Navbar";
@@ -243,6 +244,8 @@ export function TryPageContent({
       const startData = await startRes.json().catch(() => null);
 
       if (!startRes.ok || !startData?.token) throw new Error("start_failed");
+
+      posthog.capture("free_evaluation_submitted", { input_type: payload.input_type });
 
       stopProcessingMessages();
       window.location.href = `${APP_URL}/try/${startData.token}`;
