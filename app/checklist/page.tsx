@@ -72,10 +72,18 @@ export default function ChecklistPage() {
       }
       // The checklist is emailed (via Kit) and texted (via Zapier/Textla) —
       // this page's job is done, so hand off to the VSL thank-you page.
-      // Name/email carry over as query params so the evaluator form there
-      // doesn't make them retype what they just typed here.
-      const thankYouParams = new URLSearchParams({ name: name.trim(), email: email.trim() });
-      window.location.href = `/checklist/thank-you?${thankYouParams.toString()}`;
+      // Name/email carry over via sessionStorage (not a URL query param) so
+      // they don't end up in server logs, browser history, or a copy-pasted
+      // link, and so the evaluator form there doesn't make them retype it.
+      try {
+        sessionStorage.setItem(
+          "ph_checklist_thank_you_prefill",
+          JSON.stringify({ name: name.trim(), email: email.trim() })
+        );
+      } catch {
+        // Best-effort only — worst case the form just isn't prefilled.
+      }
+      window.location.href = "/checklist/thank-you";
     } catch (err) {
       setStatus("error");
       setErrorMessage(
