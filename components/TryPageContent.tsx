@@ -63,7 +63,10 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
  * unused in the ineligible/processing views, which only ever appear after
  * a real submission.
  */
-export function TryPageContent({ aboveForm }: { aboveForm?: React.ReactNode } = {}) {
+export function TryPageContent({
+  aboveForm,
+  heroContent,
+}: { aboveForm?: React.ReactNode; heroContent?: React.ReactNode } = {}) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -297,16 +300,18 @@ export function TryPageContent({ aboveForm }: { aboveForm?: React.ReactNode } = 
       <section className="bg-slate-50 pt-32 pb-16 px-6">
       <div className="max-w-5xl mx-auto">
         {aboveForm}
-        <div className="text-center mb-10 max-w-2xl mx-auto">
-          <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 leading-[1.1] tracking-tight mb-5">
-            Get a free coaching report on your last sermon
-          </h1>
-          <p className="text-lg text-slate-500 max-w-xl mx-auto leading-relaxed">
-            Submit a YouTube link, paste your notes, or upload audio, video, or a PDF/Word doc.{" "}
-            <strong className="font-semibold text-slate-700">In minutes</strong>,{" "}
-            you&apos;ll receive helpful sermon feedback to take your preaching to the next level. No account needed.
-          </p>
-        </div>
+        {heroContent ?? (
+          <div className="text-center mb-10 max-w-2xl mx-auto">
+            <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 leading-[1.1] tracking-tight mb-5">
+              Get a free coaching report on your last sermon
+            </h1>
+            <p className="text-lg text-slate-500 max-w-xl mx-auto leading-relaxed">
+              Submit a YouTube link, paste your notes, or upload audio, video, or a PDF/Word doc.{" "}
+              <strong className="font-semibold text-slate-700">In minutes</strong>,{" "}
+              you&apos;ll receive helpful sermon feedback to take your preaching to the next level. No account needed.
+            </p>
+          </div>
+        )}
 
         <div className="grid lg:grid-cols-[1fr_300px] gap-6 items-start">
           <form onSubmit={handleSubmit} noValidate className="bg-white rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/60 p-6 sm:p-8 space-y-8">
