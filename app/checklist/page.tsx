@@ -72,7 +72,10 @@ export default function ChecklistPage() {
       }
       // The checklist is emailed (via Kit) and texted (via Zapier/Textla) —
       // this page's job is done, so hand off to the VSL thank-you page.
-      window.location.href = "/checklist/thank-you";
+      // Name/email carry over as query params so the evaluator form there
+      // doesn't make them retype what they just typed here.
+      const thankYouParams = new URLSearchParams({ name: name.trim(), email: email.trim() });
+      window.location.href = `/checklist/thank-you?${thankYouParams.toString()}`;
     } catch (err) {
       setStatus("error");
       setErrorMessage(

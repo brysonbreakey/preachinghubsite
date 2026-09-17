@@ -22,9 +22,12 @@ export function ChecklistThankYouHero() {
       <p className="text-sm font-bold uppercase tracking-wide mb-3" style={{ color: "#3760ad" }}>
         While you wait
       </p>
-      <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 leading-[1.1] tracking-tight">
+      <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 leading-[1.1] tracking-tight mb-5">
         Get a free instant coaching report on your last sermon
       </h1>
+      <p className="text-lg text-slate-500 leading-relaxed">
+        Submit a YouTube link, paste your notes, or upload audio, video, or a PDF/Word doc — we&apos;ll send back coaching feedback in minutes.
+      </p>
     </div>
   );
 }

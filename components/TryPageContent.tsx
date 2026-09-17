@@ -66,9 +66,16 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export function TryPageContent({
   aboveForm,
   heroContent,
-}: { aboveForm?: React.ReactNode; heroContent?: React.ReactNode } = {}) {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  initialName,
+  initialEmail,
+}: {
+  aboveForm?: React.ReactNode;
+  heroContent?: React.ReactNode;
+  initialName?: string;
+  initialEmail?: string;
+} = {}) {
+  const [name, setName] = useState(initialName ?? "");
+  const [email, setEmail] = useState(initialEmail ?? "");
   const [phone, setPhone] = useState("");
   const [sermonTitle, setSermonTitle] = useState("");
   const [inputType, setInputType] = useState<InputType>("video");
