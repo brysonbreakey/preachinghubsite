@@ -5,7 +5,6 @@ import { PHMark } from "@/components/Logo";
 
 const NAVY = "#3760ad";
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const PDF_HREF = "/downloads/pre-preaching-checklist.pdf";
 
 function splitName(fullName: string): { firstName: string; lastName: string } {
   const trimmed = fullName.trim().replace(/\s+/g, " ");
@@ -25,7 +24,7 @@ export default function ChecklistPage() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [src, setSrc] = useState<string | undefined>(undefined);
-  const [status, setStatus] = useState<"form" | "loading" | "success" | "error">("form");
+  const [status, setStatus] = useState<"form" | "loading" | "error">("form");
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
@@ -71,7 +70,9 @@ export default function ChecklistPage() {
         const data = await res.json().catch(() => null);
         throw new Error(data?.error || "submit_failed");
       }
-      setStatus("success");
+      // The checklist is emailed (via Kit) and texted (via Zapier/Textla) —
+      // this page's job is done, so hand off to the VSL thank-you page.
+      window.location.href = "/checklist/thank-you";
     } catch (err) {
       setStatus("error");
       setErrorMessage(
@@ -81,8 +82,6 @@ export default function ChecklistPage() {
       );
     }
   }
-
-  const firstName = splitName(name).firstName;
 
   return (
     <main className="min-h-screen bg-slate-50 flex flex-col">
@@ -94,33 +93,7 @@ export default function ChecklistPage() {
             </div>
           </div>
 
-          {status === "success" ? (
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/60 p-8 text-center max-w-md mx-auto">
-              <div className="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center mx-auto mb-5">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M20 6 9 17l-5-5" />
-                </svg>
-              </div>
-              <h1 className="text-2xl font-extrabold text-slate-900 mb-2 tracking-tight">
-                Your checklist is ready, {firstName}.
-              </h1>
-              <p className="text-slate-500 leading-relaxed mb-6">
-                Tap below to download the Pre-Preaching Checklist now.
-              </p>
-              <a
-                href={PDF_HREF}
-                download
-                className="inline-flex items-center justify-center gap-2 text-white font-semibold px-6 py-4 rounded-xl text-base w-full transition-colors"
-                style={{ backgroundColor: NAVY }}
-              >
-                Download the Checklist
-              </a>
-              <a href="https://preachinghub.com" className="block text-sm text-slate-400 hover:text-slate-600 mt-5 transition-colors">
-                preachinghub.com
-              </a>
-            </div>
-          ) : (
-            <div className="lg:grid lg:grid-cols-2 lg:gap-8 lg:items-center">
+          <div className="lg:grid lg:grid-cols-2 lg:gap-8 lg:items-center">
               {/* Left column — headline, subheadline, creative */}
               <div className="text-center lg:text-left">
                 <p className="text-sm font-bold uppercase tracking-wide mb-3" style={{ color: NAVY }}>
@@ -197,8 +170,7 @@ export default function ChecklistPage() {
                   Unsubscribe any time.
                 </p>
               </div>
-            </div>
-          )}
+          </div>
         </div>
       </div>
 
