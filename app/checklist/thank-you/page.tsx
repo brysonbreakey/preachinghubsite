@@ -5,7 +5,7 @@ import { TryPageContent } from "@/components/TryPageContent";
 import { ChecklistVSL, ChecklistThankYouHero } from "@/components/ChecklistVSL";
 import { MetaPixel } from "@/components/MetaPixel";
 
-const FB_PIXEL_ID = "1475772691211417";
+const FB_PIXEL_ID = "1749227409631509";
 const PREFILL_KEY = "ph_checklist_thank_you_prefill";
 
 export default function ChecklistThankYouPage() {
