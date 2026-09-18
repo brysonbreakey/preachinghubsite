@@ -84,3 +84,17 @@ export async function addChecklistContact({
 }): Promise<void> {
   await upsertContact({ email, firstName, tags: ['checklist'] })
 }
+
+/**
+ * Adds/updates a contact in Kit tagged "try", for the free sermon
+ * evaluator — shared by /try and /checklist/thank-you.
+ */
+export async function addTryLeadContact({
+  email,
+  firstName,
+}: {
+  email: string
+  firstName?: string
+}): Promise<void> {
+  await upsertContact({ email, firstName, tags: ['try'] })
+}
