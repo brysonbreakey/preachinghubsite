@@ -36,6 +36,7 @@ export default function ChecklistThankYouPage() {
         heroContent={<ChecklistThankYouHero />}
         initialName={prefill?.name}
         initialEmail={prefill?.email}
+        showPhoneField={false}
       />
     </>
   );

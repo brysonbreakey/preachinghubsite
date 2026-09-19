@@ -69,11 +69,13 @@ export function TryPageContent({
   heroContent,
   initialName,
   initialEmail,
+  showPhoneField = true,
 }: {
   aboveForm?: React.ReactNode;
   heroContent?: React.ReactNode;
   initialName?: string;
   initialEmail?: string;
+  showPhoneField?: boolean;
 } = {}) {
   const [name, setName] = useState(initialName ?? "");
   const [email, setEmail] = useState(initialEmail ?? "");
@@ -105,7 +107,7 @@ export function TryPageContent({
     if (!name.trim()) errs.name = "Name is required.";
     if (!email.trim()) errs.email = "Email address is required.";
     else if (!EMAIL_RE.test(email.trim())) errs.email = "Enter a valid email address.";
-    if (phone.replace(/\D/g, "").length !== 10) errs.phone = "Enter a valid 10-digit phone number.";
+    if (showPhoneField && phone.replace(/\D/g, "").length !== 10) errs.phone = "Enter a valid 10-digit phone number.";
 
     if (inputType === "text" && !transcript.trim()) {
       errs.transcript = "Please paste your notes or transcript.";
@@ -367,24 +369,26 @@ export function TryPageContent({
                 />
                 {errors.email && <p className="text-xs text-red-600 mt-1.5">{errors.email}</p>}
               </div>
-              <div className="sm:col-span-2">
-                <label htmlFor="phone" className="block text-sm font-medium text-slate-700 mb-1.5">
-                  Phone number
-                </label>
-                <input
-                  id="phone"
-                  name="phone"
-                  type="tel"
-                  inputMode="numeric"
-                  value={phone}
-                  onChange={(e) => setPhone(formatPhone(e.target.value))}
-                  placeholder="xxx-xxx-xxxx"
-                  className={`w-full rounded-lg border px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#3760ad] ${
-                    errors.phone ? "border-red-300" : "border-slate-300 focus:border-[#3760ad]"
-                  }`}
-                />
-                {errors.phone && <p className="text-xs text-red-600 mt-1.5">{errors.phone}</p>}
-              </div>
+              {showPhoneField && (
+                <div className="sm:col-span-2">
+                  <label htmlFor="phone" className="block text-sm font-medium text-slate-700 mb-1.5">
+                    Phone number
+                  </label>
+                  <input
+                    id="phone"
+                    name="phone"
+                    type="tel"
+                    inputMode="numeric"
+                    value={phone}
+                    onChange={(e) => setPhone(formatPhone(e.target.value))}
+                    placeholder="xxx-xxx-xxxx"
+                    className={`w-full rounded-lg border px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#3760ad] ${
+                      errors.phone ? "border-red-300" : "border-slate-300 focus:border-[#3760ad]"
+                    }`}
+                  />
+                  {errors.phone && <p className="text-xs text-red-600 mt-1.5">{errors.phone}</p>}
+                </div>
+              )}
             </div>
 
             {/* Sermon submission */}
