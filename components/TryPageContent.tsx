@@ -290,18 +290,27 @@ export function TryPageContent({
   }
 
   // ─── Processing ───────────────────────────────────────────────────────────
+  // Styled to match the app's guest-evaluation results screen (dark bg, same
+  // "Free Evaluation" / "Your Sermon Evaluation" heading) rather than this
+  // site's own light theme + Navbar/Footer chrome — this view redirects
+  // straight into that app screen once the token's ready, so matching its
+  // look here makes the handoff invisible instead of a jarring page-swap.
   if (view === "processing") {
     return (
-      <main>
-        <Navbar />
-        <section className="min-h-[80vh] flex items-center bg-slate-50 pt-32 pb-16 px-6">
-          <div className="max-w-lg mx-auto text-center">
-            <div className="w-14 h-14 rounded-full border-4 border-slate-200 mx-auto mb-6" style={{ borderTopColor: "#3760ad", animation: "spin 0.9s linear infinite" }} />
-            <p className="text-lg font-medium text-slate-700">{processingMessage}</p>
+      <div className="min-h-screen flex items-center justify-center px-4" style={{ backgroundColor: "#0D1117" }}>
+        <div className="max-w-3xl w-full mx-auto px-4 py-10">
+          <div className="mb-8 text-center">
+            <p className="text-xs uppercase tracking-widest font-semibold mb-2" style={{ color: "#2563EB" }}>
+              Free Evaluation
+            </p>
+            <h1 className="text-3xl font-semibold text-white">Your Sermon Evaluation</h1>
           </div>
-        </section>
-        <Footer />
-      </main>
+          <div className="flex flex-col items-center gap-4 py-20 text-gray-400">
+            <div className="w-7 h-7 rounded-full border-2 animate-spin" style={{ borderColor: "#374151", borderTopColor: "#9CA3AF" }} />
+            <p className="text-sm">{processingMessage}</p>
+          </div>
+        </div>
+      </div>
     );
   }
 
