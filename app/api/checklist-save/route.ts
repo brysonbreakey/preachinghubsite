@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { addChecklistSaveContact } from "@/lib/mailchimp";
+import { addChecklistSaveContact } from "@/lib/kit";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
 
@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
   try {
     await addChecklistSaveContact({ email, firstName: firstName || undefined });
   } catch (err) {
-    console.error("checklist-save: mailchimp failed", err);
+    console.error("checklist-save: kit failed", err);
     return NextResponse.json({ error: "Something went wrong on our end." }, { status: 500 });
   }
 

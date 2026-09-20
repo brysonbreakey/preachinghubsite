@@ -98,3 +98,17 @@ export async function addTryLeadContact({
 }): Promise<void> {
   await upsertContact({ email, firstName, tags: ['try'] })
 }
+
+/**
+ * Adds/updates a contact in Kit tagged "checklist-interactive-save" —
+ * fired when someone uses the interactive checklist's "save progress" flow.
+ */
+export async function addChecklistSaveContact({
+  email,
+  firstName,
+}: {
+  email: string
+  firstName?: string
+}): Promise<void> {
+  await upsertContact({ email, firstName, tags: ['checklist-interactive-save'] })
+}
