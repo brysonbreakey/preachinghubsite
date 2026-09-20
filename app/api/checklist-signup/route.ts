@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { resolveMx } from "dns/promises";
 import { randomBytes } from "crypto";
+import { waitUntil } from "@vercel/functions";
 import { addChecklistContact } from "@/lib/kit";
 import { supabaseAdmin } from "@/lib/supabase";
 
@@ -80,16 +81,28 @@ export async function POST(req: NextRequest) {
 
   // Side channel to Zapier (Textla contact + SMS with the checklist link).
   // Best-effort only — a Zapier/Textla hiccup must never fail the signup
-  // the visitor is actually waiting on.
+  // the visitor is actually waiting on — but it still needs waitUntil to
+  // keep running after the response is sent, since Vercel can otherwise
+  // kill an un-awaited fetch the moment the function returns.
   const zapierWebhookUrl = process.env.ZAPIER_CHECKLIST_WEBHOOK_URL;
   if (zapierWebhookUrl) {
-    fetch(zapierWebhookUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ phone, first_name: firstName, checklistLink }),
-    }).catch((err) => {
-      console.error("checklist-signup: zapier webhook failed", err);
-    });
+    waitUntil(
+      fetch(zapierWebhookUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone, first_name: firstName, checklistLink }),
+      })
+        .then((res) => {
+          if (!res.ok) {
+            console.error("checklist-signup: zapier webhook non-OK response", res.status);
+          }
+        })
+        .catch((err) => {
+          console.error("checklist-signup: zapier webhook failed", err);
+        })
+    );
+  } else {
+    console.error("checklist-signup: ZAPIER_CHECKLIST_WEBHOOK_URL not set");
   }
 
   return NextResponse.json({ ok: true });
