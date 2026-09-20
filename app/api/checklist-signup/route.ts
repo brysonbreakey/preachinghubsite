@@ -7,6 +7,7 @@ import { supabaseAdmin } from "@/lib/supabase";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
 const SITE_URL = "https://preachinghub.com";
+const DEDUP_WINDOW_HOURS = 24;
 
 async function hasMailServer(email: string): Promise<boolean> {
   const domain = email.split("@")[1];
@@ -35,6 +36,23 @@ export async function POST(req: NextRequest) {
   }
   if (!(await hasMailServer(email))) {
     return NextResponse.json({ error: "That email address doesn't look like it can receive mail. Double-check it and try again." }, { status: 400 });
+  }
+
+  // Deduplication: if this email already submitted recently, don't create
+  // another row, re-tag them in Kit, or (most importantly) re-fire the
+  // Zapier/Textla webhook — that would text the same person a duplicate
+  // link every time they resubmit or double-click.
+  const dedupCutoff = new Date(Date.now() - DEDUP_WINDOW_HOURS * 60 * 60 * 1000).toISOString();
+  const { data: recentLead } = await supabaseAdmin()
+    .from("leads")
+    .select("id")
+    .eq("email", email)
+    .gte("created_at", dedupCutoff)
+    .limit(1)
+    .maybeSingle();
+
+  if (recentLead) {
+    return NextResponse.json({ ok: true });
   }
 
   // Generate the public lead token separately from any database id, and
