@@ -95,6 +95,8 @@ export async function POST(req: NextRequest) {
         .then((res) => {
           if (!res.ok) {
             console.error("checklist-signup: zapier webhook non-OK response", res.status);
+          } else {
+            console.log("checklist-signup: zapier webhook sent OK");
           }
         })
         .catch((err) => {
