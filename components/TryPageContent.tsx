@@ -19,7 +19,10 @@ type View = "form" | "processing" | "ineligible";
 // from timing out or stalling on mobile connections, which was the most
 // common way the /try upload flow was silently failing.
 const MAX_FILE_SIZE_MB = 300;
-const MAX_VIDEO_FILE_SIZE_MB = 150;
+// A typical phone-shot 1080p video runs ~10-12 Mbps, so a full 45-60 min
+// sermon is easily 400-600MB — this just needs to catch pathological
+// outliers (4K, uncompressed), not normal-length sermon recordings.
+const MAX_VIDEO_FILE_SIZE_MB = 700;
 
 function YouTubeIcon({ size = 15 }: { size?: number }) {
   return (
