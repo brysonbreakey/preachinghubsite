@@ -11,6 +11,13 @@ import { APP_URL, SIGNUP_URL } from "@/lib/urls";
 type InputType = "video" | "text" | "audio";
 type View = "form" | "processing" | "ineligible";
 
+// Only the audio track is ever analyzed (transcription + tone/pacing) — raw
+// video files carry no benefit over audio, just 5-10x the upload size. This
+// cap exists to stop multi-hundred-MB video uploads from timing out or
+// stalling on mobile connections, which is the most common way the /try
+// upload flow was silently failing.
+const MAX_FILE_SIZE_MB = 300;
+
 function YouTubeIcon({ size = 15 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -94,6 +101,7 @@ export function TryPageContent({
   const [view, setView] = useState<View>("form");
   const [ineligibleDate, setIneligibleDate] = useState<string | null>(null);
   const [processingMessage, setProcessingMessage] = useState("");
+  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
 
   const messageInterval = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -113,6 +121,8 @@ export function TryPageContent({
       errs.transcript = "Please paste your notes or transcript.";
     } else if (inputType === "audio" && !audioFile) {
       errs.audioFile = "Please choose an audio or video file.";
+    } else if (inputType === "audio" && audioFile && audioFile.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
+      errs.audioFile = `That file is too large (${(audioFile.size / (1024 * 1024)).toFixed(0)}MB). Max size is ${MAX_FILE_SIZE_MB}MB — try uploading just the audio instead of video, or a smaller file.`;
     } else if (inputType === "video") {
       if (!videoUrl.trim()) errs.videoUrl = "Please paste a video URL.";
       if (!permissionChecked) errs.permission = "Please confirm you have permission to use this content.";
@@ -227,12 +237,25 @@ export function TryPageContent({
         if (!uploadUrlRes.ok) throw new Error("upload_url_failed");
         const { uploadUrl, storagePath } = await uploadUrlRes.json();
 
-        const putRes = await fetch(uploadUrl, {
-          method: "PUT",
-          headers: { "Content-Type": contentType || "application/octet-stream" },
-          body: audioFile!,
+        // XHR instead of fetch so we can show real upload progress — a large
+        // file on a slow mobile connection can take a while, and without a
+        // percentage people assume the generic spinner is frozen and back out.
+        setUploadProgress(0);
+        await new Promise<void>((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          xhr.open("PUT", uploadUrl);
+          xhr.setRequestHeader("Content-Type", contentType || "application/octet-stream");
+          xhr.upload.onprogress = (evt) => {
+            if (evt.lengthComputable) setUploadProgress(Math.round((evt.loaded / evt.total) * 100));
+          };
+          xhr.onload = () => {
+            if (xhr.status >= 200 && xhr.status < 300) resolve();
+            else reject(new Error("audio_upload_failed"));
+          };
+          xhr.onerror = () => reject(new Error("audio_upload_failed"));
+          xhr.send(audioFile!);
         });
-        if (!putRes.ok) throw new Error("audio_upload_failed");
+        setUploadProgress(null);
 
         payload.input_type = isDocument ? "document" : isVideoFile ? "video" : "audio";
         payload.storage_path = storagePath;
@@ -264,6 +287,7 @@ export function TryPageContent({
         input_type: inputType,
       });
       stopProcessingMessages();
+      setUploadProgress(null);
       setSubmitError("Something went wrong on our end — this won't count as your free evaluation. Please try again.");
       setView("form");
     }
@@ -318,7 +342,9 @@ export function TryPageContent({
           </div>
           <div className="flex flex-col items-center gap-4 py-20 text-gray-400">
             <div className="w-7 h-7 rounded-full border-2 animate-spin" style={{ borderColor: "#374151", borderTopColor: "#9CA3AF" }} />
-            <p className="text-sm">{processingMessage}</p>
+            <p className="text-sm">
+              {uploadProgress !== null ? `Uploading… ${uploadProgress}%` : processingMessage}
+            </p>
           </div>
         </div>
       </div>
@@ -502,6 +528,9 @@ export function TryPageContent({
                       </label>
                     )}
                     {errors.audioFile && <p className="text-xs text-red-600 mt-1.5">{errors.audioFile}</p>}
+                    <p className="text-xs text-slate-400 mt-1.5">
+                      Have an audio file? Audio uploads much faster and works just as well.
+                    </p>
                   </div>
                 )}
 
