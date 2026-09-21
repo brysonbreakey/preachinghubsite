@@ -12,11 +12,14 @@ type InputType = "video" | "text" | "audio";
 type View = "form" | "processing" | "ineligible";
 
 // Only the audio track is ever analyzed (transcription + tone/pacing) — raw
-// video files carry no benefit over audio, just 5-10x the upload size. This
-// cap exists to stop multi-hundred-MB video uploads from timing out or
-// stalling on mobile connections, which is the most common way the /try
-// upload flow was silently failing.
+// video files carry no benefit over audio, just 5-10x the upload size. Video
+// gets a lower cap than audio/documents specifically to push people toward
+// the smaller file that works just as well, rather than risk an unreliable
+// in-browser video transcode on a phone. These caps exist to stop uploads
+// from timing out or stalling on mobile connections, which was the most
+// common way the /try upload flow was silently failing.
 const MAX_FILE_SIZE_MB = 300;
+const MAX_VIDEO_FILE_SIZE_MB = 150;
 
 function YouTubeIcon({ size = 15 }: { size?: number }) {
   return (
@@ -37,6 +40,12 @@ const NON_VIDEO_ICONS: Record<string, string | string[]> = {
   text: ["M4 7V4h16v3", "M9 20h6", "M12 4v16"],
   audio: ["M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4", "M17 8l-5-5-5 5", "M12 3v12"],
 };
+
+function isVideoFile(file: File): boolean {
+  const name = file.name.toLowerCase();
+  const isDocument = name.endsWith(".pdf") || name.endsWith(".doc") || name.endsWith(".docx");
+  return !isDocument && (file.type.startsWith("video/") || /\.(mp4|mov)$/i.test(name));
+}
 
 function formatPhone(value: string): string {
   const digits = value.replace(/\D/g, "").slice(0, 10);
@@ -102,6 +111,9 @@ export function TryPageContent({
   const [ineligibleDate, setIneligibleDate] = useState<string | null>(null);
   const [processingMessage, setProcessingMessage] = useState("");
   const [uploadProgress, setUploadProgress] = useState<number | null>(null);
+  const [uploadBackgrounded, setUploadBackgrounded] = useState(false);
+  const wakeLockRef = useRef<WakeLockSentinel | null>(null);
+  const isUploadingRef = useRef(false);
 
   const messageInterval = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -121,8 +133,11 @@ export function TryPageContent({
       errs.transcript = "Please paste your notes or transcript.";
     } else if (inputType === "audio" && !audioFile) {
       errs.audioFile = "Please choose an audio or video file.";
-    } else if (inputType === "audio" && audioFile && audioFile.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
-      errs.audioFile = `That file is too large (${(audioFile.size / (1024 * 1024)).toFixed(0)}MB). Max size is ${MAX_FILE_SIZE_MB}MB — try uploading just the audio instead of video, or a smaller file.`;
+    } else if (inputType === "audio" && audioFile) {
+      const cap = isVideoFile(audioFile) ? MAX_VIDEO_FILE_SIZE_MB : MAX_FILE_SIZE_MB;
+      if (audioFile.size > cap * 1024 * 1024) {
+        errs.audioFile = `That file is too large (${(audioFile.size / (1024 * 1024)).toFixed(0)}MB). Max size is ${cap}MB — try uploading just the audio instead of video, or a smaller file.`;
+      }
     } else if (inputType === "video") {
       if (!videoUrl.trim()) errs.videoUrl = "Please paste a video URL.";
       if (!permissionChecked) errs.permission = "Please confirm you have permission to use this content.";
@@ -149,6 +164,25 @@ export function TryPageContent({
       clearInterval(messageInterval.current);
       messageInterval.current = null;
     }
+  }
+
+  // Keeps the screen from locking mid-upload — a locked phone screen can
+  // pause JS execution on mobile Safari and silently kill a large upload.
+  // Not supported everywhere, so this is best-effort and fails silently.
+  async function acquireWakeLock() {
+    try {
+      if ("wakeLock" in navigator) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        wakeLockRef.current = await (navigator as any).wakeLock.request("screen");
+      }
+    } catch {
+      // Unsupported or denied — the upload still works, just without this protection.
+    }
+  }
+
+  function releaseWakeLock() {
+    wakeLockRef.current?.release().catch(() => {});
+    wakeLockRef.current = null;
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -219,7 +253,7 @@ export function TryPageContent({
       } else {
         const name = audioFile!.name.toLowerCase();
         const isDocument = name.endsWith(".pdf") || name.endsWith(".doc") || name.endsWith(".docx");
-        const isVideoFile = !isDocument && (audioFile!.type.startsWith("video/") || /\.(mp4|mov)$/i.test(name));
+        const isVideo = isVideoFile(audioFile!);
 
         // Use a safe content type for uploads (browser sometimes sends empty string for docs)
         let contentType = audioFile!.type;
@@ -240,24 +274,51 @@ export function TryPageContent({
         // XHR instead of fetch so we can show real upload progress — a large
         // file on a slow mobile connection can take a while, and without a
         // percentage people assume the generic spinner is frozen and back out.
+        //
+        // Three things fight mobile Safari's habit of pausing/killing JS on a
+        // large upload: a screen wake lock (locking the phone can pause JS
+        // outright), a beforeunload guard (stops an accidental swipe-to-close),
+        // and a visibilitychange listener that warns on screen if they
+        // background the tab anyway, since JS can stall there too.
         setUploadProgress(0);
-        await new Promise<void>((resolve, reject) => {
-          const xhr = new XMLHttpRequest();
-          xhr.open("PUT", uploadUrl);
-          xhr.setRequestHeader("Content-Type", contentType || "application/octet-stream");
-          xhr.upload.onprogress = (evt) => {
-            if (evt.lengthComputable) setUploadProgress(Math.round((evt.loaded / evt.total) * 100));
-          };
-          xhr.onload = () => {
-            if (xhr.status >= 200 && xhr.status < 300) resolve();
-            else reject(new Error("audio_upload_failed"));
-          };
-          xhr.onerror = () => reject(new Error("audio_upload_failed"));
-          xhr.send(audioFile!);
-        });
-        setUploadProgress(null);
+        setUploadBackgrounded(false);
+        isUploadingRef.current = true;
+        await acquireWakeLock();
+        const beforeUnloadHandler = (e: BeforeUnloadEvent) => {
+          e.preventDefault();
+        };
+        const visibilityHandler = () => {
+          if (document.hidden && isUploadingRef.current) setUploadBackgrounded(true);
+          else setUploadBackgrounded(false);
+        };
+        window.addEventListener("beforeunload", beforeUnloadHandler);
+        document.addEventListener("visibilitychange", visibilityHandler);
 
-        payload.input_type = isDocument ? "document" : isVideoFile ? "video" : "audio";
+        try {
+          await new Promise<void>((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.open("PUT", uploadUrl);
+            xhr.setRequestHeader("Content-Type", contentType || "application/octet-stream");
+            xhr.upload.onprogress = (evt) => {
+              if (evt.lengthComputable) setUploadProgress(Math.round((evt.loaded / evt.total) * 100));
+            };
+            xhr.onload = () => {
+              if (xhr.status >= 200 && xhr.status < 300) resolve();
+              else reject(new Error("audio_upload_failed"));
+            };
+            xhr.onerror = () => reject(new Error("audio_upload_failed"));
+            xhr.send(audioFile!);
+          });
+        } finally {
+          isUploadingRef.current = false;
+          setUploadProgress(null);
+          setUploadBackgrounded(false);
+          window.removeEventListener("beforeunload", beforeUnloadHandler);
+          document.removeEventListener("visibilitychange", visibilityHandler);
+          releaseWakeLock();
+        }
+
+        payload.input_type = isDocument ? "document" : isVideo ? "video" : "audio";
         payload.storage_path = storagePath;
       }
 
@@ -345,6 +406,14 @@ export function TryPageContent({
             <p className="text-sm">
               {uploadProgress !== null ? `Uploading… ${uploadProgress}%` : processingMessage}
             </p>
+            {uploadProgress !== null && (
+              <p className="text-xs text-gray-500">Stay on this screen until the upload finishes.</p>
+            )}
+            {uploadBackgrounded && (
+              <p className="text-xs px-3 py-2 rounded-lg" style={{ color: "#FCA5A5", backgroundColor: "#7F1D1D33" }}>
+                This tab was backgrounded — come back and keep it open, or the upload may fail.
+              </p>
+            )}
           </div>
         </div>
       </div>
