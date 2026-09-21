@@ -251,7 +251,18 @@ export function TryPageContent({
 
       stopProcessingMessages();
       window.location.href = `${APP_URL}/try/${startData.token}`;
-    } catch {
+    } catch (err) {
+      // All three network steps (upload-url, the file PUT, and start) used to
+      // share this one catch with no logging at all — any of them failing
+      // produced the exact same generic message and left zero trace of
+      // which step actually broke. Capturing the real error message (each
+      // step throws its own label; a raw failed fetch — e.g. a CORS block
+      // on the R2 PUT — carries the browser's own message, like "Failed to
+      // fetch") makes this diagnosable from PostHog instead of guesswork.
+      posthog.capture("free_evaluation_error", {
+        reason: err instanceof Error ? err.message : String(err),
+        input_type: inputType,
+      });
       stopProcessingMessages();
       setSubmitError("Something went wrong on our end — this won't count as your free evaluation. Please try again.");
       setView("form");
