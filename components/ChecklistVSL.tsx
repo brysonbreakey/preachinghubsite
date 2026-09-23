@@ -1,3 +1,5 @@
+import { FeedbackReportMockup } from "@/components/FeedbackReportMockup";
+
 export function ChecklistVSL() {
   return (
     <div className="max-w-2xl mx-auto mb-10 text-center">
@@ -25,9 +27,21 @@ export function ChecklistThankYouHero() {
       <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 leading-[1.1] tracking-tight mb-5">
         Get a free instant coaching report on your last sermon
       </h1>
-      <p className="text-lg text-slate-500 leading-relaxed">
-        Submit a YouTube link, paste your notes, or upload audio, video, or a PDF/Word doc — we&apos;ll send back coaching feedback in minutes.
+      <p className="text-lg text-slate-500 leading-relaxed mb-3">
+        Give us one sermon and we&apos;ll send back a personal coaching report in a few minutes — what&apos;s working, what to sharpen, and questions to think about before next Sunday. Free, no account needed.
       </p>
+      <p className="text-base text-slate-500 leading-relaxed mb-8">
+        <strong className="font-semibold text-slate-700">No recording handy?</strong> Just paste your notes or manuscript — that works too.
+      </p>
+
+      <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3">Here&apos;s a sample report</p>
+      <div className="relative max-w-md mx-auto overflow-hidden rounded-2xl" style={{ maxHeight: 340 }}>
+        <FeedbackReportMockup />
+        <div
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-24"
+          style={{ background: "linear-gradient(to bottom, rgba(248,250,252,0), rgb(248,250,252))" }}
+        />
+      </div>
     </div>
   );
 }

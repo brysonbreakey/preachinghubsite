@@ -37,6 +37,7 @@ export default function ChecklistThankYouPage() {
         initialName={prefill?.name}
         initialEmail={prefill?.email}
         showPhoneField={false}
+        defaultInputType="text"
       />
     </>
   );

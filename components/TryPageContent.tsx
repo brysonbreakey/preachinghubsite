@@ -234,18 +234,20 @@ export function TryPageContent({
   initialName,
   initialEmail,
   showPhoneField = true,
+  defaultInputType = "video",
 }: {
   aboveForm?: React.ReactNode;
   heroContent?: React.ReactNode;
   initialName?: string;
   initialEmail?: string;
   showPhoneField?: boolean;
+  defaultInputType?: InputType;
 } = {}) {
   const [name, setName] = useState(initialName ?? "");
   const [email, setEmail] = useState(initialEmail ?? "");
   const [phone, setPhone] = useState("");
   const [sermonTitle, setSermonTitle] = useState("");
-  const [inputType, setInputType] = useState<InputType>("video");
+  const [inputType, setInputType] = useState<InputType>(defaultInputType);
   const [transcript, setTranscript] = useState("");
   const [videoUrl, setVideoUrl] = useState("");
   const [permissionChecked, setPermissionChecked] = useState(false);
@@ -265,7 +267,18 @@ export function TryPageContent({
 
   const messageInterval = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  // Diagnostic events for figuring out why visitors don't submit: which input
+  // they gravitate to, whether they ever start the form, and whether a chosen
+  // file is what stalls them.
+  const formStartedRef = useRef(false);
+  function trackFormStarted() {
+    if (formStartedRef.current) return;
+    formStartedRef.current = true;
+    posthog.capture("try_form_started", { page: window.location.pathname, input_type: inputType });
+  }
+
   function selectInputType(value: InputType) {
+    posthog.capture("try_input_type_selected", { page: window.location.pathname, input_type: value });
     setInputType(value);
     setErrors((prev) => ({ name: prev.name, email: prev.email }));
   }
@@ -569,7 +582,7 @@ export function TryPageContent({
         )}
 
         <div className="grid lg:grid-cols-[1fr_300px] gap-6 items-start">
-          <form onSubmit={handleSubmit} noValidate className="bg-white rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/60 p-6 sm:p-8 space-y-8">
+          <form onSubmit={handleSubmit} onFocusCapture={trackFormStarted} noValidate className="bg-white rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/60 p-6 sm:p-8 space-y-8">
             {submitError && (
               <div className="rounded-lg bg-red-50 border border-red-100 text-red-700 text-sm px-4 py-3">
                 {submitError}
@@ -688,7 +701,17 @@ export function TryPageContent({
                       id="audioFile"
                       name="audioFile"
                       accept=".mp3,.m4a,.wav,.mp4,.mov,.pdf,.doc,.docx"
-                      onChange={(e) => setAudioFile(e.target.files?.[0] ?? null)}
+                      onChange={(e) => {
+                        const f = e.target.files?.[0] ?? null;
+                        if (f) {
+                          posthog.capture("try_file_selected", {
+                            page: window.location.pathname,
+                            size_mb: Math.round(f.size / (1024 * 1024)),
+                            is_video: isVideoFile(f),
+                          });
+                        }
+                        setAudioFile(f);
+                      }}
                       className="hidden"
                     />
                     {audioFile ? (
