@@ -24,6 +24,16 @@ const MAX_FILE_SIZE_MB = 300;
 // outliers (4K, uncompressed), not normal-length sermon recordings.
 const MAX_VIDEO_FILE_SIZE_MB = 700;
 
+// Video files over this size go through multipart upload (split into
+// chunks, uploaded to R2 in parts, assembled server-side) instead of one
+// giant PUT — a single multi-hundred-MB PUT on mobile has no way to recover
+// from a mid-transfer network hiccup and has to restart from zero. Mirrors
+// the thresholds already used on the app side for the same reason.
+const MULTIPART_THRESHOLD_BYTES = 100 * 1024 * 1024;
+const MULTIPART_CHUNK_SIZE_BYTES = 50 * 1024 * 1024;
+const MULTIPART_CONCURRENCY = 3;
+const MULTIPART_PART_ATTEMPTS = 3;
+
 function YouTubeIcon({ size = 15 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -48,6 +58,141 @@ function isVideoFile(file: File): boolean {
   const name = file.name.toLowerCase();
   const isDocument = name.endsWith(".pdf") || name.endsWith(".doc") || name.endsWith(".docx");
   return !isDocument && (file.type.startsWith("video/") || /\.(mp4|mov)$/i.test(name));
+}
+
+async function uploadFileSinglePut(
+  file: File,
+  contentType: string,
+  onProgress: (pct: number) => void
+): Promise<string> {
+  const uploadUrlRes = await fetch(`${APP_URL}/api/free-evaluation/upload-url`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ filename: file.name, contentType }),
+  });
+  if (!uploadUrlRes.ok) throw new Error("upload_url_failed");
+  const { uploadUrl, storagePath } = await uploadUrlRes.json();
+
+  // XHR instead of fetch so we can show real upload progress — a large file
+  // on a slow mobile connection can take a while, and without a percentage
+  // people assume the generic spinner is frozen and back out.
+  await new Promise<void>((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("PUT", uploadUrl);
+    xhr.setRequestHeader("Content-Type", contentType || "application/octet-stream");
+    xhr.upload.onprogress = (evt) => {
+      if (evt.lengthComputable) onProgress(Math.round((evt.loaded / evt.total) * 100));
+    };
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) resolve();
+      else reject(new Error("audio_upload_failed"));
+    };
+    xhr.onerror = () => reject(new Error("audio_upload_failed"));
+    xhr.send(file);
+  });
+
+  return storagePath;
+}
+
+// Splits a large video into 50MB parts, uploads up to 3 at once directly to
+// R2, and assembles them server-side. A single giant PUT has no way to
+// recover from a mid-transfer network hiccup on mobile and has to restart
+// from zero — chunking bounds how much is lost to any one dropped part, and
+// lets several parts move in parallel instead of one long serial transfer.
+async function uploadFileMultipart(
+  file: File,
+  contentType: string,
+  onProgress: (pct: number) => void
+): Promise<string> {
+  const startRes = await fetch(`${APP_URL}/api/free-evaluation/upload-url/multipart/start`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ filename: file.name, contentType }),
+  });
+  if (!startRes.ok) throw new Error("multipart_start_failed");
+  const { uploadId, key, storagePath } = await startRes.json();
+
+  const totalParts = Math.ceil(file.size / MULTIPART_CHUNK_SIZE_BYTES);
+  const bytesLoaded = new Array(totalParts).fill(0);
+  const parts: { PartNumber: number; ETag: string }[] = [];
+
+  const reportProgress = () => {
+    const loaded = bytesLoaded.reduce((a, b) => a + b, 0);
+    onProgress(Math.round((loaded / file.size) * 100));
+  };
+
+  async function uploadPart(partNumber: number) {
+    const start = (partNumber - 1) * MULTIPART_CHUNK_SIZE_BYTES;
+    const chunk = file.slice(start, Math.min(start + MULTIPART_CHUNK_SIZE_BYTES, file.size));
+
+    const urlRes = await fetch(`${APP_URL}/api/free-evaluation/upload-url/multipart/part-url`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ uploadId, key, partNumber }),
+    });
+    if (!urlRes.ok) throw new Error(`multipart_part_url_failed_${partNumber}`);
+    const { url } = await urlRes.json();
+
+    // Retry a dropped part a few times before giving up on the whole upload —
+    // a transient mobile network blip mid-part is the common failure, and
+    // only this part's bytes need re-sending, not the entire file.
+    let etag = "";
+    for (let attempt = 1; attempt <= MULTIPART_PART_ATTEMPTS; attempt++) {
+      try {
+        etag = await new Promise<string>((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          xhr.open("PUT", url);
+          xhr.upload.onprogress = (evt) => {
+            bytesLoaded[partNumber - 1] = evt.loaded;
+            reportProgress();
+          };
+          xhr.onload = () => {
+            if (xhr.status >= 200 && xhr.status < 300) resolve(xhr.getResponseHeader("ETag") ?? "");
+            else reject(new Error(`multipart_part_upload_failed_${partNumber}`));
+          };
+          xhr.onerror = () => reject(new Error(`multipart_part_upload_failed_${partNumber}`));
+          xhr.send(chunk);
+        });
+        break;
+      } catch (err) {
+        bytesLoaded[partNumber - 1] = 0;
+        reportProgress();
+        if (attempt === MULTIPART_PART_ATTEMPTS) throw err;
+        await new Promise((r) => setTimeout(r, 1000 * attempt));
+      }
+    }
+
+    parts.push({ PartNumber: partNumber, ETag: etag });
+  }
+
+  try {
+    for (let i = 0; i < totalParts; i += MULTIPART_CONCURRENCY) {
+      const batch = Array.from(
+        { length: Math.min(MULTIPART_CONCURRENCY, totalParts - i) },
+        (_, j) => i + j + 1
+      );
+      await Promise.all(batch.map(uploadPart));
+    }
+
+    const completeRes = await fetch(`${APP_URL}/api/free-evaluation/upload-url/multipart/complete`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ uploadId, key, parts: parts.sort((a, b) => a.PartNumber - b.PartNumber) }),
+    });
+    if (!completeRes.ok) throw new Error("multipart_complete_failed");
+  } catch (err) {
+    // Best-effort cleanup so a failed upload doesn't leave orphaned parts
+    // billed against the R2 bucket — never lets a cleanup failure mask the
+    // real error.
+    fetch(`${APP_URL}/api/free-evaluation/upload-url/multipart/abort`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ uploadId, key }),
+    }).catch(() => {});
+    throw err;
+  }
+
+  return storagePath;
 }
 
 function formatPhone(value: string): string {
@@ -266,18 +411,6 @@ export function TryPageContent({
           else if (name.endsWith(".doc")) contentType = "application/msword";
         }
 
-        const uploadUrlRes = await fetch(`${APP_URL}/api/free-evaluation/upload-url`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ filename: audioFile!.name, contentType }),
-        });
-        if (!uploadUrlRes.ok) throw new Error("upload_url_failed");
-        const { uploadUrl, storagePath } = await uploadUrlRes.json();
-
-        // XHR instead of fetch so we can show real upload progress — a large
-        // file on a slow mobile connection can take a while, and without a
-        // percentage people assume the generic spinner is frozen and back out.
-        //
         // Three things fight mobile Safari's habit of pausing/killing JS on a
         // large upload: a screen wake lock (locking the phone can pause JS
         // outright), a beforeunload guard (stops an accidental swipe-to-close),
@@ -297,21 +430,13 @@ export function TryPageContent({
         window.addEventListener("beforeunload", beforeUnloadHandler);
         document.addEventListener("visibilitychange", visibilityHandler);
 
+        let storagePath: string;
         try {
-          await new Promise<void>((resolve, reject) => {
-            const xhr = new XMLHttpRequest();
-            xhr.open("PUT", uploadUrl);
-            xhr.setRequestHeader("Content-Type", contentType || "application/octet-stream");
-            xhr.upload.onprogress = (evt) => {
-              if (evt.lengthComputable) setUploadProgress(Math.round((evt.loaded / evt.total) * 100));
-            };
-            xhr.onload = () => {
-              if (xhr.status >= 200 && xhr.status < 300) resolve();
-              else reject(new Error("audio_upload_failed"));
-            };
-            xhr.onerror = () => reject(new Error("audio_upload_failed"));
-            xhr.send(audioFile!);
-          });
+          if (isVideo && audioFile!.size > MULTIPART_THRESHOLD_BYTES) {
+            storagePath = await uploadFileMultipart(audioFile!, contentType, setUploadProgress);
+          } else {
+            storagePath = await uploadFileSinglePut(audioFile!, contentType, setUploadProgress);
+          }
         } finally {
           isUploadingRef.current = false;
           setUploadProgress(null);
