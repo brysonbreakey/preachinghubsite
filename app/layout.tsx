@@ -24,6 +24,9 @@ export const metadata: Metadata = {
     description: "Get coaching feedback on your last sermon. Free for 14 days.",
     images: ["/og-image.jpg"],
   },
+  other: {
+    "facebook-domain-verification": "j5qki1v8x98n625dkhr133a5hsuyuq",
+  },
 };
 
 const animationCSS = `
