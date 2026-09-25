@@ -18,6 +18,19 @@ export function ChecklistVSL() {
   );
 }
 
+export function ChecklistReceivedHeading() {
+  return (
+    <div className="max-w-2xl mx-auto mb-10 text-center">
+      <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mb-2">
+        Your checklist is on its way 🎉
+      </h2>
+      <p className="text-sm text-slate-500">
+        If you don&apos;t see it in a few minutes, check your spam folder.
+      </p>
+    </div>
+  );
+}
+
 export function ChecklistThankYouHero() {
   return (
     <div className="text-center mb-10 max-w-2xl mx-auto">

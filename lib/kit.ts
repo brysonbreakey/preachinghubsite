@@ -21,15 +21,18 @@ async function kitFetch(path: string, init: RequestInit): Promise<any> {
 async function upsertSubscriber({
   email,
   firstName,
+  fields,
 }: {
   email: string
   firstName?: string
+  fields?: Record<string, string>
 }): Promise<number> {
   const data = await kitFetch('/subscribers', {
     method: 'POST',
     body: JSON.stringify({
       email_address: email,
       ...(firstName ? { first_name: firstName } : {}),
+      ...(fields && Object.keys(fields).length ? { fields } : {}),
     }),
   })
   return data.subscriber.id as number
@@ -59,12 +62,14 @@ async function upsertContact({
   email,
   firstName,
   tags,
+  fields,
 }: {
   email: string
   firstName?: string
   tags: string[]
+  fields?: Record<string, string>
 }): Promise<void> {
-  const subscriberId = await upsertSubscriber({ email, firstName })
+  const subscriberId = await upsertSubscriber({ email, firstName, fields })
   for (const tagName of tags) {
     const tagId = await findOrCreateTag(tagName)
     await applyTag(tagId, subscriberId)
@@ -78,11 +83,23 @@ async function upsertContact({
 export async function addChecklistContact({
   email,
   firstName,
+  offerLink,
 }: {
   email: string
   firstName?: string
+  offerLink?: string
 }): Promise<void> {
-  await upsertContact({ email, firstName, tags: ['checklist'] })
+  // offer_link is a Kit custom field — Kit auto-creates it on first use,
+  // same as findOrCreateTag does for tags. Referenced in a follow-up email
+  // as {{ subscriber.offer_link }} so the button always points at the exact
+  // same 24-hour offer this contact was given at signup, regardless of what
+  // device they open that email on.
+  await upsertContact({
+    email,
+    firstName,
+    tags: ['checklist'],
+    fields: offerLink ? { offer_link: offerLink } : undefined,
+  })
 }
 
 /**

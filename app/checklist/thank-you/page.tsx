@@ -1,44 +1,37 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { TryPageContent } from "@/components/TryPageContent";
-import { ChecklistVSL, ChecklistThankYouHero } from "@/components/ChecklistVSL";
+import { Suspense } from "react";
 import { MetaPixel } from "@/components/MetaPixel";
+import { ChecklistThankYouOffer } from "@/components/ChecklistThankYouOffer";
+import { useOffer } from "@/lib/useOffer";
 
+// Same pixel ID as before this page's content changed — the ID and the URL
+// (/checklist/thank-you) are what Meta ties ad tracking/attribution to, not
+// the page's content, so swapping what renders here doesn't affect it. This
+// still fires a base PageView on load exactly as it did before; there was
+// never a custom "Lead" or other event on this page to preserve beyond that.
 const FB_PIXEL_ID = "1749227409631509";
-const PREFILL_KEY = "ph_checklist_thank_you_prefill";
+
+function ThankYouOfferContent() {
+  const offer = useOffer();
+
+  return typeof offer === "object" ? (
+    <ChecklistThankYouOffer token={offer.token} expiresAt={offer.expiresAt} />
+  ) : offer === "unavailable" ? (
+    <div className="min-h-screen flex items-center justify-center text-slate-500 text-sm px-6 text-center">
+      Something went wrong loading this offer. Please refresh, or{" "}
+      <a href="/auth/login" className="underline">sign in</a> if you already have an account.
+    </div>
+  ) : null;
+}
 
 export default function ChecklistThankYouPage() {
-  const [prefill, setPrefill] = useState<{ name?: string; email?: string } | null>(null);
-
-  useEffect(() => {
-    let value: { name?: string; email?: string } = {};
-    try {
-      const raw = sessionStorage.getItem(PREFILL_KEY);
-      if (raw) {
-        value = JSON.parse(raw);
-        sessionStorage.removeItem(PREFILL_KEY);
-      }
-    } catch {
-      // Best-effort only — worst case the form just isn't prefilled.
-    }
-    setPrefill(value);
-  }, []);
-
   return (
     <>
       <MetaPixel pixelId={FB_PIXEL_ID} />
-      {/* key forces a remount once sessionStorage has been read, since
-          TryPageContent's initial name/email state is only set on mount */}
-      <TryPageContent
-        key={prefill ? "prefilled" : "loading"}
-        aboveForm={<ChecklistVSL />}
-        heroContent={<ChecklistThankYouHero />}
-        initialName={prefill?.name}
-        initialEmail={prefill?.email}
-        showPhoneField={false}
-        defaultInputType="text"
-      />
+      <Suspense fallback={null}>
+        <ThankYouOfferContent />
+      </Suspense>
     </>
   );
 }
