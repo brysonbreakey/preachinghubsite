@@ -76,6 +76,39 @@ export function ChecklistThankYouOffer({
   const msLeft = useCountdown(expiresAt);
   const expired = msLeft <= 0;
 
+  function proceedWithTokenHash(tokenHash: string) {
+    const next = `/account/plan?offer=${encodeURIComponent(token)}`;
+    window.location.href = `${APP_URL}/auth/callback?${new URLSearchParams({
+      token_hash: tokenHash,
+      type: "magiclink",
+      next,
+    }).toString()}`;
+  }
+
+  // Tries to create the account first. If that email already has one, this
+  // page doubles as a login instead of bouncing to a separate page — retries
+  // the SAME password as a sign-in, transparently, no second click. Only a
+  // wrong password (or no account failing both ways) surfaces as an error.
+  async function attemptLogin() {
+    try {
+      const res = await fetch(`${APP_URL}/api/auth/offer-login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim(), password, offer: token }),
+      });
+      const data = await res.json().catch(() => null);
+      if (!res.ok || !data?.token_hash) {
+        setErrorCode(data?.error === "invalid_credentials" ? "wrong_password" : (data?.error ?? "signup_failed"));
+        setSubmitting(false);
+        return;
+      }
+      proceedWithTokenHash(data.token_hash);
+    } catch {
+      setErrorCode("signup_failed");
+      setSubmitting(false);
+    }
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setErrorCode(null);
@@ -102,25 +135,24 @@ export function ChecklistThankYouOffer({
       });
       const data = await res.json().catch(() => null);
       if (!res.ok || !data?.token_hash) {
+        if (data?.error === "account_exists") {
+          await attemptLogin();
+          return;
+        }
         setErrorCode(data?.error ?? "signup_failed");
         setSubmitting(false);
         return;
       }
 
-      const next = `/account/plan?offer=${encodeURIComponent(token)}`;
-      window.location.href = `${APP_URL}/auth/callback?${new URLSearchParams({
-        token_hash: data.token_hash,
-        type: "magiclink",
-        next,
-      }).toString()}`;
+      proceedWithTokenHash(data.token_hash);
     } catch {
       setErrorCode("signup_failed");
       setSubmitting(false);
     }
   }
 
-  const loginHref = `${APP_URL}/auth/login?${new URLSearchParams({
-    mode: "login",
+  const forgotPasswordHref = `${APP_URL}/auth/login?${new URLSearchParams({
+    mode: "forgot",
     next: `/account/plan?offer=${token}`,
   }).toString()}`;
 
@@ -179,10 +211,10 @@ export function ChecklistThankYouOffer({
               </div>
             ) : (
               <form onSubmit={handleSubmit} noValidate className="space-y-3">
-                {errorCode === "account_exists" ? (
+                {errorCode === "wrong_password" ? (
                   <div className="rounded-lg bg-amber-50 border border-amber-100 text-amber-800 text-sm px-4 py-3">
-                    You already have an account with this email.{" "}
-                    <a href={loginHref} className="font-semibold underline">Sign in to use this offer →</a>
+                    You already have an account with this email, but that password doesn&apos;t match.{" "}
+                    <a href={forgotPasswordHref} className="font-semibold underline">Reset your password →</a>
                   </div>
                 ) : errorCode ? (
                   <div className="rounded-lg bg-red-50 border border-red-100 text-red-700 text-sm px-4 py-3">
@@ -216,13 +248,13 @@ export function ChecklistThankYouOffer({
                   />
                 </div>
                 <div>
-                  <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-1.5">Create a password</label>
+                  <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-1.5">Password</label>
                   <input
                     id="password"
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="At least 6 characters"
+                    placeholder="At least 6 characters — or your existing password"
                     className="w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#3760ad]/30 focus:border-[#3760ad]"
                   />
                 </div>
