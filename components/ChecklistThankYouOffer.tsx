@@ -40,7 +40,19 @@ function splitName(fullName: string): { firstName: string; lastName: string } {
   return { firstName: trimmed.slice(0, idx), lastName: trimmed.slice(idx + 1) };
 }
 
-export function ChecklistThankYouOffer({ token, expiresAt }: { token: string; expiresAt: number }) {
+export function ChecklistThankYouOffer({
+  token,
+  expiresAt,
+  fromChecklist = true,
+}: {
+  token: string;
+  expiresAt: number;
+  // False for the standalone /1-dollar-month page, which people can be sent
+  // to directly with no checklist download involved — just the copy that
+  // references the checklist, everything else (form, checkout, countdown)
+  // is identical.
+  fromChecklist?: boolean;
+}) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -116,11 +128,13 @@ export function ChecklistThankYouOffer({ token, expiresAt }: { token: string; ex
     <main>
       {/* Slim confirmation banner — no nav, nothing to click away to, so the
           only thing on this page to do is the offer below. */}
-      <div className="bg-blue-50 border-b border-blue-100 py-2.5 px-6 text-center">
-        <p className="text-sm text-blue-900">
-          🎉 Your checklist is on its way — check your inbox (and spam folder) in a few minutes.
-        </p>
-      </div>
+      {fromChecklist && (
+        <div className="bg-blue-50 border-b border-blue-100 py-2.5 px-6 text-center">
+          <p className="text-sm text-blue-900">
+            🎉 Your checklist is on its way — check your inbox (and spam folder) in a few minutes.
+          </p>
+        </div>
+      )}
 
       <section className="bg-slate-50 pt-12 pb-16 px-6">
         <div className="max-w-2xl mx-auto">
@@ -139,8 +153,9 @@ export function ChecklistThankYouOffer({ token, expiresAt }: { token: string; ex
               Your first month of PreachingHub for $1
             </h1>
             <p className="text-lg text-slate-500 leading-relaxed">
-              You just grabbed the checklist. Here&apos;s a way to put it to work: your first month of full access to the
-              platform built for preachers.
+              {fromChecklist
+                ? "You just grabbed the checklist. Here's a way to put it to work: your first month of full access to the platform built for preachers."
+                : "Your first month of full access to the platform built for preachers — sermon prep, AI coaching, templates, and more."}
             </p>
           </div>
 
@@ -225,7 +240,9 @@ export function ChecklistThankYouOffer({ token, expiresAt }: { token: string; ex
             <p className="text-xs text-slate-400 text-center mt-3 leading-relaxed">
               You&apos;ll be taken to secure checkout to add a card. $1 today for your first month, $49/month after that unless you cancel first.
               <br />
-              A one-time offer for checklist readers, available for 24 hours after you download it.
+              {fromChecklist
+                ? "A one-time offer for checklist readers, available for 24 hours after you download it."
+                : "A one-time offer, available for 24 hours from when you first view this page."}
             </p>
           </div>
         </div>
