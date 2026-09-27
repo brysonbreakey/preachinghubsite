@@ -40,19 +40,25 @@ function splitName(fullName: string): { firstName: string; lastName: string } {
   return { firstName: trimmed.slice(0, idx), lastName: trimmed.slice(idx + 1) };
 }
 
+type Variant = "checklist" | "new" | "returning";
+
 export function ChecklistThankYouOffer({
   token,
   expiresAt,
-  fromChecklist = true,
+  variant = "checklist",
 }: {
   token: string;
   expiresAt: number;
-  // False for the standalone /1-dollar-month page, which people can be sent
-  // to directly with no checklist download involved — just the copy that
-  // references the checklist, everything else (form, checkout, countdown)
-  // is identical.
-  fromChecklist?: boolean;
+  // "checklist" — /checklist/thank-you, unchanged from before this existed.
+  // "new" — /1-dollar-month, sent to people with no account yet; no login
+  // hint on the password field, since that's not who this link is for.
+  // "returning" — /returning-1-dollar-month, sent to past trial/customers;
+  // welcome-back copy, and the password field says up front it doubles as
+  // sign-in. The account-creation-then-login-fallback logic below runs the
+  // same way regardless — this only changes what the page says.
+  variant?: Variant;
 }) {
+  const fromChecklist = variant === "checklist";
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -182,12 +188,15 @@ export function ChecklistThankYouOffer({
               )}
             </p>
             <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 leading-[1.1] tracking-tight mb-5">
-              Your first month of PreachingHub for $1
+              {variant === "returning" ? "Come back to PreachingHub for $1" : "Your first month of PreachingHub for $1"}
             </h1>
             <p className="text-lg text-slate-500 leading-relaxed">
-              {fromChecklist
-                ? "You just grabbed the checklist. Here's a way to put it to work: your first month of full access to the platform built for preachers."
-                : "Your first month of full access to the platform built for preachers — sermon prep, AI coaching, templates, and more."}
+              {variant === "checklist" &&
+                "You just grabbed the checklist. Here's a way to put it to work: your first month of full access to the platform built for preachers."}
+              {variant === "new" &&
+                "Your first month of full access to the platform built for preachers — sermon prep, AI coaching, templates, and more."}
+              {variant === "returning" &&
+                "Pick up right where you left off — sign back in and get your next month of full access for $1."}
             </p>
           </div>
 
@@ -254,7 +263,9 @@ export function ChecklistThankYouOffer({
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="At least 6 characters — or your existing password"
+                    placeholder={
+                      variant === "new" ? "At least 6 characters" : "At least 6 characters — or your existing password"
+                    }
                     className="w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#3760ad]/30 focus:border-[#3760ad]"
                   />
                 </div>
@@ -272,9 +283,10 @@ export function ChecklistThankYouOffer({
             <p className="text-xs text-slate-400 text-center mt-3 leading-relaxed">
               You&apos;ll be taken to secure checkout to add a card. $1 today for your first month, $49/month after that unless you cancel first.
               <br />
-              {fromChecklist
-                ? "A one-time offer for checklist readers, available for 24 hours after you download it."
-                : "A one-time offer, available for 24 hours from when you first view this page."}
+              {variant === "checklist" &&
+                "A one-time offer for checklist readers, available for 24 hours after you download it."}
+              {(variant === "new" || variant === "returning") &&
+                "A one-time offer, available until 11:59 PM CDT on September 30."}
             </p>
           </div>
         </div>

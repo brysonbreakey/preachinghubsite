@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
-const OFFER_STORAGE_KEY = "ph_checklist_offer";
+const ROLLING_STORAGE_KEY = "ph_checklist_offer";
+const FIXED_STORAGE_KEY = "ph_fixed_offer";
 
 export type OfferState = "loading" | "unavailable" | { token: string; expiresAt: number };
 
@@ -22,15 +23,19 @@ function parseToken(token: string): { token: string; expiresAt: number } | null 
 //      submitted the form, so a later email linking back here (any device,
 //      any browser) shows the exact same deadline, not a fresh 24 hours.
 //   2. localStorage — the same browser revisiting without that link.
-//   3. Mint a fresh one — only for landing on this page with neither (e.g.
-//      testing it directly).
+//   3. Mint one — only for landing on this page with neither (e.g. testing
+//      it directly). For "rolling" this starts a fresh 24 hours from now;
+//      for "fixed" it's the same server-side campaign deadline every time,
+//      so there's nothing visitor-specific to protect and the ?offer= param
+//      is mostly unused on those pages, but still honored if present.
 // An already-expired ?offer= link is passed through as-is rather than
 // falling back — ChecklistThankYouOffer already renders the "ended" state
 // correctly for a past expiresAt, which is the honest result for a stale link.
-export function useOffer(): OfferState {
+export function useOffer(deadline: "rolling" | "fixed" = "rolling"): OfferState {
   const searchParams = useSearchParams();
   const urlToken = searchParams.get("offer");
   const [state, setState] = useState<OfferState>("loading");
+  const storageKey = deadline === "fixed" ? FIXED_STORAGE_KEY : ROLLING_STORAGE_KEY;
 
   useEffect(() => {
     let cancelled = false;
@@ -39,7 +44,7 @@ export function useOffer(): OfferState {
       const parsed = parseToken(urlToken);
       if (parsed) {
         try {
-          localStorage.setItem(OFFER_STORAGE_KEY, JSON.stringify(parsed));
+          localStorage.setItem(storageKey, JSON.stringify(parsed));
         } catch {}
         setState(parsed);
         return;
@@ -49,7 +54,7 @@ export function useOffer(): OfferState {
 
     (async () => {
       try {
-        const raw = localStorage.getItem(OFFER_STORAGE_KEY);
+        const raw = localStorage.getItem(storageKey);
         if (raw) {
           const saved = JSON.parse(raw) as { token: string; expiresAt: number };
           if (saved?.token && saved.expiresAt > Date.now()) {
@@ -61,11 +66,15 @@ export function useOffer(): OfferState {
         // fall through and request a fresh one
       }
       try {
-        const res = await fetch("/api/offer-token", { method: "POST" });
+        const res = await fetch("/api/offer-token", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ deadline }),
+        });
         if (!res.ok) throw new Error("offer_token_failed");
         const data = (await res.json()) as { token: string; expiresAt: number };
         try {
-          localStorage.setItem(OFFER_STORAGE_KEY, JSON.stringify(data));
+          localStorage.setItem(storageKey, JSON.stringify(data));
         } catch {}
         if (!cancelled) setState(data);
       } catch {
@@ -76,7 +85,7 @@ export function useOffer(): OfferState {
     return () => {
       cancelled = true;
     };
-  }, [urlToken]);
+  }, [urlToken, deadline, storageKey]);
 
   return state;
 }
