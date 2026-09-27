@@ -33,6 +33,18 @@ function formatCountdown(ms: number): string {
   return `${pad(h)}:${pad(m)}:${pad(s)}`;
 }
 
+// D:HH:MM:SS — used on the fixed-deadline pages, which can be several days
+// out, unlike the rolling 24-hour checklist offer.
+function formatCountdownWithDays(ms: number): string {
+  const totalSeconds = Math.floor(ms / 1000);
+  const d = Math.floor(totalSeconds / 86400);
+  const h = Math.floor((totalSeconds % 86400) / 3600);
+  const m = Math.floor((totalSeconds % 3600) / 60);
+  const s = totalSeconds % 60;
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d}:${pad(h)}:${pad(m)}:${pad(s)}`;
+}
+
 function splitName(fullName: string): { firstName: string; lastName: string } {
   const trimmed = fullName.trim().replace(/\s+/g, " ");
   const idx = trimmed.indexOf(" ");
@@ -119,12 +131,22 @@ export function ChecklistThankYouOffer({
     e.preventDefault();
     setErrorCode(null);
 
-    if (!name.trim()) return setErrorCode("name_required");
+    if (variant !== "returning" && !name.trim()) return setErrorCode("name_required");
     if (!EMAIL_RE.test(email.trim())) return setErrorCode("invalid_email");
     if (password.length < 6) return setErrorCode("weak_password");
 
     setSubmitting(true);
     posthog.capture("checklist_offer_signup_submitted");
+
+    // /returning-1-dollar-month is a login page, full stop — no name field,
+    // no account-creation attempt. Going straight to offer-login also gives
+    // a cleaner error for someone who lands here with no account at all,
+    // instead of them first tripping a signup attempt with no name to send.
+    if (variant === "returning") {
+      await attemptLogin();
+      return;
+    }
+
     const { firstName, lastName } = splitName(name);
 
     try {
@@ -183,12 +205,14 @@ export function ChecklistThankYouOffer({
               ) : (
                 <>
                   SPECIAL OFFER · expires in{" "}
-                  <span className="font-mono tabular-nums">{formatCountdown(msLeft)}</span>
+                  <span className="font-mono tabular-nums">
+                    {variant === "checklist" ? formatCountdown(msLeft) : formatCountdownWithDays(msLeft)}
+                  </span>
                 </>
               )}
             </p>
             <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 leading-[1.1] tracking-tight mb-5">
-              {variant === "returning" ? "Come back to PreachingHub for $1" : "Your first month of PreachingHub for $1"}
+              Your first month of PreachingHub for $1
             </h1>
             <p className="text-lg text-slate-500 leading-relaxed">
               {variant === "checklist" &&
@@ -222,7 +246,9 @@ export function ChecklistThankYouOffer({
               <form onSubmit={handleSubmit} noValidate className="space-y-3">
                 {errorCode === "wrong_password" ? (
                   <div className="rounded-lg bg-amber-50 border border-amber-100 text-amber-800 text-sm px-4 py-3">
-                    You already have an account with this email, but that password doesn&apos;t match.{" "}
+                    {variant === "returning"
+                      ? "We couldn't sign you in — check your email and password."
+                      : "You already have an account with this email, but that password doesn't match."}{" "}
                     <a href={forgotPasswordHref} className="font-semibold underline">Reset your password →</a>
                   </div>
                 ) : errorCode ? (
@@ -237,15 +263,17 @@ export function ChecklistThankYouOffer({
                   </div>
                 ) : null}
 
-                <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-slate-700 mb-1.5">Name</label>
-                  <input
-                    id="name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#3760ad]/30 focus:border-[#3760ad]"
-                  />
-                </div>
+                {variant !== "returning" && (
+                  <div>
+                    <label htmlFor="name" className="block text-sm font-medium text-slate-700 mb-1.5">Name</label>
+                    <input
+                      id="name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className="w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#3760ad]/30 focus:border-[#3760ad]"
+                    />
+                  </div>
+                )}
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-1.5">Email address</label>
                   <input
@@ -264,7 +292,11 @@ export function ChecklistThankYouOffer({
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder={
-                      variant === "new" ? "At least 6 characters" : "At least 6 characters — or your existing password"
+                      variant === "new"
+                        ? "At least 6 characters"
+                        : variant === "returning"
+                          ? "Your password"
+                          : "At least 6 characters — or your existing password"
                     }
                     className="w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#3760ad]/30 focus:border-[#3760ad]"
                   />
@@ -286,7 +318,7 @@ export function ChecklistThankYouOffer({
               {variant === "checklist" &&
                 "A one-time offer for checklist readers, available for 24 hours after you download it."}
               {(variant === "new" || variant === "returning") &&
-                "A one-time offer, available until 11:59 PM CDT on September 30."}
+                "A one-time offer, available until 11:59PM CST September 30th."}
             </p>
           </div>
         </div>
