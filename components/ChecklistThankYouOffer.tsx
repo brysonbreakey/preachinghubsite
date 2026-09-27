@@ -26,7 +26,7 @@ const PRO_FEATURES: { label: string; sublabel?: string }[] = [
   { label: "Free Research Tools Library" },
 ];
 
-function WhatsIncluded() {
+function WhatsIncluded({ label }: { label: string }) {
   const [open, setOpen] = useState(false);
   return (
     <div className="border border-slate-200 rounded-2xl overflow-hidden mb-6">
@@ -35,7 +35,7 @@ function WhatsIncluded() {
         onClick={() => setOpen((o) => !o)}
         className="w-full flex items-center justify-between px-5 py-4 text-sm font-semibold text-slate-800 tracking-wide uppercase hover:bg-slate-50 transition-colors"
       >
-        What&apos;s included
+        {label}
         <Icon
           d="m6 9 6 6 6-6"
           size={16}
@@ -285,7 +285,7 @@ export function ChecklistThankYouOffer({
               ))}
             </ul>
 
-            <WhatsIncluded />
+            <WhatsIncluded label={variant === "checklist" ? "What's included" : "See all features"} />
 
             {expired ? (
               <div className="w-full text-center px-6 py-4 rounded-xl bg-slate-100 text-slate-500 text-sm">
