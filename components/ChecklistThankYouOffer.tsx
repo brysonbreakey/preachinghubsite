@@ -15,6 +15,7 @@ const BENEFITS = [
 // Same list as the app's account/plan "What's included" dropdown.
 const PRO_FEATURES: { label: string; sublabel?: string }[] = [
   { label: "Sermon Builder" },
+  { label: "Preaching Calendar" },
   { label: "Unlimited Coaching Reports" },
   { label: "Expert evaluations across 7 categories" },
   { label: "Full Timestamped Transcript" },
@@ -373,7 +374,7 @@ export function ChecklistThankYouOffer({
               You&apos;ll be taken to secure checkout to add a card. $1 today for your first month, $49/month after that unless you cancel first.
               <br />
               {variant === "checklist" &&
-                "A one-time offer for checklist readers, available for 24 hours after you download it."}
+                "A one-time offer for checklist readers, available for 24 hours after download."}
               {(variant === "new" || variant === "returning") &&
                 "A one-time offer, available until 11:59PM CST September 30th."}
             </p>
