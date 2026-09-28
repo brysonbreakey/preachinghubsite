@@ -338,7 +338,9 @@ export function ChecklistThankYouOffer({
                   />
                 </div>
                 <div>
-                  <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-1.5">Password</label>
+                  <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-1.5">
+                    {variant === "returning" ? "Password" : "Create a Password"}
+                  </label>
                   <input
                     id="password"
                     type="password"
