@@ -128,7 +128,7 @@ export function ChecklistThankYouTrial() {
             </h1>
             <p className="text-lg text-slate-500 leading-relaxed mb-4">
               Use the Sermon Builder to work through your message step by step — Study, Big Idea, Structure,
-              Application — with honest coaching feedback along the way, before you ever step into the pulpit.
+              Application — with actionable coaching feedback along the way, before you ever step into the pulpit.
             </p>
             <p className="text-lg text-slate-500 leading-relaxed">
               Start your 14-day free trial and bring whatever you&apos;re working on, whenever you&apos;re working on
