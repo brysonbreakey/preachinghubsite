@@ -120,6 +120,9 @@ export function ChecklistThankYouTrial() {
       <section className="bg-slate-50 pt-12 pb-16 px-6">
         <div className="max-w-2xl mx-auto">
           <div className="text-center mb-8">
+            <p className="text-sm font-bold uppercase tracking-wide mb-3" style={{ color: "#3760ad" }}>
+              Free Trial
+            </p>
             <p className="text-base text-slate-500 leading-relaxed mb-2">
               You&apos;re already thinking ahead to your next sermon — let&apos;s help you make it the best it can be.
             </p>
