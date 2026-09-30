@@ -120,15 +120,15 @@ export function ChecklistThankYouTrial() {
       <section className="bg-slate-50 pt-12 pb-16 px-6">
         <div className="max-w-2xl mx-auto">
           <div className="text-center mb-8">
-            <p className="text-sm font-bold uppercase tracking-wide mb-3" style={{ color: "#3760ad" }}>
-              Free Trial
-            </p>
             <p className="text-base text-slate-500 leading-relaxed mb-2">
               You&apos;re already thinking ahead to your next sermon — let&apos;s help you make it the best it can be.
             </p>
-            <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 leading-[1.1] tracking-tight mb-5 mt-3">
+            <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 leading-[1.1] tracking-tight mb-3 mt-3">
               Take Your Next Sermon All the Way to Ready
             </h1>
+            <p className="text-sm font-bold uppercase tracking-wide mb-5" style={{ color: "#3760ad" }}>
+              Free Trial
+            </p>
             <p className="text-lg text-slate-500 leading-relaxed mb-4">
               Use the Sermon Builder to work through your message step by step — Study, Big Idea, Structure,
               Application — with actionable coaching feedback along the way, before you ever step into the pulpit.
