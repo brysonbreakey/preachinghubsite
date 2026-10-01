@@ -196,7 +196,7 @@ export function ChecklistThankYouTrial() {
               </button>
             </form>
             <p className="text-xs text-slate-400 text-center mt-3 leading-relaxed">
-              14-day free trial, no card required. Full access to the Sermon Builder and coaching feedback.
+              14-day free trial, <strong className="font-semibold text-slate-500">no card required.</strong> Full access to the Sermon Builder and coaching feedback.
             </p>
           </div>
         </div>
