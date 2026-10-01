@@ -65,7 +65,7 @@ export function PricingCard() {
           >
             Start Your Free Trial
           </a>
-          <p className="text-xs text-slate-400 text-center mt-3">14-day free trial. Card required &mdash; you won&apos;t be charged until your trial ends. Cancel anytime before then.</p>
+          <p className="text-xs text-slate-400 text-center mt-3">14-day free trial. No credit card required to start.</p>
         </div>
 
         <p className="text-center text-slate-500 mt-12">

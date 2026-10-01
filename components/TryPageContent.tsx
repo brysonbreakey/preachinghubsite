@@ -518,7 +518,7 @@ export function TryPageContent({
             >
               Start Your Free Trial →
             </a>
-            <p className="text-xs text-slate-400">$39/month (billed annually) after your trial. Card required to start.</p>
+            <p className="text-xs text-slate-400">No credit card required. $39/month (billed annually) after your trial.</p>
           </div>
         </section>
         <Footer />

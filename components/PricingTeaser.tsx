@@ -38,7 +38,7 @@ export function PricingTeaser() {
             See full plan details
           </a>
         </div>
-        <p className="text-xs text-slate-400 mt-5">14-day free trial. Card required to start.</p>
+        <p className="text-xs text-slate-400 mt-5">14-day free trial. No credit card required.</p>
       </div>
     </section>
   );
