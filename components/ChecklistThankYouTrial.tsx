@@ -127,7 +127,7 @@ export function ChecklistThankYouTrial() {
               Take Your Next Sermon All the Way to Ready
             </h1>
             <p className="text-sm font-bold uppercase tracking-wide mb-5" style={{ color: "#3760ad" }}>
-              Free Trial
+              Free Trial · No Credit Card Required
             </p>
             <p className="text-lg text-slate-500 leading-relaxed mb-4">
               Use the Sermon Builder to work through your message step by step — Study, Big Idea, Structure,
@@ -200,7 +200,7 @@ export function ChecklistThankYouTrial() {
               </button>
             </form>
             <p className="text-xs text-slate-400 text-center mt-3 leading-relaxed">
-              14-day free trial. Full access to the Sermon Builder and coaching feedback.
+              14-day free trial, no credit card required. Full access to the Sermon Builder and coaching feedback.
             </p>
           </div>
         </div>
