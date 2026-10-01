@@ -131,7 +131,8 @@ export function ChecklistThankYouTrial() {
               along the way, before you ever step into the pulpit.
             </p>
             <p className="text-lg text-slate-500 leading-relaxed">
-              Start your 14-day trial and make your next sermon your best one yet. No card required.
+              Start your 14-day trial and make your next sermon your best one yet.{" "}
+              <strong className="font-semibold text-slate-700">No card required.</strong>
             </p>
           </div>
 
@@ -196,7 +197,7 @@ export function ChecklistThankYouTrial() {
               </button>
             </form>
             <p className="text-xs text-slate-400 text-center mt-3 leading-relaxed">
-              14-day free trial, <strong className="font-semibold text-slate-500">no card required.</strong> Full access to the Sermon Builder and coaching feedback.
+              14-day free trial, <strong className="font-semibold text-slate-500">no card required.</strong> Full access to the entire PreachingHub platform.
             </p>
           </div>
         </div>
