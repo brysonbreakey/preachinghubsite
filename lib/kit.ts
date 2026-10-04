@@ -116,11 +116,18 @@ export async function addChecklistContact({
 export async function addTryLeadContact({
   email,
   firstName,
+  lastName,
 }: {
   email: string
   firstName?: string
+  lastName?: string
 }): Promise<void> {
-  await upsertContact({ email, firstName, tags: ['try'] })
+  await upsertContact({
+    email,
+    firstName,
+    tags: ['try'],
+    fields: lastName ? { last_name: lastName } : undefined,
+  })
 }
 
 /**
