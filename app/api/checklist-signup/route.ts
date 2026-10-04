@@ -23,6 +23,7 @@ async function hasMailServer(email: string): Promise<boolean> {
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => null);
   const firstName = typeof body?.first_name === "string" ? body.first_name.trim() : "";
+  const lastName = typeof body?.last_name === "string" ? body.last_name.trim() : "";
   const email = typeof body?.email === "string" ? body.email.trim() : "";
   const phone = typeof body?.phone === "string" ? body.phone.trim() : "";
 
@@ -138,7 +139,7 @@ export async function POST(req: NextRequest) {
       fetch(zapierWebhookUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone, first_name: firstName, checklistLink, offerLink: offerShortLink }),
+        body: JSON.stringify({ phone, first_name: firstName, last_name: lastName, checklistLink, offerLink: offerShortLink }),
       })
         .then((res) => {
           if (!res.ok) {
