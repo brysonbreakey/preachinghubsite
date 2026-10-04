@@ -119,7 +119,7 @@ export async function POST(req: NextRequest) {
   const offerShortLink = offerToken ? `${SITE_URL}/o/${leadToken}` : undefined;
 
   try {
-    await addChecklistContact({ email, firstName, offerLink });
+    await addChecklistContact({ email, firstName, lastName, offerLink });
   } catch (err) {
     console.error("checklist-signup: kit failed", err);
     return NextResponse.json(

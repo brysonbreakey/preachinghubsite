@@ -83,22 +83,29 @@ async function upsertContact({
 export async function addChecklistContact({
   email,
   firstName,
+  lastName,
   offerLink,
 }: {
   email: string
   firstName?: string
+  lastName?: string
   offerLink?: string
 }): Promise<void> {
-  // offer_link is a Kit custom field — Kit auto-creates it on first use,
-  // same as findOrCreateTag does for tags. Referenced in a follow-up email
-  // as {{ subscriber.offer_link }} so the button always points at the exact
-  // same 24-hour offer this contact was given at signup, regardless of what
-  // device they open that email on.
+  // offer_link is a Kit custom field, referenced in a follow-up email as
+  // {{ subscriber.offer_link }} so the button always points at the exact same
+  // 24-hour offer this contact was given at signup, regardless of what device
+  // they open that email on. last_name is Kit's "LAST NAME" custom field —
+  // first_name is a native attribute, last name is not. Only sent when there
+  // is one, so a single-word name can't blank out a last name already on file.
+  const fields: Record<string, string> = {}
+  if (offerLink) fields.offer_link = offerLink
+  if (lastName) fields.last_name = lastName
+
   await upsertContact({
     email,
     firstName,
     tags: ['checklist'],
-    fields: offerLink ? { offer_link: offerLink } : undefined,
+    fields: Object.keys(fields).length ? fields : undefined,
   })
 }
 
