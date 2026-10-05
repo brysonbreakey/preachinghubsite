@@ -121,7 +121,7 @@ export function ChecklistThankYouTrial() {
         <div className="max-w-2xl mx-auto">
           <div className="text-center mb-8">
             <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 leading-[1.1] tracking-tight mb-3 mt-3">
-              Take Your Next Sermon All the Way to Ready
+              Make Your Next Sermon Your Best One Yet
             </h1>
             <p className="text-sm font-bold uppercase tracking-wide mb-5" style={{ color: "#3760ad" }}>
               Free Trial · No Card Required
