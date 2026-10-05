@@ -86,14 +86,7 @@ export default function ChecklistPage() {
       } catch {
         // Best-effort only — worst case the form just isn't prefilled.
       }
-      // The same offer deadline minted server-side at signup, carried in the
-      // URL — so the offer page shows this exact countdown even if they
-      // never touch this browser again (e.g. click a later email on another
-      // device) instead of starting a fresh 24 hours from whenever they
-      // happen to land there.
-      window.location.href = data?.offerToken
-        ? `/checklist/thank-you?offer=${encodeURIComponent(data.offerToken)}`
-        : "/checklist/thank-you";
+      window.location.href = "/checklist/thank-you";
     } catch (err) {
       setStatus("error");
       setErrorMessage(

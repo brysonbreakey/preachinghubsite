@@ -3,7 +3,6 @@ import { resolveMx } from "dns/promises";
 import { randomBytes } from "crypto";
 import { waitUntil } from "@vercel/functions";
 import { addChecklistContact } from "@/lib/kit";
-import { createOfferToken } from "@/lib/offerToken";
 import { supabaseAdmin } from "@/lib/supabase";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
@@ -47,36 +46,14 @@ export async function POST(req: NextRequest) {
   const dedupCutoff = new Date(Date.now() - DEDUP_WINDOW_HOURS * 60 * 60 * 1000).toISOString();
   const { data: recentLead } = await supabaseAdmin()
     .from("leads")
-    .select("id, lead_token")
+    .select("id")
     .eq("email", email)
     .gte("created_at", dedupCutoff)
     .limit(1)
     .maybeSingle();
 
   if (recentLead) {
-    // Still mint a fresh offer token so a resubmission (e.g. double-click)
-    // gets a working redirect — we don't have the original one to look up.
-    // Stored on the existing row (rather than a new one) so /o/:lead_token
-    // — the short link already sent for this lead — reflects the new offer.
-    let offerToken: string | undefined;
-    try {
-      offerToken = createOfferToken().token;
-      await supabaseAdmin().from("leads").update({ offer_token: offerToken }).eq("id", recentLead.id);
-    } catch (err) {
-      console.error("checklist-signup: offer token unavailable (dedup path)", err);
-    }
-    return NextResponse.json({ ok: true, offerToken });
-  }
-
-  // Minted once, here, at signup — not when the offer page loads — so the
-  // exact same deadline can be handed to Kit/Zapier and used for the
-  // immediate redirect below. If OFFER_SIGNING_SECRET isn't set, this
-  // degrades to no offer link rather than failing the whole signup.
-  let offerToken: string | undefined;
-  try {
-    offerToken = createOfferToken().token;
-  } catch (err) {
-    console.error("checklist-signup: offer token unavailable", err);
+    return NextResponse.json({ ok: true });
   }
 
   // Generate the public lead token separately from any database id, and
@@ -93,7 +70,7 @@ export async function POST(req: NextRequest) {
       leadToken = randomBytes(4).toString("hex");
       const { error } = await supabaseAdmin()
         .from("leads")
-        .insert({ lead_token: leadToken, email, first_name: firstName, phone, offer_token: offerToken });
+        .insert({ lead_token: leadToken, email, first_name: firstName, phone });
       if (!error) {
         inserted = true;
       } else if (error.code !== "23505") {
@@ -115,8 +92,10 @@ export async function POST(req: NextRequest) {
   // link. Zapier/SMS gets the short /o/:lead_token version below instead —
   // the full link is 129 characters, which alone eats almost an entire SMS
   // segment.
-  const offerLink = offerToken ? `${SITE_URL}/checklist/thank-you?offer=${offerToken}` : undefined;
-  const offerShortLink = offerToken ? `${SITE_URL}/o/${leadToken}` : undefined;
+  // Both land on the plain free-trial page now — no signed offer token. The short
+  // /o/:lead_token form is kept so links already texted/emailed keep working.
+  const offerLink = `${SITE_URL}/checklist/thank-you`;
+  const offerShortLink = `${SITE_URL}/o/${leadToken}`;
 
   try {
     await addChecklistContact({ email, firstName, lastName, offerLink });
@@ -156,5 +135,5 @@ export async function POST(req: NextRequest) {
     console.error("checklist-signup: ZAPIER_CHECKLIST_WEBHOOK_URL not set");
   }
 
-  return NextResponse.json({ ok: true, offerToken });
+  return NextResponse.json({ ok: true });
 }
