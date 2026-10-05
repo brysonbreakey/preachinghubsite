@@ -131,7 +131,7 @@ export function ChecklistThankYouTrial() {
               along the way, before you ever step into the pulpit.
             </p>
             <p className="text-lg text-slate-500 leading-relaxed">
-              Start your 14-day trial and make your next sermon your best one yet.{" "}
+              Start your 14-day trial.{" "}
               <strong className="font-semibold text-slate-700">No card required.</strong>
             </p>
           </div>
