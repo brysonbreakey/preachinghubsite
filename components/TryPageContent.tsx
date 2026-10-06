@@ -594,7 +594,7 @@ export function TryPageContent({
         {heroContent ?? (
           <div className="text-center mb-10 max-w-2xl mx-auto">
             <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 leading-[1.1] tracking-tight mb-5">
-              Get a free coaching report on your last sermon
+              Get a free coaching report on a recent sermon
             </h1>
             <p className="text-lg text-slate-500 max-w-xl mx-auto leading-relaxed">
               Submit a YouTube link, paste your notes, or upload audio, video, or a PDF/Word doc.{" "}
