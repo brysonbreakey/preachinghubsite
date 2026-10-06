@@ -6,6 +6,8 @@ import { Icon } from "@/components/Icon";
 import { YouTubeSearchInput } from "@/components/YouTubeSearchInput";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { SampleReportTeaser } from "@/components/SampleReportTeaser";
+import { SampleReportModal, type CloseMethod } from "@/components/SampleReportModal";
 import { APP_URL, SIGNUP_URL } from "@/lib/urls";
 
 type InputType = "video" | "text" | "audio";
@@ -247,6 +249,27 @@ export function TryPageContent({
   const [email, setEmail] = useState(initialEmail ?? "");
   const [phone, setPhone] = useState("");
   const [sermonTitle, setSermonTitle] = useState("");
+  // "See a real sermon, fully evaluated" — the sample report modal.
+  const [sampleOpen, setSampleOpen] = useState(false);
+  const openedSample = useRef(false);
+  function openSample() {
+    openedSample.current = true;
+    posthog.capture("try_sample_teaser_clicked", { page: window.location.pathname });
+    setSampleOpen(true);
+  }
+  function closeSample(method: CloseMethod) {
+    posthog.capture("try_sample_modal_closed", { method, page: window.location.pathname });
+    setSampleOpen(false);
+    // "See this for your sermon": put the cursor where they'd start, without
+    // switching away from anything they've already entered.
+    if (method === "cta") {
+      setTimeout(() => {
+        const el = document.querySelector<HTMLElement>(inputType === "text" ? "textarea[name=transcript]" : inputType === "video" ? "#youtubeInput" : "label[for=audioFile]");
+        el?.focus();
+        el?.scrollIntoView({ block: "center", behavior: "smooth" });
+      }, 50);
+    }
+  }
   const [inputType, setInputType] = useState<InputType>(defaultInputType);
   const [transcript, setTranscript] = useState("");
   const [videoUrl, setVideoUrl] = useState("");
@@ -472,7 +495,7 @@ export function TryPageContent({
 
       if (!startRes.ok || !startData?.token) throw new Error("start_failed");
 
-      posthog.capture("free_evaluation_submitted", { input_type: payload.input_type });
+      posthog.capture("free_evaluation_submitted", { input_type: payload.input_type, opened_sample: openedSample.current });
 
       stopProcessingMessages();
       window.location.href = `${APP_URL}/try/${startData.token}`;
@@ -581,8 +604,12 @@ export function TryPageContent({
           </div>
         )}
 
-        <div className="grid lg:grid-cols-[1fr_300px] gap-6 items-start">
-          <form onSubmit={handleSubmit} onFocusCapture={trackFormStarted} noValidate className="bg-white rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/60 p-6 sm:p-8 space-y-8">
+        <div className="grid lg:grid-cols-[1fr_300px] lg:grid-rows-[auto_1fr] gap-6 items-start">
+          {/* Narrow screens: the sample sits above the form. Wide: top of the right column. */}
+          <div className="order-first lg:order-none lg:col-start-2 lg:row-start-1">
+            <SampleReportTeaser onOpen={openSample} />
+          </div>
+          <form onSubmit={handleSubmit} onFocusCapture={trackFormStarted} noValidate className="lg:col-start-1 lg:row-start-1 lg:row-span-2 bg-white rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/60 p-6 sm:p-8 space-y-8">
             {submitError && (
               <div className="rounded-lg bg-red-50 border border-red-100 text-red-700 text-sm px-4 py-3">
                 {submitError}
@@ -806,7 +833,7 @@ export function TryPageContent({
           </form>
 
           {/* What you'll receive */}
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 lg:sticky lg:top-16">
+          <div className="lg:col-start-2 lg:row-start-2 bg-white rounded-2xl border border-slate-200 p-6 lg:sticky lg:top-16">
             <div className="font-semibold text-slate-800 mb-4">What you&apos;ll receive</div>
             <div className="space-y-4">
               {RECEIVE_ITEMS.map(({ icon, label, body }) => (
@@ -826,6 +853,7 @@ export function TryPageContent({
       </div>
       </section>
       <Footer />
+      {sampleOpen && <SampleReportModal onClose={closeSample} />}
     </main>
   );
 }

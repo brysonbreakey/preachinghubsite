@@ -114,6 +114,7 @@ export function YouTubeSearchInput({
   return (
     <div>
       <input
+        id="youtubeInput"
         type="text"
         value={query}
         onChange={(e) => handleChange(e.target.value)}
