@@ -605,11 +605,11 @@ export function TryPageContent({
         )}
 
         <div className="grid lg:grid-cols-[1fr_300px] lg:grid-rows-[auto_1fr] gap-6 items-start">
-          {/* Narrow screens: the sample sits above the form. Wide: top of the right column. */}
-          <div className="order-first lg:order-none lg:col-start-2 lg:row-start-1">
+          {/* Narrow screens: form first, then the sample, then "What you'll receive". Wide: top of the right column. */}
+          <div className="order-2 lg:order-none lg:col-start-2 lg:row-start-1">
             <SampleReportTeaser onOpen={openSample} />
           </div>
-          <form onSubmit={handleSubmit} onFocusCapture={trackFormStarted} noValidate className="lg:col-start-1 lg:row-start-1 lg:row-span-2 bg-white rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/60 p-6 sm:p-8 space-y-8">
+          <form onSubmit={handleSubmit} onFocusCapture={trackFormStarted} noValidate className="order-1 lg:order-none lg:col-start-1 lg:row-start-1 lg:row-span-2 bg-white rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/60 p-6 sm:p-8 space-y-8">
             {submitError && (
               <div className="rounded-lg bg-red-50 border border-red-100 text-red-700 text-sm px-4 py-3">
                 {submitError}
@@ -833,7 +833,7 @@ export function TryPageContent({
           </form>
 
           {/* What you'll receive */}
-          <div className="lg:col-start-2 lg:row-start-2 bg-white rounded-2xl border border-slate-200 p-6 lg:sticky lg:top-16">
+          <div className="order-3 lg:order-none lg:col-start-2 lg:row-start-2 bg-white rounded-2xl border border-slate-200 p-6 lg:sticky lg:top-16">
             <div className="font-semibold text-slate-800 mb-4">What you&apos;ll receive</div>
             <div className="space-y-4">
               {RECEIVE_ITEMS.map(({ icon, label, body }) => (
