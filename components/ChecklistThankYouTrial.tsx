@@ -136,7 +136,7 @@ export function ChecklistThankYouTrial() {
             </p>
           </div>
 
-          <WhatsIncluded label="See all features" />
+          <WhatsIncluded label="See all features" defaultOpen />
 
           <div className="bg-white rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/60 p-6 sm:p-8">
             <form onSubmit={handleSubmit} noValidate className="space-y-3">

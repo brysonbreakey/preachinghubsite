@@ -17,8 +17,8 @@ const PRO_FEATURES: { label: string; sublabel?: string }[] = [
   { label: "Free Research Tools Library" },
 ];
 
-export function WhatsIncluded({ label }: { label: string }) {
-  const [open, setOpen] = useState(false);
+export function WhatsIncluded({ label, defaultOpen = false }: { label: string; defaultOpen?: boolean }) {
+  const [open, setOpen] = useState(defaultOpen);
   return (
     <div className="border border-slate-200 rounded-2xl overflow-hidden mb-6">
       <button
