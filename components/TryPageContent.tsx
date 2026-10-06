@@ -609,7 +609,7 @@ export function TryPageContent({
           <div className="order-2 lg:order-none lg:col-start-2 lg:row-start-1">
             <SampleReportTeaser onOpen={openSample} />
           </div>
-          <form onSubmit={handleSubmit} onFocusCapture={trackFormStarted} noValidate className="order-1 lg:order-none lg:col-start-1 lg:row-start-1 lg:row-span-2 bg-white rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/60 p-6 sm:p-8 space-y-8">
+          <form id="try-form" onSubmit={handleSubmit} onFocusCapture={trackFormStarted} noValidate className="scroll-mt-24 order-1 lg:order-none lg:col-start-1 lg:row-start-1 lg:row-span-2 bg-white rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/60 p-6 sm:p-8 space-y-8">
             {submitError && (
               <div className="rounded-lg bg-red-50 border border-red-100 text-red-700 text-sm px-4 py-3">
                 {submitError}
@@ -849,6 +849,21 @@ export function TryPageContent({
               ))}
             </div>
           </div>
+
+          {/* Mobile only: by the time they've scrolled past the form, the sample and this
+              list, the form is far above them — one tap takes them back to it. */}
+          <button
+            type="button"
+            onClick={() => {
+              posthog.capture("try_back_to_form_clicked", { page: window.location.pathname });
+              document.getElementById("try-form")?.scrollIntoView({ behavior: "smooth", block: "start" });
+            }}
+            className="order-4 lg:hidden cta-btn w-full inline-flex items-center justify-center gap-2 font-semibold px-6 py-4 rounded-xl text-base text-white"
+            style={{ backgroundColor: "#3760ad" }}
+          >
+            Try it
+            <Icon d="M12 19V5M5 12l7-7 7 7" size={16} color="white" strokeWidth={2.5} className="shrink-0" />
+          </button>
         </div>
       </div>
       </section>
