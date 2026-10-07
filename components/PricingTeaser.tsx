@@ -17,7 +17,7 @@ export function PricingTeaser() {
           One plan. $29/month to start.
         </h2>
         <p className="text-lg text-slate-500 mb-10 max-w-md mx-auto">
-          No tiers, no locked features. Every preacher gets the full PreachingHub experience &mdash; $29/month for your first 3 months, then $49/month starting in month 4.
+          No tiers, no locked features. The full PreachingHub experience &mdash; $29/month for your first 3 months, then $49/month after that.
         </p>
         <FeatureList features={HIGHLIGHTS} columns={2} className="mb-10 max-w-md mx-auto" />
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">

@@ -197,16 +197,18 @@ function Hero() {
           <p className="hero-sub text-xl text-blue-100/80 max-w-xl mx-auto lg:mx-0 mb-10 leading-relaxed">
             PreachingHub gives every preacher what most can only get from an expensive coach &mdash; structured prep from text to pulpit, plus detailed feedback on your content, voice, and delivery for every sermon in minutes.
           </p>
-          <div className="hero-cta flex flex-col sm:flex-row items-center lg:items-start justify-center lg:justify-start gap-3 mb-3">
-            <a href={SIGNUP_URL} className="cta-btn w-full sm:w-auto inline-flex items-center justify-center gap-2 text-[#0b1230] font-bold px-7 py-4 rounded-full text-base shadow-lg bg-white hover:bg-blue-50">
-              Start Your Next Sermon
-              <Icon d="M5 12h14M12 5l7 7-7 7" size={16} color="#0b1230" strokeWidth={2.5} />
-            </a>
+          <div className="hero-cta flex flex-col sm:flex-row items-center sm:items-start justify-center lg:justify-start gap-3">
+            <div className="flex flex-col items-center gap-2 w-full sm:w-auto">
+              <a href={SIGNUP_URL} className="cta-btn w-full sm:w-auto inline-flex items-center justify-center gap-2 text-[#0b1230] font-bold px-7 py-4 rounded-full text-base shadow-lg bg-white hover:bg-blue-50">
+                Start Your Next Sermon
+                <Icon d="M5 12h14M12 5l7 7-7 7" size={16} color="#0b1230" strokeWidth={2.5} />
+              </a>
+              <p className="text-xs text-blue-100/60">Free to start. No card required.</p>
+            </div>
             <a href="#features" className="w-full sm:w-auto inline-flex items-center justify-center gap-2 text-white/80 hover:text-white border border-white/20 hover:border-white/40 font-semibold px-7 py-4 rounded-full text-base transition-colors">
               See what&apos;s included
             </a>
           </div>
-          <p className="hero-cta text-xs text-blue-100/60" style={{ animationDelay: "0.48s" }}>Free to start. No card required.</p>
         </div>
 
         {/* Mockup */}
