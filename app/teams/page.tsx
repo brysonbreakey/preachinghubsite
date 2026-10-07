@@ -3,7 +3,8 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Icon } from "@/components/Icon";
 import { TeamPricingCalculator } from "@/components/TeamPricingCalculator";
-import { FEATURES } from "@/lib/planFeatures";
+import { PLAN_FEATURES } from "@/lib/planFeatures";
+import { FeatureList } from "@/components/FeatureList";
 
 export const metadata: Metadata = {
   title: "PreachingHub for Teams — Shared Billing, Volume Discounts",
@@ -126,16 +127,7 @@ function TierFeatures() {
           data-animate="fade-up"
           data-delay="100"
         >
-          <ul className="grid sm:grid-cols-2 gap-x-6 gap-y-3">
-            {FEATURES.map((f) => (
-              <li key={f} className="flex items-start gap-2.5 text-sm text-slate-600 leading-relaxed">
-                <span className="mt-0.5 shrink-0">
-                  <Icon d="M20 6 9 17l-5-5" size={15} color="#16a34a" strokeWidth={2.5} />
-                </span>
-                {f}
-              </li>
-            ))}
-          </ul>
+          <FeatureList features={PLAN_FEATURES} columns={2} />
         </div>
       </div>
     </section>

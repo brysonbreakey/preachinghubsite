@@ -8,7 +8,6 @@ import { APP_URL, SIGNUP_URL } from "@/lib/urls";
 const NAV_LINKS = [
   { href: "/#features", label: "Features" },
   { href: "/pricing", label: "Pricing" },
-  { href: "/compare", label: "Compare" },
   { href: "/teams", label: "Teams" },
   { href: "/try", label: "Free Coaching Report" },
 ];

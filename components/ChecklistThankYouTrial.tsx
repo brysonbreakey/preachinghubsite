@@ -21,7 +21,7 @@ function splitName(fullName: string): { firstName: string; lastName: string } {
 // than selling a specific offer. Same inline account-creation pattern as the
 // $1-offer pages (create the account here, no bounce to a separate signup
 // page), just without an offer token — /api/auth/offer-signup and
-// offer-login both treat a missing offer as a plain 14-day-trial signup.
+// offer-login both treat a missing offer as a plain 7-day-trial signup.
 export function ChecklistThankYouTrial() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -131,7 +131,7 @@ export function ChecklistThankYouTrial() {
               along the way, before you ever step into the pulpit.
             </p>
             <p className="text-lg text-slate-500 leading-relaxed">
-              Start your 14-day trial.{" "}
+              Try it free.{" "}
               <strong className="font-semibold text-slate-700">No card required.</strong>
             </p>
           </div>
@@ -197,7 +197,7 @@ export function ChecklistThankYouTrial() {
               </button>
             </form>
             <p className="text-xs text-slate-400 text-center mt-3 leading-relaxed">
-              14-day free trial, <strong className="font-semibold text-slate-500">no card required.</strong> Full access to the entire PreachingHub platform.
+              7-day free trial, <strong className="font-semibold text-slate-500">no card required.</strong> Full access to the entire PreachingHub platform.
             </p>
           </div>
         </div>

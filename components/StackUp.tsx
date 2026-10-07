@@ -354,7 +354,7 @@ export function StackUp() {
                 <tr>
                   <td className="w-56 sticky left-0 z-10 bg-white px-5 py-4 border-b border-slate-100 text-sm text-slate-600">Free trial</td>
                   <td className="w-36 sticky left-56 z-10 px-4 py-4 text-center border-b border-slate-100" style={{ backgroundColor: "#eff6ff" }}>
-                    <span className="font-bold text-sm" style={{ color: NAVY }}>14 days</span>
+                    <span className="font-bold text-sm" style={{ color: NAVY }}>7 days</span>
                   </td>
                   <td className="px-4 py-4 text-center border-b border-slate-100 text-sm text-slate-400">14 days</td>
                   <td className="px-4 py-4 text-center border-b border-slate-100 text-sm text-slate-400">7 days</td>

@@ -5,21 +5,18 @@ import { PricingCard } from "@/components/PricingCard";
 
 export const metadata: Metadata = {
   title: "Pricing — PreachingHub",
-  description: "Your AI sermon coach. More affordable than one session with a live coach. Start your 14-day free trial.",
+  description: "One plan for sermon prep, expert feedback, and delivery coaching. Try it free for 7 days, no card required.",
 };
 
 function Hero() {
   return (
-    <section className="pt-32 pb-16 px-6 bg-white text-center">
+    <section className="pt-32 pb-12 px-6 bg-white text-center">
       <div className="max-w-2xl mx-auto" data-animate="fade-up">
-        <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 mb-3 tracking-tight leading-tight">
-          Your AI Sermon Coach.
+        <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 mb-4 tracking-tight leading-tight">
+          Grow every time you preach.
         </h1>
-        <h2 className="text-xl sm:text-2xl font-bold text-slate-700 mb-5 tracking-tight">
-          More affordable than one session with a live coach.
-        </h2>
         <p className="text-lg text-slate-500 leading-relaxed">
-          A live preaching coach charges up to $500 for a single session. Get unlimited AI coaching on your content, voice, and delivery for a fraction of the cost &mdash; for every sermon, every week.
+          Prepare, refine, preach, and review every sermon in one place.
         </p>
       </div>
     </section>

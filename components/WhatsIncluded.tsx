@@ -2,20 +2,8 @@
 
 import { useState } from "react";
 import { Icon } from "@/components/Icon";
-
-// Same list as the app's account/plan "What's included" dropdown.
-const PRO_FEATURES: { label: string; sublabel?: string }[] = [
-  { label: "Sermon Builder" },
-  { label: "Preaching Calendar" },
-  { label: "Unlimited Coaching Reports" },
-  { label: "Expert evaluations across 7 categories" },
-  { label: "Full Timestamped Transcript" },
-  { label: "Visual Delivery Evaluation", sublabel: "Body language & facial expressions" },
-  { label: "Tone & Volume Analysis" },
-  { label: "Filler Word Analysis" },
-  { label: "Pulpit Mode for live preaching" },
-  { label: "Free Research Tools Library" },
-];
+import { FeatureList } from "@/components/FeatureList";
+import { PLAN_FEATURES } from "@/lib/planFeatures";
 
 export function WhatsIncluded({ label, defaultOpen = false }: { label: string; defaultOpen?: boolean }) {
   const [open, setOpen] = useState(defaultOpen);
@@ -37,17 +25,7 @@ export function WhatsIncluded({ label, defaultOpen = false }: { label: string; d
       </button>
       {open && (
         <div className="px-5 pb-5 border-t border-slate-200">
-          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2.5 pt-4">
-            {PRO_FEATURES.map((f) => (
-              <li key={f.label} className="flex items-start gap-2">
-                <Icon d="M20 6 9 17l-5-5" size={13} color="#16a34a" strokeWidth={2.5} className="shrink-0 mt-0.5" />
-                <span className="text-xs leading-relaxed text-slate-600">
-                  <span>{f.label}</span>
-                  {f.sublabel && <span className="block text-[10px] text-slate-400 mt-0.5">{f.sublabel}</span>}
-                </span>
-              </li>
-            ))}
-          </ul>
+          <FeatureList features={PLAN_FEATURES} columns={2} compact className="pt-4" />
         </div>
       )}
     </div>

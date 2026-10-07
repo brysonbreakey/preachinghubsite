@@ -189,7 +189,7 @@ function Hero() {
         <div className="text-center lg:text-left min-w-0">
           <div className="hero-badge inline-flex items-center gap-2 bg-white/10 border border-white/20 backdrop-blur text-white text-xs font-semibold px-3 py-1.5 rounded-full mb-8 uppercase tracking-wide">
             <span className="w-1.5 h-1.5 rounded-full bg-[#FBBF24] inline-block"></span>
-            14-Day Free Trial &middot; No Credit Card Required
+            7-Day Free Trial &middot; No Credit Card Required
           </div>
           <h1 className="hero-h1 text-5xl sm:text-6xl font-black text-white leading-[1.05] tracking-tight mb-6">
             What if every sermon was better than your last?
@@ -206,7 +206,7 @@ function Hero() {
               See what&apos;s included
             </a>
           </div>
-          <p className="hero-cta text-xs text-blue-100/60" style={{ animationDelay: "0.48s" }}>Free to start. Cancel anytime.</p>
+          <p className="hero-cta text-xs text-blue-100/60" style={{ animationDelay: "0.48s" }}>Free to start. No card required.</p>
         </div>
 
         {/* Mockup */}
@@ -624,7 +624,7 @@ function FinalCTA() {
       <div className="relative max-w-2xl mx-auto" data-animate="fade-up">
         <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 backdrop-blur text-white text-xs font-semibold px-3 py-1.5 rounded-full mb-8 uppercase tracking-wide">
           <span className="w-1.5 h-1.5 rounded-full bg-[#FBBF24] inline-block"></span>
-          14-Day Free Trial &middot; No Credit Card Required
+          7-Day Free Trial &middot; No Credit Card Required
         </div>
         <h2 className="text-4xl sm:text-5xl font-black text-white leading-[1.05] tracking-tight mb-6">
           Ready to make your next sermon your best one yet?
@@ -636,7 +636,7 @@ function FinalCTA() {
           Start Your Free Trial
           <Icon d="M5 12h14M12 5l7 7-7 7" size={16} color="#0b1230" strokeWidth={2.5} />
         </a>
-        <p className="text-blue-100/60 text-xs mt-5">No credit card required. $39/month billed annually after your trial.</p>
+        <p className="text-blue-100/60 text-xs mt-5">No credit card required. $29/month for your first 3 months, then $49/month.</p>
       </div>
     </section>
   );

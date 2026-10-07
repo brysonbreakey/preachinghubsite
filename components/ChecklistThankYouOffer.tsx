@@ -240,7 +240,7 @@ export function ChecklistThankYouOffer({
 
             {expired ? (
               <div className="w-full text-center px-6 py-4 rounded-xl bg-slate-100 text-slate-500 text-sm">
-                This offer has ended, but you can still start a free 14-day trial.
+                This offer has ended, but you can still start a free 7-day trial.
                 <br />
                 <a href={`${APP_URL}/auth/login?mode=signup&source=checklist_offer_expired`} className="font-semibold underline" style={{ color: "#3760ad" }}>
                   Start your free trial →

@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   description: "Structured sermon prep, coaching-quality feedback, and team tools built for preachers who take their craft seriously.",
   openGraph: {
     title: "PreachingHub — Sermon Prep & Coaching for Preachers",
-    description: "Get coaching feedback on your last sermon. Free for 14 days.",
+    description: "Get coaching feedback on your last sermon. Free for 7 days.",
     url: "https://preachinghub.com",
     siteName: "PreachingHub",
     type: "website",
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "PreachingHub — Sermon Prep & Coaching for Preachers",
-    description: "Get coaching feedback on your last sermon. Free for 14 days.",
+    description: "Get coaching feedback on your last sermon. Free for 7 days.",
     images: ["/og-image.jpg"],
   },
   other: {
