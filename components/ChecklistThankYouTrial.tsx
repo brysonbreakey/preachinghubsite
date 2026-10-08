@@ -22,6 +22,46 @@ function splitName(fullName: string): { firstName: string; lastName: string } {
 // $1-offer pages (create the account here, no bounce to a separate signup
 // page), just without an offer token — /api/auth/offer-signup and
 // offer-login both treat a missing offer as a plain 7-day-trial signup.
+// Shown the moment they hit "Start My Free Trial". Creating the account and the trial
+// takes a few seconds (the app sets up their plan before it hands them over), and the
+// form just sitting there reads as stuck — this makes the wait read as progress. It's
+// dismissed on any error, since `submitting` goes back to false.
+const SETUP_STEPS = ["Creating your account", "Starting your 7-day trial", "Opening your workspace"];
+
+function SettingUpOverlay({ firstName }: { firstName: string }) {
+  const [active, setActive] = useState(0);
+  useEffect(() => {
+    if (active >= SETUP_STEPS.length - 1) return;
+    const t = setTimeout(() => setActive((a) => a + 1), 1800);
+    return () => clearTimeout(t);
+  }, [active]);
+  return (
+    <div className="fixed inset-0 z-[100] bg-slate-50 flex items-center justify-center px-6" role="status" aria-live="polite">
+      <div className="w-full max-w-sm text-center">
+        <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+          {firstName ? `Welcome, ${firstName}.` : "Welcome."}
+        </h2>
+        <p className="text-slate-500 mt-2">Setting up your trial…</p>
+        <ol className="mt-8 space-y-3 text-left inline-block">
+          {SETUP_STEPS.map((label, i) => (
+            <li key={label} className={`flex items-center gap-3 text-sm ${i < active ? "text-slate-400" : i === active ? "text-slate-900 font-medium" : "text-slate-300"}`}>
+              <span className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 border ${i < active ? "bg-green-500 border-green-500" : i === active ? "border-[#3760ad]" : "border-slate-200"}`}>
+                {i < active ? (
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
+                ) : i === active ? (
+                  <span className="w-2 h-2 rounded-full bg-[#3760ad] animate-pulse" />
+                ) : null}
+              </span>
+              {label}
+              {i === active ? "…" : ""}
+            </li>
+          ))}
+        </ol>
+      </div>
+    </div>
+  );
+}
+
 export function ChecklistThankYouTrial() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -110,6 +150,7 @@ export function ChecklistThankYouTrial() {
 
   return (
     <main>
+      {submitting && <SettingUpOverlay firstName={splitName(name).firstName} />}
       {/* Same confirmation banner as before — unchanged. */}
       <div className="bg-blue-50 border-b border-blue-100 py-2.5 px-6 text-center">
         <p className="text-sm text-blue-900">
