@@ -38,6 +38,9 @@ function SettingUpOverlay({ firstName }: { firstName: string }) {
   return (
     <div className="fixed inset-0 z-[100] bg-slate-50 flex items-center justify-center px-6" role="status" aria-live="polite">
       <div className="w-full max-w-sm text-center">
+        {/* Always-moving: a spinner and a sliding bar, so even a slow few seconds can't look frozen. */}
+        <style>{`@keyframes ph-slide { 0% { transform: translateX(-110%); } 100% { transform: translateX(310%); } }`}</style>
+        <div aria-hidden className="mx-auto mb-6 w-12 h-12 rounded-full border-4 border-slate-200 border-t-[#3760ad] animate-spin" />
         <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
           {firstName ? `Welcome, ${firstName}.` : "Welcome."}
         </h2>
@@ -57,6 +60,9 @@ function SettingUpOverlay({ firstName }: { firstName: string }) {
             </li>
           ))}
         </ol>
+        <div aria-hidden className="mt-8 h-1.5 w-full rounded-full bg-slate-200 overflow-hidden">
+          <div className="h-full w-1/3 rounded-full bg-[#3760ad]" style={{ animation: "ph-slide 1.3s ease-in-out infinite" }} />
+        </div>
       </div>
     </div>
   );
