@@ -7,7 +7,7 @@ import { Icon } from "@/components/Icon";
 const HIGHLIGHTS: { promise: string; body: string; icon: string | string[]; showBodyOnPhone?: boolean }[] = [
   {
     promise: "Get unlimited coaching feedback instantly.",
-    body: "A written report on any sermon: what's working and how to grow.",
+    body: "A written report on any sermon, available in minutes.",
     icon: ["M9 11l3 3L22 4", "M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"],
     showBodyOnPhone: true, // the one that most needs explaining
   },
@@ -27,7 +27,7 @@ export function FeatureHighlights() {
   return (
     <div className="grid sm:grid-cols-3 gap-2 mb-3 text-left">
       {HIGHLIGHTS.map((h) => (
-        <div key={h.promise} className="rounded-xl border border-slate-200 bg-white px-3 py-2.5">
+        <div key={h.promise} className="rounded-xl border border-slate-200 bg-white px-3.5 py-4">
           <div className="flex items-start gap-2">
             <span className="w-6 h-6 rounded-md bg-[#3760ad]/10 flex items-center justify-center shrink-0">
               <Icon d={h.icon} size={13} color="#3760ad" strokeWidth={2} />
