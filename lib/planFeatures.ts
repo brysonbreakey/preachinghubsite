@@ -3,7 +3,7 @@ export type PlanFeature = { name: string; description?: string };
 export const PLAN_FEATURES: PlanFeature[] = [
   { name: "Sermon Builder", description: "A full editor and a prep process you can customize, from text to pulpit." },
   { name: "Preaching Calendar", description: "Keep track of every sermon you're preparing." },
-  { name: "Coaching Reports", description: "Unlimited reports, with expert evaluation across 7 categories." },
+  { name: "Coaching Reports", description: "Submit any sermon and get a written report: what's working, how to grow, and your top coaching priority, across 7 categories. Unlimited." },
   { name: "Delivery Analysis", description: "Tone, volume, pace, and filler words, with a pacing chart." },
   { name: "Visual Delivery", description: "Body language and facial expressions." },
   { name: "Preaching Fingerprint Report", description: "An overall profile of your preaching in this season." },

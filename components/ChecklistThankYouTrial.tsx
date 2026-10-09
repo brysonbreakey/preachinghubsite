@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import posthog from "posthog-js";
 import { Footer } from "@/components/Footer";
 import { WhatsIncluded } from "@/components/WhatsIncluded";
+import { FeatureHighlights } from "@/components/FeatureHighlights";
 import { APP_URL } from "@/lib/urls";
 
 const PREFILL_KEY = "ph_checklist_thank_you_prefill";
@@ -183,7 +184,8 @@ export function ChecklistThankYouTrial() {
             </p>
           </div>
 
-          <WhatsIncluded label="See all features" defaultOpen />
+          <FeatureHighlights />
+          <WhatsIncluded label="See all features" />
 
           <div className="bg-white rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/60 p-6 sm:p-8">
             <form onSubmit={handleSubmit} noValidate className="space-y-3">
