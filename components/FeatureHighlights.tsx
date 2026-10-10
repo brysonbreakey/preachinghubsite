@@ -11,7 +11,7 @@ const HIGHLIGHTS: { promise: string; body: string; icon: string | string[]; }[] 
     icon: ["M9 11l3 3L22 4", "M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"],
   },
   {
-    promise: "Walk into the pulpit prepared.",
+    promise: "Walk into the pulpit with confidence.",
     body: "A full editor and prep steps, from idea to pulpit.",
     icon: ["M12 20h9", "M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"],
   },
