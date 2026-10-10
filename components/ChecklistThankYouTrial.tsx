@@ -176,8 +176,8 @@ export function ChecklistThankYouTrial() {
             </p>
             <p className="text-lg text-slate-500 leading-relaxed mb-4">
               Walk into the pulpit confident that your sermon is excellent, and that you wrote it yourself.
-              For the next 7 days, PreachingHub coaches you step by step, showing you what&apos;s working and
-              exactly how to grow.
+              With our sermon prep tools and AI coaching, you&apos;ll be ready to make your next sermon your
+              best one yet.
             </p>
             <p className="text-lg text-slate-500 leading-relaxed">
               Try it free.{" "}
