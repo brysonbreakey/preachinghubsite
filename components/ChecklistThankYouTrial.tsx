@@ -169,18 +169,19 @@ export function ChecklistThankYouTrial() {
         <div className="max-w-2xl mx-auto">
           <div className="text-center mb-8">
             <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 leading-[1.1] tracking-tight mb-3 mt-3">
-              Make Your Next Sermon Your Best One Yet
+              Watch Your Preaching Improve in 7 Days
             </h1>
             <p className="text-sm font-bold uppercase tracking-wide mb-5" style={{ color: "#3760ad" }}>
-              Free Trial · No Card Required
+              Free Trial · Cancel Anytime
             </p>
             <p className="text-lg text-slate-500 leading-relaxed mb-4">
-              Use the Sermon Builder to work through your message step by step with actionable coaching feedback
-              along the way, before you ever step into the pulpit.
+              Walk into the pulpit confident that your sermon is excellent, and that you wrote it yourself.
+              For the next 7 days, PreachingHub coaches you step by step, showing you what&apos;s working and
+              exactly how to grow.
             </p>
             <p className="text-lg text-slate-500 leading-relaxed">
               Try it free.{" "}
-              <strong className="font-semibold text-slate-700">No card required.</strong>
+              <strong className="font-semibold text-slate-700">Cancel anytime.</strong>
             </p>
           </div>
 
@@ -246,7 +247,7 @@ export function ChecklistThankYouTrial() {
               </button>
             </form>
             <p className="text-xs text-slate-400 text-center mt-3 leading-relaxed">
-              7-day free trial, <strong className="font-semibold text-slate-500">no card required.</strong> Full access to the entire PreachingHub platform.
+              7-day free trial, <strong className="font-semibold text-slate-500">cancel anytime.</strong> Full access to the entire PreachingHub platform.
             </p>
           </div>
         </div>
