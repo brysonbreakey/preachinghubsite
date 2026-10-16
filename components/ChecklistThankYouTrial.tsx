@@ -173,22 +173,15 @@ export function ChecklistThankYouTrial() {
             <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 leading-[1.1] tracking-tight mb-5 mt-3">
               Watch Your Preaching Improve in 7 Days or You Don&apos;t Pay
             </h1>
-            <p className="text-lg text-slate-500 leading-relaxed mb-4">
+            <p className="text-xl sm:text-2xl text-slate-700 leading-snug mb-4 max-w-xl mx-auto">
               Walk into the pulpit confident that your sermon is excellent, and that you wrote it yourself.
-              With our sermon prep tools and AI coaching, you&apos;ll be ready to make your next sermon your
-              best one yet.
-            </p>
-            <p className="text-lg text-slate-500 leading-relaxed mb-4">
-              Try it free for 7 days. After that, enjoy a special{" "}
-              <strong className="font-semibold text-slate-700">$29/month for your first 3 months</strong>, then $49/month.
             </p>
             <p className="text-sm font-bold uppercase tracking-wide" style={{ color: "#3760ad" }}>
-              Free to Start · Cancel Anytime
+              Free for 7 Days · Then $29/Month for 3 Months
             </p>
           </div>
 
           <FeatureHighlights />
-          <WhatsIncluded label="See all features" />
 
           {/* Proof, right above the ask. */}
           <div className="mb-8">
@@ -254,9 +247,15 @@ export function ChecklistThankYouTrial() {
               </button>
             </form>
             <p className="text-xs text-slate-400 text-center mt-3 leading-relaxed">
-              Add your card next &mdash; nothing is charged for 7 days. Then $29/month for your first 3 months, $49/month after.{" "}
-              <strong className="font-semibold text-slate-500">Cancel anytime.</strong> Full access to the entire PreachingHub platform.
+              Next, you&apos;ll add a card. You won&apos;t be charged for 7 days.
+              <br />
+              After that, it&apos;s $29/month for 3 months, then $49/month.{" "}
+              <strong className="font-semibold text-slate-500">Cancel anytime.</strong>
             </p>
+          </div>
+
+          <div className="mt-8">
+            <WhatsIncluded label="See all features" />
           </div>
 
         </div>
