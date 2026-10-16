@@ -7,6 +7,8 @@ import { YouTubeSearchInput } from "@/components/YouTubeSearchInput";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { SampleReportTeaser } from "@/components/SampleReportTeaser";
+import { Testimonial } from "@/components/Testimonial";
+import { BRENT_GARRARD } from "@/lib/testimonials";
 import { SampleReportModal, type CloseMethod } from "@/components/SampleReportModal";
 import { APP_URL, SIGNUP_URL } from "@/lib/urls";
 
@@ -603,6 +605,11 @@ export function TryPageContent({
             </p>
           </div>
         )}
+
+        {/* Proof, above the form. */}
+        <div className="mb-10">
+          <Testimonial {...BRENT_GARRARD} />
+        </div>
 
         <div className="grid lg:grid-cols-[1fr_300px] lg:grid-rows-[auto_1fr] gap-6 items-start">
           {/* Narrow screens: form first, then the sample, then "What you'll receive". Wide: top of the right column. */}

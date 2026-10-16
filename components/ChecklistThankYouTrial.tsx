@@ -6,6 +6,7 @@ import { Footer } from "@/components/Footer";
 import { WhatsIncluded } from "@/components/WhatsIncluded";
 import { FeatureHighlights } from "@/components/FeatureHighlights";
 import { Testimonial } from "@/components/Testimonial";
+import { BRENT_GARRARD } from "@/lib/testimonials";
 import { APP_URL } from "@/lib/urls";
 
 const PREFILL_KEY = "ph_checklist_thank_you_prefill";
@@ -170,7 +171,7 @@ export function ChecklistThankYouTrial() {
         <div className="max-w-2xl mx-auto">
           <div className="text-center mb-8">
             <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 leading-[1.1] tracking-tight mb-3 mt-3">
-              Watch Your Preaching Improve in 7 Days
+              Watch Your Preaching Improve in 7 Days or You Don&apos;t Pay
             </h1>
             <p className="text-sm font-bold uppercase tracking-wide mb-5" style={{ color: "#3760ad" }}>
               Free Trial · Cancel Anytime
@@ -188,6 +189,11 @@ export function ChecklistThankYouTrial() {
 
           <FeatureHighlights />
           <WhatsIncluded label="See all features" />
+
+          {/* Proof, right above the ask. */}
+          <div className="mb-8">
+            <Testimonial {...BRENT_GARRARD} />
+          </div>
 
           <div className="bg-white rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/60 p-6 sm:p-8">
             <form onSubmit={handleSubmit} noValidate className="space-y-3">
@@ -252,14 +258,6 @@ export function ChecklistThankYouTrial() {
             </p>
           </div>
 
-          {/* Proof, right under the ask. */}
-          <div className="mt-10">
-            <Testimonial
-              quote="After nearly 30 years of preaching, I value how PreachingHub’s sermon feedback affirms my strengths and offers practical ways to grow, helping me step into the pulpit more confident and better prepared."
-              name="Brent Garrard"
-              role="Lead Pastor, Augusta GA"
-            />
-          </div>
         </div>
       </section>
       <Footer />
