@@ -246,7 +246,7 @@ export function ChecklistThankYouTrial() {
               </button>
             </form>
             <p className="text-xs text-slate-400 text-center mt-3 leading-relaxed">
-              Next, you&apos;ll add a card. You won&apos;t be charged for 7 days.
+              Get your first report before you add a card. You won&apos;t be charged for 7 days.
               <br />
               After that, it&apos;s $29/month for 3 months, then $49/month.{" "}
               <strong className="font-semibold text-slate-500">Cancel anytime.</strong>
