@@ -51,7 +51,7 @@ function Stepper({
 
 export function TeamPricingCalculator() {
   const [seats, setSeats] = useState(2);
-  const [billing, setBilling] = useState<BillingPeriod>("annual");
+  const [billing, setBilling] = useState<BillingPeriod>("monthly");
 
   const pct = discountPercent(seats);
   const subtotal = seatSubtotal(seats, billing);
