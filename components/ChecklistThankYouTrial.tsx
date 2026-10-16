@@ -250,7 +250,7 @@ export function ChecklistThankYouTrial() {
                 className="cta-btn w-full inline-flex items-center justify-center gap-2 font-semibold px-6 py-4 rounded-xl text-base text-white disabled:opacity-60"
                 style={{ backgroundColor: "#3760ad" }}
               >
-                {submitting ? "Starting your trial…" : "Start My Free Trial →"}
+                {submitting ? "Starting your trial…" : "Start My Free Week →"}
               </button>
             </form>
             <p className="text-xs text-slate-400 text-center mt-3 leading-relaxed">
