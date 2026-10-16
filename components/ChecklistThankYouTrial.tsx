@@ -5,6 +5,7 @@ import posthog from "posthog-js";
 import { Footer } from "@/components/Footer";
 import { WhatsIncluded } from "@/components/WhatsIncluded";
 import { FeatureHighlights } from "@/components/FeatureHighlights";
+import { Testimonial } from "@/components/Testimonial";
 import { APP_URL } from "@/lib/urls";
 
 const PREFILL_KEY = "ph_checklist_thank_you_prefill";
@@ -249,6 +250,15 @@ export function ChecklistThankYouTrial() {
             <p className="text-xs text-slate-400 text-center mt-3 leading-relaxed">
               7-day free trial, <strong className="font-semibold text-slate-500">cancel anytime.</strong> Full access to the entire PreachingHub platform.
             </p>
+          </div>
+
+          {/* Proof, right under the ask. */}
+          <div className="mt-10">
+            <Testimonial
+              quote="After nearly 30 years of preaching, I value how PreachingHub’s sermon feedback affirms my strengths and offers practical ways to grow, helping me step into the pulpit more confident and better prepared."
+              name="Brent Garrard"
+              role="Lead Pastor, Augusta GA"
+            />
           </div>
         </div>
       </section>
