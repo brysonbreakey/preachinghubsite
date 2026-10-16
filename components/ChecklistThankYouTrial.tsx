@@ -173,7 +173,7 @@ export function ChecklistThankYouTrial() {
               Watch Your Preaching Improve in 7 Days or You Don&apos;t Pay
             </h1>
             <p className="text-xl sm:text-2xl text-slate-700 leading-snug mb-4 max-w-xl mx-auto">
-              Walk into the pulpit confident that your sermon is excellent, and that you wrote it yourself.
+              One 5-minute step done twice and you&apos;ll walk into the pulpit confident that your sermon is excellent ... and that you wrote it yourself.
             </p>
             <p className="text-sm font-bold uppercase tracking-wide" style={{ color: "#3760ad" }}>
               Free for 7 Days · Then $29/Month for 3 Months
