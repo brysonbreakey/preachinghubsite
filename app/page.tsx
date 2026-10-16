@@ -189,7 +189,7 @@ function Hero() {
         <div className="text-center lg:text-left min-w-0">
           <div className="hero-badge inline-flex items-center gap-2 bg-white/10 border border-white/20 backdrop-blur text-white text-xs font-semibold px-3 py-1.5 rounded-full mb-8 uppercase tracking-wide">
             <span className="w-1.5 h-1.5 rounded-full bg-[#FBBF24] inline-block"></span>
-            7-Day Free Trial &middot; Start Free, Cancel Anytime
+            Start Free. Cancel Anytime.
           </div>
           <h1 className="hero-h1 text-5xl sm:text-6xl font-black text-white leading-[1.05] tracking-tight mb-6">
             What if every sermon was better than your last?
@@ -197,17 +197,14 @@ function Hero() {
           <p className="hero-sub text-xl text-blue-100/80 max-w-xl mx-auto lg:mx-0 mb-10 leading-relaxed">
             PreachingHub gives every preacher what most can only get from an expensive coach &mdash; structured prep from text to pulpit, plus detailed feedback on your content, voice, and delivery for every sermon in minutes.
           </p>
-          <div className="hero-cta flex flex-col sm:flex-row items-center sm:items-start justify-center lg:justify-start gap-3">
-            <div className="flex flex-col items-center gap-2 w-full sm:w-auto">
+          <div className="hero-cta flex flex-col items-center lg:items-start">
+            <div className="flex flex-col items-center gap-2 w-full sm:w-fit">
               <a href={SIGNUP_URL} className="cta-btn w-full sm:w-auto inline-flex items-center justify-center gap-2 text-[#0b1230] font-bold px-7 py-4 rounded-full text-base shadow-lg bg-white hover:bg-blue-50">
                 Start Your Next Sermon
                 <Icon d="M5 12h14M12 5l7 7-7 7" size={16} color="#0b1230" strokeWidth={2.5} />
               </a>
-              <p className="text-xs text-blue-100/60">Start free, cancel anytime.</p>
+              <p className="text-xs text-blue-100/60">Start Free. Cancel anytime.</p>
             </div>
-            <a href="#features" className="w-full sm:w-auto inline-flex items-center justify-center gap-2 text-white/80 hover:text-white border border-white/20 hover:border-white/40 font-semibold px-7 py-4 rounded-full text-base transition-colors">
-              See what&apos;s included
-            </a>
           </div>
         </div>
 
@@ -497,42 +494,6 @@ function ProcessCycle() {
   );
 }
 
-// ─── How It Works (video) ──────────────────────────────────────────────────────
-
-function HowItWorksVideo() {
-  return (
-    <section className="py-16 sm:py-24 px-6 bg-slate-50">
-      <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-12" data-animate="fade-up">
-          <p className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: "#3760ad" }}>How It Works</p>
-          <h2 className="text-4xl sm:text-5xl font-extrabold text-slate-900 mb-4 tracking-tight">
-            See It In Action
-          </h2>
-          <p className="text-lg text-slate-500 max-w-xl mx-auto">
-            A 60-second look at prepping, rehearsing, and growing with every sermon.
-          </p>
-        </div>
-
-        <div
-          className="rounded-2xl overflow-hidden shadow-xl shadow-blue-100/50 border border-slate-200 bg-black"
-          data-animate="scale-up"
-          data-delay="100"
-        >
-          <video
-            className="w-full aspect-video"
-            controls
-            preload="metadata"
-            poster="/video/explainer-poster.jpg"
-            playsInline
-          >
-            <source src="/video/explainer.mp4" type="video/mp4" />
-          </video>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 // ─── Testimonials ─────────────────────────────────────────────────────────────
 
 function Testimonials() {
@@ -654,7 +615,6 @@ export default function Page() {
       <ProblemStatement />
       <Features />
       <ProcessCycle />
-      <HowItWorksVideo />
       <Testimonials />
       <AboutCompany />
       <PricingTeaser />
