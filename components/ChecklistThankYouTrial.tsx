@@ -170,20 +170,16 @@ export function ChecklistThankYouTrial() {
       <section className="bg-slate-50 pt-12 pb-16 px-6">
         <div className="max-w-2xl mx-auto">
           <div className="text-center mb-8">
-            <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 leading-[1.1] tracking-tight mb-3 mt-3">
+            <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 leading-[1.1] tracking-tight mb-5 mt-3">
               Watch Your Preaching Improve in 7 Days or You Don&apos;t Pay
             </h1>
-            <p className="text-sm font-bold uppercase tracking-wide mb-5" style={{ color: "#3760ad" }}>
-              Free Trial · Cancel Anytime
-            </p>
             <p className="text-lg text-slate-500 leading-relaxed mb-4">
               Walk into the pulpit confident that your sermon is excellent, and that you wrote it yourself.
               With our sermon prep tools and AI coaching, you&apos;ll be ready to make your next sermon your
               best one yet.
             </p>
-            <p className="text-lg text-slate-500 leading-relaxed">
-              Try it free.{" "}
-              <strong className="font-semibold text-slate-700">Cancel anytime.</strong>
+            <p className="text-sm font-bold uppercase tracking-wide" style={{ color: "#3760ad" }}>
+              Free to Start · Cancel Anytime
             </p>
           </div>
 
