@@ -178,6 +178,10 @@ export function ChecklistThankYouTrial() {
               With our sermon prep tools and AI coaching, you&apos;ll be ready to make your next sermon your
               best one yet.
             </p>
+            <p className="text-lg text-slate-500 leading-relaxed mb-4">
+              Try it free for 7 days. After that, enjoy a special{" "}
+              <strong className="font-semibold text-slate-700">$29/month for your first 3 months</strong>, then $49/month.
+            </p>
             <p className="text-sm font-bold uppercase tracking-wide" style={{ color: "#3760ad" }}>
               Free to Start · Cancel Anytime
             </p>
@@ -250,7 +254,8 @@ export function ChecklistThankYouTrial() {
               </button>
             </form>
             <p className="text-xs text-slate-400 text-center mt-3 leading-relaxed">
-              7-day free trial, <strong className="font-semibold text-slate-500">cancel anytime.</strong> Full access to the entire PreachingHub platform.
+              Add your card next &mdash; nothing is charged for 7 days. Then $29/month for your first 3 months, $49/month after.{" "}
+              <strong className="font-semibold text-slate-500">Cancel anytime.</strong> Full access to the entire PreachingHub platform.
             </p>
           </div>
 
