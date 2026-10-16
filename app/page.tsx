@@ -189,7 +189,7 @@ function Hero() {
         <div className="text-center lg:text-left min-w-0">
           <div className="hero-badge inline-flex items-center gap-2 bg-white/10 border border-white/20 backdrop-blur text-white text-xs font-semibold px-3 py-1.5 rounded-full mb-8 uppercase tracking-wide">
             <span className="w-1.5 h-1.5 rounded-full bg-[#FBBF24] inline-block"></span>
-            7-Day Free Trial &middot; No Credit Card Required
+            7-Day Free Trial &middot; Start Free, Cancel Anytime
           </div>
           <h1 className="hero-h1 text-5xl sm:text-6xl font-black text-white leading-[1.05] tracking-tight mb-6">
             What if every sermon was better than your last?
@@ -203,7 +203,7 @@ function Hero() {
                 Start Your Next Sermon
                 <Icon d="M5 12h14M12 5l7 7-7 7" size={16} color="#0b1230" strokeWidth={2.5} />
               </a>
-              <p className="text-xs text-blue-100/60">Free to start. No card required.</p>
+              <p className="text-xs text-blue-100/60">Start free, cancel anytime.</p>
             </div>
             <a href="#features" className="w-full sm:w-auto inline-flex items-center justify-center gap-2 text-white/80 hover:text-white border border-white/20 hover:border-white/40 font-semibold px-7 py-4 rounded-full text-base transition-colors">
               See what&apos;s included
@@ -604,7 +604,7 @@ function AboutCompany() {
             Start Your Free Trial
             <Icon d="M5 12h14M12 5l7 7-7 7" size={16} color="white" strokeWidth={2.5} />
           </a>
-          <p className="text-slate-400 text-xs mt-3">No credit card required.</p>
+          <p className="text-slate-400 text-xs mt-3">Start free, cancel anytime.</p>
         </div>
       </div>
     </section>
@@ -626,7 +626,7 @@ function FinalCTA() {
       <div className="relative max-w-2xl mx-auto" data-animate="fade-up">
         <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 backdrop-blur text-white text-xs font-semibold px-3 py-1.5 rounded-full mb-8 uppercase tracking-wide">
           <span className="w-1.5 h-1.5 rounded-full bg-[#FBBF24] inline-block"></span>
-          7-Day Free Trial &middot; No Credit Card Required
+          7-Day Free Trial &middot; Start Free, Cancel Anytime
         </div>
         <h2 className="text-4xl sm:text-5xl font-black text-white leading-[1.05] tracking-tight mb-6">
           Ready to make your next sermon your best one yet?
@@ -638,7 +638,7 @@ function FinalCTA() {
           Start Your Free Trial
           <Icon d="M5 12h14M12 5l7 7-7 7" size={16} color="#0b1230" strokeWidth={2.5} />
         </a>
-        <p className="text-blue-100/60 text-xs mt-5">No credit card required. $29/month for your first 3 months, then $49/month.</p>
+        <p className="text-blue-100/60 text-xs mt-5">Start free, cancel anytime. $29/month for your first 3 months, then $49/month.</p>
       </div>
     </section>
   );

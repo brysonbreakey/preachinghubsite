@@ -22,7 +22,7 @@ export function PricingCard() {
       >
         Start Your Free Trial
       </a>
-      <p className="text-xs text-slate-400 text-center mt-3">7-day free trial. No credit card required to start.</p>
+      <p className="text-xs text-slate-400 text-center mt-3">7-day free trial. Start free, cancel anytime.</p>
     </>
   );
 
