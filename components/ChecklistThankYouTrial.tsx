@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import posthog from "posthog-js";
-import { Footer } from "@/components/Footer";
 import { WhatsIncluded } from "@/components/WhatsIncluded";
 import { FeatureHighlights } from "@/components/FeatureHighlights";
 import { Testimonial } from "@/components/Testimonial";
@@ -260,7 +259,6 @@ export function ChecklistThankYouTrial() {
 
         </div>
       </section>
-      <Footer />
     </main>
   );
 }
