@@ -158,6 +158,19 @@ export default function PrivacyPage() {
           <P>
             <a href="mailto:bryson@preachinghub.com" className="font-semibold" style={{ color: "#3760ad" }}>bryson@preachinghub.com</a>
           </P>
+
+          <section id="sms-privacy" className="mt-16 pt-4 border-t border-slate-200 scroll-mt-28">
+            <H2>SMS Privacy Policy</H2>
+            <P>
+              PREACHINGHUB LLC and its affiliates (&ldquo;We&rdquo; or &ldquo;Us&rdquo;) are offering a mobile messaging program (the &ldquo;Program&rdquo;). This SMS Privacy Policy applies to the Program. By opting in to or participating in any of our Programs, you consent to this SMS Privacy Policy.
+            </P>
+            <P>
+              We respect your privacy. No mobile opt-in information will be shared with third parties or affiliates for marketing or promotional purposes. We will use information you provide Us, which includes your phone number and any other personal information you provide (such as name, email, address, etc.) to transmit your mobile messages and respond to you. This includes, but is not limited to, sharing your information with platform providers, phone companies, and other vendors who assist Us in the preparation and delivery of mobile messages. Nonetheless, We reserve the right at all times to disclose any information as necessary to satisfy any law, regulation or governmental request, to avoid liability, or to protect Our rights or property.
+            </P>
+            <P>
+              When you complete forms online or otherwise provide Us information in connection with the Program, you agree to provide accurate, complete, and true information. You agree not to use a false or misleading name or a name that you are not authorized to use. If, in Our sole discretion, We believe that any such information is untrue, inaccurate, or incomplete, or you have opted into the Program for an ulterior purpose, We may refuse you access to the Program and pursue any appropriate legal remedies. This Privacy Policy is strictly limited to the Program and has no effect on any other privacy policy(ies) that may govern the relationship between you and Us in other contexts.
+            </P>
+          </section>
         </div>
       </section>
       <Footer />

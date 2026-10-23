@@ -11,6 +11,10 @@ function H2({ children }: { children: React.ReactNode }) {
   return <h2 className="text-2xl font-extrabold text-slate-900 mt-12 mb-4 tracking-tight">{children}</h2>;
 }
 
+function H3({ children }: { children: React.ReactNode }) {
+  return <h3 className="text-lg font-bold text-slate-900 mt-8 mb-2">{children}</h3>;
+}
+
 function P({ children }: { children: React.ReactNode }) {
   return <p className="text-slate-600 leading-relaxed mb-4">{children}</p>;
 }
@@ -146,6 +150,53 @@ export default function TermsPage() {
             <li><span className="font-semibold text-slate-900">Assignment:</span> You may not assign these Terms without our prior written consent. We may assign these Terms in connection with a merger, acquisition, or sale of assets.</li>
             <li><span className="font-semibold text-slate-900">Contact:</span> Questions about these Terms may be directed to <a href="mailto:bryson@preachinghub.com" className="font-semibold" style={{ color: "#3760ad" }}>bryson@preachinghub.com</a>.</li>
           </UL>
+
+          <section id="sms-terms" className="mt-16 pt-4 border-t border-slate-200 scroll-mt-28">
+            <H2>SMS Marketing Terms and Conditions</H2>
+            <P>
+              PREACHINGHUB LLC and its affiliates (&ldquo;We&rdquo; or &ldquo;Us&rdquo;) are offering a mobile messaging program (the &ldquo;Program&rdquo;), which you agree to use and participate in subject to these SMS Marketing Terms and Conditions (the &ldquo;Terms&rdquo;). By opting in to or participating in any of our Programs, you accept and agree to these terms and conditions. PLEASE READ THESE TERMS CAREFULLY, AS THEY CONSTITUTE A LEGAL AGREEMENT BETWEEN YOU AND US.
+            </P>
+
+            <H3>User Opt In</H3>
+            <P>
+              Program allows users to receive SMS/MMS mobile messages or other marketing and informational communications by opting into the Program, such as through online or application-based enrollment forms or by texting a keyword to one of our phone numbers (such as a traditional 10-digit phone number or a toll-free number) or &ldquo;short codes&rdquo; (a 5 or 6-digit number that We use to exchange SMS/MMS with you), to which you may need to respond to confirm your opt-in. Regardless of the opt-in method you used to join the Program, you agree that these Terms apply to your participation in the Program. By participating in the Program, you agree to receive text messages, including automated text messages, at the phone number associated with your opt-in, and you understand that consent to these terms is not required to make any purchase from Us. While you consent to receive messages and calls sent using an autodialer, this shall not be interpreted to suggest or imply that any of Our mobile messages are sent using an automatic telephone dialing system (&ldquo;ATDS&rdquo; or &ldquo;autodialer&rdquo;), and you and We agree that the system we use to send Our messages is not an ATDS.
+            </P>
+
+            <H3>User Opt Out</H3>
+            <P>
+              If you do not wish to continue participating in the Program or no longer agree to these Terms, you agree to reply STOP, UNSUBSCRIBE, REMOVE, CANCEL, END, QUIT, OPT OUT or ARRET to any mobile message from Us to opt out of the Program. You may receive one additional mobile message confirming your decision to opt out. You understand and agree that these opt-out options are the only reasonable methods of opting out. You also understand and agree that any other method of opting out, including, but not limited to, texting words other than those set forth above or verbally requesting one of our employees to remove you from our list, is not a reasonable means of opting out.
+            </P>
+
+            <H3>Support Instructions</H3>
+            <P>
+              For support regarding the Program, text &ldquo;HELP&rdquo; in reply to the message you received from Us, or send Us an email at <a href="mailto:bryson@preachinghub.com" className="font-semibold" style={{ color: "#3760ad" }}>bryson@preachinghub.com</a>. For further opt-out support, please contact our SMS platform provider, SlickText, at <a href="mailto:support@slicktext.com" className="font-semibold" style={{ color: "#3760ad" }}>support@slicktext.com</a>.
+            </P>
+
+            <H3>Cost and Frequency</H3>
+            <P>
+              Although We do not charge you for our messages, message and data rates may apply from your wireless carrier. The Program involves recurring mobile messages, which may vary in frequency based on, among other factors, your level of interaction with Us.
+            </P>
+
+            <H3>MMS Disclosure</H3>
+            <P>
+              The Program will attempt to send SMS MTs (terminating messages) if your mobile device does not support MMS messaging.
+            </P>
+
+            <H3>Our Disclaimer of Warranty</H3>
+            <P>
+              The Program is offered on an &quot;as-is&quot; basis and may not be always available in all areas and may not continue to work in the event of product, software, coverage or other changes made by your wireless carrier. We will not be liable for any delays or failures in the receipt of any mobile messages connected with this Program. Carriers are not liable for delayed or undelivered mobile messages.
+            </P>
+
+            <H3>Participant Requirements</H3>
+            <P>
+              You must have a wireless device of your own, capable of two-way messaging, be using a participating wireless carrier, and be a wireless service subscriber with text messaging service. Not all cellular phone providers carry the necessary service to participate. Check your phone capabilities for specific text messaging instructions.
+            </P>
+
+            <H3>SMS Privacy Policy</H3>
+            <P>
+              The Privacy Policy can be found at <a href="https://slk1.io/5bqh" className="font-semibold break-all" style={{ color: "#3760ad" }}>https://slk1.io/5bqh</a>.
+            </P>
+          </section>
         </div>
       </section>
       <Footer />
