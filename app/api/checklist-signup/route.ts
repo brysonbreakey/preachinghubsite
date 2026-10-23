@@ -3,6 +3,7 @@ import { resolveMx } from "dns/promises";
 import { randomBytes } from "crypto";
 import { waitUntil } from "@vercel/functions";
 import { addChecklistContact } from "@/lib/kit";
+import { upsertChecklistContact } from "@/lib/slicktext";
 import { supabaseAdmin } from "@/lib/supabase";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
@@ -41,7 +42,7 @@ export async function POST(req: NextRequest) {
 
   // Deduplication: if this email already submitted recently, don't create
   // another row, re-tag them in Kit, or (most importantly) re-fire the
-  // Zapier/Textla webhook — that would text the same person a duplicate
+  // SlickText automation — that would text the same person a duplicate
   // link every time they resubmit or double-click.
   const dedupCutoff = new Date(Date.now() - DEDUP_WINDOW_HOURS * 60 * 60 * 1000).toISOString();
   const { data: recentLead } = await supabaseAdmin()
@@ -57,7 +58,7 @@ export async function POST(req: NextRequest) {
   }
 
   // Generate the public lead token separately from any database id, and
-  // insert it into Supabase before sending it to Kit/Zapier — the token in
+  // insert it into Supabase before sending it to Kit/SlickText — the token in
   // the link is only useful if the row it points to already exists.
   // At 8 hex chars the token space is small enough that a collision is
   // possible at scale, so this inserts (rather than upserts) and retries
@@ -88,14 +89,10 @@ export async function POST(req: NextRequest) {
 
   const checklistLink = `${SITE_URL}/c/${leadToken}`;
 
-  // Kit's email isn't character-constrained, so it gets the full direct
-  // link. Zapier/SMS gets the short /o/:lead_token version below instead —
-  // the full link is 129 characters, which alone eats almost an entire SMS
-  // segment.
-  // Both land on the plain free-trial page now — no signed offer token. The short
-  // /o/:lead_token form is kept so links already texted/emailed keep working.
+  // Kit's email links straight to the free-trial page, no signed offer token.
+  // (The short /o/:lead_token redirect stays in place so links already
+  // texted/emailed keep working.)
   const offerLink = `${SITE_URL}/checklist/thank-you`;
-  const offerShortLink = `${SITE_URL}/o/${leadToken}`;
 
   try {
     await addChecklistContact({ email, firstName, lastName, offerLink });
@@ -107,33 +104,15 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Side channel to Zapier (Textla contact + SMS with the checklist link).
-  // Best-effort only — a Zapier/Textla hiccup must never fail the signup
-  // the visitor is actually waiting on — but it still needs waitUntil to
-  // keep running after the response is sent, since Vercel can otherwise
-  // kill an un-awaited fetch the moment the function returns.
-  const zapierWebhookUrl = process.env.ZAPIER_CHECKLIST_WEBHOOK_URL;
-  if (zapierWebhookUrl) {
-    waitUntil(
-      fetch(zapierWebhookUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone, first_name: firstName, last_name: lastName, checklistLink, offerLink: offerShortLink }),
-      })
-        .then((res) => {
-          if (!res.ok) {
-            console.error("checklist-signup: zapier webhook non-OK response", res.status);
-          } else {
-            console.log("checklist-signup: zapier webhook sent OK");
-          }
-        })
-        .catch((err) => {
-          console.error("checklist-signup: zapier webhook failed", err);
-        })
-    );
-  } else {
-    console.error("checklist-signup: ZAPIER_CHECKLIST_WEBHOOK_URL not set");
-  }
+  // SlickText: create/update the contact with the checklist link in its
+  // `checklist_link` field — a SlickText automation texts them when that field
+  // changes. Best-effort (the helper never throws): a texting hiccup must never
+  // fail the signup the visitor is waiting on, but it needs waitUntil to keep
+  // running after the response is sent, since Vercel can otherwise kill an
+  // un-awaited fetch the moment the function returns.
+  waitUntil(
+    upsertChecklistContact({ phone, firstName, lastName, email, checklistLink })
+  );
 
   return NextResponse.json({ ok: true });
 }

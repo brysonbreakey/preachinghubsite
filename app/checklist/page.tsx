@@ -73,7 +73,7 @@ export default function ChecklistPage() {
       }
       posthog.capture("checklist_signup_submitted");
 
-      // The checklist is emailed (via Kit) and texted (via Zapier/Textla) —
+      // The checklist is emailed (via Kit) and texted (via SlickText) —
       // this page's job is done, so hand off to the VSL thank-you page.
       // Name/email carry over via sessionStorage (not a URL query param) so
       // they don't end up in server logs, browser history, or a copy-pasted

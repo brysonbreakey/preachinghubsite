@@ -1,0 +1,98 @@
+// SlickText v2 API (https://api.slicktext.com/docs/v2/overview). The API has no
+// "send a text" call: we create/update the contact with the personalised link in
+// the `checklist_link` custom field, and a SlickText automation that triggers on
+// that field changing sends the text.
+const SLICKTEXT_BASE = 'https://dev.slicktext.com/v1'
+const TIMEOUT_MS = 8000
+
+export type ChecklistContact = {
+  phone: string
+  firstName: string
+  lastName?: string
+  email: string
+  checklistLink: string
+}
+
+function digitsOnly(value: unknown): string {
+  return String(value ?? '').replace(/\D/g, '')
+}
+
+async function request(path: string, apiKey: string, init: RequestInit = {}) {
+  return fetch(`${SLICKTEXT_BASE}${path}`, {
+    ...init,
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+      ...(init.headers ?? {}),
+    },
+    signal: AbortSignal.timeout(TIMEOUT_MS),
+  })
+}
+
+async function errorSummary(res: Response): Promise<string> {
+  const text = await res.text().catch(() => '')
+  return `${res.status} ${text.slice(0, 300)}`
+}
+
+// The docs don't say whether POST /contacts updates an existing number, so if it
+// refuses we look the contact up by phone and update it instead. The lookup is
+// only trusted if the contact it returns really has this number: the filter is
+// undocumented, and an ignored filter would hand back someone else.
+async function findContactId(brandId: string, apiKey: string, phone10: string): Promise<number | string | null> {
+  for (const candidate of [`+1${phone10}`, phone10]) {
+    const res = await request(`/brands/${brandId}/contacts?mobile_number=${encodeURIComponent(candidate)}&limit=50`, apiKey)
+    if (!res.ok) continue
+    const body = await res.json().catch(() => null)
+    const match = (body?.data ?? []).find((c: { mobile_number?: unknown }) => digitsOnly(c.mobile_number).slice(-10) === phone10)
+    if (match?.contact_id != null) return match.contact_id
+  }
+  return null
+}
+
+// Best-effort: never throws, so a SlickText problem can't fail the signup.
+export async function upsertChecklistContact(contact: ChecklistContact): Promise<void> {
+  const apiKey = process.env.SLICKTEXT_API_KEY
+  const brandId = process.env.SLICKTEXT_BRAND_ID
+  if (!apiKey || !brandId) {
+    console.error('slicktext: SLICKTEXT_API_KEY / SLICKTEXT_BRAND_ID not set')
+    return
+  }
+
+  const digits = digitsOnly(contact.phone)
+  const phone10 = digits.length === 11 && digits.startsWith('1') ? digits.slice(1) : digits
+  if (phone10.length !== 10) {
+    console.error('slicktext: skipped, phone is not a 10-digit US number')
+    return
+  }
+
+  const body = JSON.stringify({
+    mobile_number: `+1${phone10}`,
+    first_name: contact.firstName,
+    last_name: contact.lastName ?? '',
+    email: contact.email,
+    custom_fields: { checklist_link: contact.checklistLink },
+  })
+
+  try {
+    const created = await request(`/brands/${brandId}/contacts`, apiKey, { method: 'POST', body })
+    if (created.ok) {
+      console.log('slicktext: contact created')
+      return
+    }
+    const createFailure = await errorSummary(created)
+
+    const existingId = await findContactId(brandId, apiKey, phone10)
+    if (existingId == null) {
+      console.error('slicktext: create failed and no existing contact found:', createFailure)
+      return
+    }
+    const updated = await request(`/brands/${brandId}/contacts/${existingId}`, apiKey, { method: 'PUT', body })
+    if (updated.ok) {
+      console.log('slicktext: existing contact updated')
+    } else {
+      console.error('slicktext: update failed:', await errorSummary(updated))
+    }
+  } catch (err) {
+    console.error('slicktext: request failed', err)
+  }
+}
