@@ -30,7 +30,7 @@ export default function PrivacyPage() {
       <section className="pt-32 pb-24 px-6 bg-white">
         <div className="max-w-3xl mx-auto">
           <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 mb-3 tracking-tight">Privacy Policy</h1>
-          <p className="text-sm text-slate-400 mb-10">Updated August 2026</p>
+          <p className="text-sm text-slate-400 mb-10">Updated October 2026</p>
 
           <P>
             This Privacy Policy explains how PreachingHub (&ldquo;PreachingHub,&rdquo; &ldquo;we,&rdquo; &ldquo;us,&rdquo; or &ldquo;our&rdquo;) collects, uses, discloses, and protects information when you use our website (preachinghub.com) and application (app.preachinghub.com) (together, the &ldquo;Service&rdquo;).
@@ -47,6 +47,7 @@ export default function PrivacyPage() {
             <li>Payment information: billing name and address, and payment method details. Full card numbers are never stored on our servers — payments are processed by Stripe, and Stripe&apos;s own privacy policy governs how they handle that data.</li>
             <li>Sermon content: sermon manuscripts, outlines, notes, and other text you write or upload for coaching and evaluation.</li>
             <li>Video uploads: if you use the visual delivery evaluation feature, video files you upload of your preaching.</li>
+            <li>Phone number: if you choose to provide one, for example to receive text messages from us (see the SMS Privacy Policy below).</li>
             <li>Communications: messages you send us for support, feedback, or testimonials.</li>
           </UL>
 
@@ -87,6 +88,7 @@ export default function PrivacyPage() {
             <li>Amazon Web Services (Rekognition) — analyzes uploaded video for delivery-related signals (e.g., pacing, expression, posture) as part of the evaluation pipeline. This analysis is used internally to generate coaching feedback and is not published or shared as raw data.</li>
             <li>Stripe — processes payments and manages billing.</li>
             <li>Supabase — hosts our application database.</li>
+            <li>SlickText — our SMS platform provider; delivers text messages to people who opt in to our mobile messaging program (see the SMS Privacy Policy below).</li>
             <li>Vercel — hosts our web application and infrastructure.</li>
           </UL>
           <P>These providers only receive the information necessary to perform their function and are contractually restricted from using it for other purposes.</P>

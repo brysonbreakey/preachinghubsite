@@ -194,7 +194,7 @@ export default function TermsPage() {
 
             <H3>SMS Privacy Policy</H3>
             <P>
-              The Privacy Policy can be found at <a href="https://slk1.io/5bqh" className="font-semibold break-all" style={{ color: "#3760ad" }}>https://slk1.io/5bqh</a>.
+              The Privacy Policy can be found at <a href="https://preachinghub.com/privacy#sms-privacy" className="font-semibold break-all" style={{ color: "#3760ad" }}>https://preachinghub.com/privacy#sms-privacy</a>.
             </P>
           </section>
         </div>
