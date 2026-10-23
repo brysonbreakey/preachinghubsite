@@ -5,12 +5,12 @@
 const SLICKTEXT_BASE = 'https://dev.slicktext.com/v1'
 const TIMEOUT_MS = 8000
 
-export type ChecklistContact = {
+export type SlickTextContact = {
   phone: string
   firstName: string
   lastName?: string
-  email: string
-  checklistLink: string
+  email?: string
+  customFields?: Record<string, string>
 }
 
 function digitsOnly(value: unknown): string {
@@ -50,7 +50,7 @@ async function findContactId(brandId: string, apiKey: string, phone10: string): 
 }
 
 // Best-effort: never throws, so a SlickText problem can't fail the signup.
-export async function upsertChecklistContact(contact: ChecklistContact): Promise<void> {
+async function upsertContact(contact: SlickTextContact): Promise<void> {
   const apiKey = process.env.SLICKTEXT_API_KEY
   const brandId = process.env.SLICKTEXT_BRAND_ID
   if (!apiKey || !brandId) {
@@ -69,8 +69,8 @@ export async function upsertChecklistContact(contact: ChecklistContact): Promise
     mobile_number: `+1${phone10}`,
     first_name: contact.firstName,
     last_name: contact.lastName ?? '',
-    email: contact.email,
-    custom_fields: { checklist_link: contact.checklistLink },
+    ...(contact.email ? { email: contact.email } : {}),
+    ...(contact.customFields ? { custom_fields: contact.customFields } : {}),
   })
 
   try {
@@ -95,4 +95,22 @@ export async function upsertChecklistContact(contact: ChecklistContact): Promise
   } catch (err) {
     console.error('slicktext: request failed', err)
   }
+}
+
+// Checklist signup: the link goes in `checklist_link`; a SlickText automation texts
+// them when that field changes.
+export function upsertChecklistContact(contact: {
+  phone: string
+  firstName: string
+  lastName?: string
+  email: string
+  checklistLink: string
+}): Promise<void> {
+  const { checklistLink, ...rest } = contact
+  return upsertContact({ ...rest, customFields: { checklist_link: checklistLink } })
+}
+
+// /try free-evaluation form: just name and phone, no automation field.
+export function upsertTryContact(contact: { phone: string; firstName: string; lastName?: string }): Promise<void> {
+  return upsertContact(contact)
 }
