@@ -160,7 +160,7 @@ export function ChecklistThankYouTrial() {
     <main>
       {submitting && <SettingUpOverlay firstName={splitName(name).firstName} />}
       {/* Same confirmation banner as before — unchanged. */}
-      <div className="bg-blue-50 border-b border-blue-100 py-4 px-6 text-center">
+      <div className="bg-blue-50 border-b border-blue-100 py-3 px-6 text-center">
         <p className="text-sm sm:text-base text-blue-900">
           🎉 Your checklist is on its way — check your inbox (and spam folder) in a few minutes.
         </p>
@@ -171,9 +171,9 @@ export function ChecklistThankYouTrial() {
           target="_blank"
           rel="noopener noreferrer"
           onClick={() => posthog.capture("checklist_pdf_opened", { page: "checklist_thank_you" })}
-          className="mt-3 inline-flex items-center gap-2 rounded-lg border-2 border-[#3760ad] bg-white px-5 py-2.5 text-sm sm:text-base font-semibold text-[#3760ad] shadow-sm hover:bg-blue-100 transition-colors"
+          className="mt-2.5 inline-flex items-center gap-1.5 rounded-lg border-2 border-[#3760ad] bg-white px-4 py-1.5 text-sm font-semibold text-[#3760ad] shadow-sm hover:bg-blue-100 transition-colors"
         >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="M12 3v12" />
             <path d="m7 10 5 5 5-5" />
             <path d="M5 21h14" />
