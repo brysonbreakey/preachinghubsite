@@ -164,6 +164,20 @@ export function ChecklistThankYouTrial() {
         <p className="text-sm text-blue-900">
           🎉 Your checklist is on its way — check your inbox (and spam folder) in a few minutes.
         </p>
+        {/* Opens in a new tab, so this page (and the offer below) stays open behind it.
+            Deliberately a quiet text link, not a button — the form below is the main action. */}
+        <p className="text-sm text-blue-900 mt-0.5">
+          Want it right now?{" "}
+          <a
+            href="/downloads/pre-preaching-checklist.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => posthog.capture("checklist_pdf_opened", { page: "checklist_thank_you" })}
+            className="font-semibold underline underline-offset-2"
+          >
+            Open the PDF in a new tab ↗
+          </a>
+        </p>
       </div>
 
       <section className="bg-slate-50 pt-12 pb-16 px-6">
