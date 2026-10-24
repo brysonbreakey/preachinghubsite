@@ -95,7 +95,7 @@ export async function POST(req: NextRequest) {
   const offerLink = `${SITE_URL}/checklist/thank-you`;
 
   try {
-    await addChecklistContact({ email, firstName, lastName, offerLink });
+    await addChecklistContact({ email, firstName, lastName, offerLink, phone });
   } catch (err) {
     console.error("checklist-signup: kit failed", err);
     return NextResponse.json(

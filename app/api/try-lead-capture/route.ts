@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
   // This is a side-channel lead capture (Kit) — it must never block or
   // fail the actual free-evaluation flow, so failures here are only logged.
   try {
-    await addTryLeadContact({ email, firstName, lastName });
+    await addTryLeadContact({ email, firstName, lastName, phone });
   } catch (err) {
     console.error("try-lead-capture: kit failed", err);
   }

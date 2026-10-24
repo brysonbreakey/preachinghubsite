@@ -85,11 +85,13 @@ export async function addChecklistContact({
   firstName,
   lastName,
   offerLink,
+  phone,
 }: {
   email: string
   firstName?: string
   lastName?: string
   offerLink?: string
+  phone?: string
 }): Promise<void> {
   // offer_link is a Kit custom field, referenced in a follow-up email as
   // {{ subscriber.offer_link }} so the button always points at the exact same
@@ -100,6 +102,7 @@ export async function addChecklistContact({
   const fields: Record<string, string> = {}
   if (offerLink) fields.offer_link = offerLink
   if (lastName) fields.last_name = lastName
+  if (phone) fields.mobile_phone = phone
 
   await upsertContact({
     email,
@@ -117,16 +120,24 @@ export async function addTryLeadContact({
   email,
   firstName,
   lastName,
+  phone,
 }: {
   email: string
   firstName?: string
   lastName?: string
+  phone?: string
 }): Promise<void> {
+  // "Mobile Phone" is a Kit custom field (key mobile_phone). Like last_name, it's
+  // only sent when there is one, so a form without a phone field (the
+  // /checklist/thank-you evaluator) can't blank a number already on file.
+  const fields: Record<string, string> = {}
+  if (lastName) fields.last_name = lastName
+  if (phone) fields.mobile_phone = phone
   await upsertContact({
     email,
     firstName,
     tags: ['try'],
-    fields: lastName ? { last_name: lastName } : undefined,
+    fields: Object.keys(fields).length ? fields : undefined,
   })
 }
 
