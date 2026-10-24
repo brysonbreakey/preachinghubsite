@@ -160,24 +160,26 @@ export function ChecklistThankYouTrial() {
     <main>
       {submitting && <SettingUpOverlay firstName={splitName(name).firstName} />}
       {/* Same confirmation banner as before — unchanged. */}
-      <div className="bg-blue-50 border-b border-blue-100 py-2.5 px-6 text-center">
-        <p className="text-sm text-blue-900">
+      <div className="bg-blue-50 border-b border-blue-100 py-4 px-6 text-center">
+        <p className="text-sm sm:text-base text-blue-900">
           🎉 Your checklist is on its way — check your inbox (and spam folder) in a few minutes.
         </p>
         {/* Opens in a new tab, so this page (and the offer below) stays open behind it.
-            Deliberately a quiet text link, not a button — the form below is the main action. */}
-        <p className="text-sm text-blue-900 mt-0.5">
-          Want it right now?{" "}
-          <a
-            href="/downloads/pre-preaching-checklist.pdf"
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={() => posthog.capture("checklist_pdf_opened", { page: "checklist_thank_you" })}
-            className="font-semibold underline underline-offset-2"
-          >
-            Open the PDF in a new tab ↗
-          </a>
-        </p>
+            An outlined secondary button: easy to see, but the solid trial button below stays the main action. */}
+        <a
+          href="/downloads/pre-preaching-checklist.pdf"
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => posthog.capture("checklist_pdf_opened", { page: "checklist_thank_you" })}
+          className="mt-3 inline-flex items-center gap-2 rounded-lg border-2 border-[#3760ad] bg-white px-5 py-2.5 text-sm sm:text-base font-semibold text-[#3760ad] shadow-sm hover:bg-blue-100 transition-colors"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M12 3v12" />
+            <path d="m7 10 5 5 5-5" />
+            <path d="M5 21h14" />
+          </svg>
+          Get your checklist now (PDF)
+        </a>
       </div>
 
       <section className="bg-slate-50 pt-12 pb-16 px-6">
