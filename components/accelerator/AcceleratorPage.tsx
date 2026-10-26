@@ -46,7 +46,7 @@ export function AcceleratorPage({ cohort, spotsLeft }: { cohort: Cohort; spotsLe
   }
 
   // Never a made-up number: with no real count available the page just says "Limited spots".
-  const spotsText = spotsLeft === null ? "Limited spots" : spotsLeft === 1 ? "1 spot left" : `${spotsLeft} spots left`;
+  const spotsText = spotsLeft === null ? "Limited spots" : spotsLeft === 0 ? "This cohort is full" : spotsLeft === 1 ? "1 spot left" : `${spotsLeft} spots left`;
   const spots = <span className="text-rose-500">{spotsText}</span>;
   const cohortLine = `This cohort starts ${cohort.startsToday ? "today" : cohort.startsOn}`;
 
@@ -260,7 +260,7 @@ export function AcceleratorPage({ cohort, spotsLeft }: { cohort: Cohort; spotsLe
           </div>
           <h2 className={`text-3xl font-black text-[#0F172A] tracking-tight ${H}`}>Better preaching, or your money back</h2>
           <p className="text-lg text-[#64748B] font-medium leading-relaxed">
-            Use PreachingHub for 30 days. If you don&apos;t walk into the pulpit with more confidence and less stress, email me and I&apos;ll refund every penny, even if we&apos;ve already had our coaching session.
+            Test PreachingHub for 30 days. If you don&apos;t walk into the pulpit with more confidence and less stress, email me and I&apos;ll refund every penny, even if we&apos;ve already had our coaching session.
             <br /><br />
             No hoops, no hard feelings.
           </p>

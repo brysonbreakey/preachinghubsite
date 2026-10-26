@@ -2,6 +2,8 @@
 // and THIRD MONDAY of every month, each with 6 spots. When a cohort's start date passes, the next
 // one is current with a fresh 6 spots. Dates are computed in Central time so "today" matches
 // Bryson's calendar.
+import { APP_URL } from "@/lib/urls";
+
 export const COHORT_SPOTS = 6;
 const COHORT_MONDAYS = [1, 3]; // which Mondays of the month start a cohort
 const TIME_ZONE = "America/Chicago";
@@ -42,11 +44,28 @@ export function currentCohort(now: Date = new Date()): Cohort {
   return { key, startsOn: `${MONTHS[m - 1]} ${ordinal(d)}`, startsToday: key === today };
 }
 
-// How many of this cohort's spots are left. TODO: read the real count from the app (the claims
-// table and GET /api/coaching/spaces in Documentation/coaching-offer-spec.md, with the cap
-// COHORT_SPOTS per cohort key). Until that exists this returns null and the page says
-// "Limited spots" rather than showing a number that isn't real.
-export async function getSpotsLeft(cohortKey: string): Promise<number | null> {
-  void cohortKey;
-  return null;
+export type LiveCohort = {
+  cohort: Cohort;
+  remaining: number;
+  state: "open" | "full" | "downsell_only";
+};
+
+// The app is the source of truth for which cohort is current and how many spots are left
+// (GET /api/coaching/spaces on the app, backed by the claims table). Cached for about a minute.
+// Returns null if the app can't be reached or answers oddly, and the page then falls back to the
+// local schedule above and "Limited spots", never a made-up number.
+export async function getLiveCohort(): Promise<LiveCohort | null> {
+  try {
+    const res = await fetch(`${APP_URL}/api/coaching/spaces`, { next: { revalidate: 60 }, signal: AbortSignal.timeout(2000) });
+    if (!res.ok) return null;
+    const d = await res.json();
+    const c = d?.cohort;
+    const valid =
+      typeof c?.key === "string" && /^\d{4}-\d{2}-\d{2}$/.test(c.key) && typeof c?.startsOn === "string" &&
+      Number.isInteger(d?.remaining) && d.remaining >= 0 && ["open", "full", "downsell_only"].includes(d?.state);
+    if (!valid) return null;
+    return { cohort: { key: c.key, startsOn: c.startsOn, startsToday: !!c.startsToday }, remaining: d.remaining, state: d.state };
+  } catch {
+    return null;
+  }
 }
