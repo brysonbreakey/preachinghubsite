@@ -48,7 +48,13 @@ export function AcceleratorPage({ cohort, spotsLeft }: { cohort: Cohort; spotsLe
   // Never a made-up number: with no real count available the page just says "Limited spots".
   const spotsText = spotsLeft === null ? "Limited spots" : spotsLeft === 0 ? "This cohort is full" : spotsLeft === 1 ? "1 spot left" : `${spotsLeft} spots left`;
   const spots = <span className="text-rose-500">{spotsText}</span>;
-  const cohortLine = `This cohort starts ${cohort.startsToday ? "today" : cohort.startsOn}`;
+  // "6 SPOTS LEFT IN THIS COHORT • NEXT ONE STARTS NOVEMBER 2ND"
+  const cohortLine = (
+    <>
+      {spots}
+      {spotsLeft === 0 ? "" : " in this cohort"} • next one starts {cohort.startsToday ? "today" : cohort.startsOn}
+    </>
+  );
 
   return (
     <main className="font-[family-name:var(--font-jakarta)] bg-white text-[#0F172A] overflow-x-hidden antialiased">
@@ -123,7 +129,7 @@ export function AcceleratorPage({ cohort, spotsLeft }: { cohort: Cohort; spotsLe
           </a>
           <div className="space-y-1.5">
             <p className="text-sm sm:text-base font-black text-gray-500 uppercase tracking-widest">
-              {cohortLine} • {spots}
+              {cohortLine}
             </p>
             <p className="text-sm sm:text-base font-medium text-[#64748B]">Account access today, coaching available that week</p>
           </div>
@@ -236,7 +242,7 @@ export function AcceleratorPage({ cohort, spotsLeft }: { cohort: Cohort; spotsLe
             <div className="w-full lg:w-72 flex flex-col items-center gap-6">
               <div className="text-center">
                 <p className={`text-5xl font-black text-[#0F172A] ${H}`}>$49<span className="text-lg text-[#64748B] font-bold">/mo</span></p>
-                <p className="text-sm font-bold text-[#64748B] mt-3">{cohortLine} • {spots}</p>
+                <p className="text-sm font-bold text-[#64748B] mt-3">{cohortLine}</p>
                 <p className="text-xs font-medium text-[#64748B] mt-1">Account access today, coaching available that week</p>
               </div>
               <button
