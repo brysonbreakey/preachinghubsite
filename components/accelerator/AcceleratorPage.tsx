@@ -2,19 +2,11 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import posthog from "posthog-js";
-import { PHLogo } from "@/components/Logo";
 import { Icon } from "@/components/Icon";
 import { BRENT_GARRARD } from "@/lib/testimonials";
-import { APP_URL } from "@/lib/urls";
+import type { Cohort } from "@/lib/cohort";
 import { AcceleratorSignupModal } from "./AcceleratorSignupModal";
-
-// ─── Cohort details ───────────────────────────────────────────────────────────
-// PLACEHOLDERS copied from the design file. "Spots left" is shown to visitors as a fact, so it
-// has to come from the real count (see Documentation/coaching-offer-spec.md, sections 2 and 4)
-// before this page replaces /checklist/thank-you. Do not ship the hard-coded number.
-const COHORT = { number: 4, startsOn: "November 4th", spotsLeft: 4 };
 
 const H = "font-[family-name:var(--font-inter)] tracking-[-0.04em]";
 const SERIF = "font-[family-name:var(--font-lora)]";
@@ -23,7 +15,29 @@ const SHADOW_ELEVATED = "shadow-[0_20px_50px_-12px_rgba(79,70,229,0.1)]";
 
 type Intent = "accelerator" | "trial";
 
-export function AcceleratorPage() {
+// A quick, eased scroll (about 0.45s) to a section, instead of the browser's slower default.
+function fastScrollTo(id: string) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const target = el.getBoundingClientRect().top + window.scrollY - 24;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    window.scrollTo(0, target);
+    return;
+  }
+  const from = window.scrollY;
+  const distance = target - from;
+  const duration = 450;
+  const start = performance.now();
+  const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+  function step(now: number) {
+    const t = Math.min((now - start) / duration, 1);
+    window.scrollTo(0, from + distance * ease(t));
+    if (t < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+export function AcceleratorPage({ cohort, spotsLeft }: { cohort: Cohort; spotsLeft: number | null }) {
   const [modal, setModal] = useState<Intent | null>(null);
 
   function openSignup(location: string, intent: Intent = "accelerator") {
@@ -31,9 +45,10 @@ export function AcceleratorPage() {
     setModal(intent);
   }
 
-  const spotsLeft = (
-    <span className="text-rose-500">{COHORT.spotsLeft} spots left</span>
-  );
+  // Never a made-up number: with no real count available the page just says "Limited spots".
+  const spotsText = spotsLeft === null ? "Limited spots" : spotsLeft === 1 ? "1 spot left" : `${spotsLeft} spots left`;
+  const spots = <span className="text-rose-500">{spotsText}</span>;
+  const cohortLine = `This cohort starts ${cohort.startsToday ? "today" : cohort.startsOn}`;
 
   return (
     <main className="font-[family-name:var(--font-jakarta)] bg-white text-[#0F172A] overflow-x-hidden antialiased">
@@ -62,13 +77,9 @@ export function AcceleratorPage() {
         </a>
       </div>
 
-      {/* Navigation */}
-      <nav className="max-w-7xl mx-auto px-8 py-6 flex justify-between items-center border-b border-gray-50">
-        <Link href="/" aria-label="PreachingHub"><PHLogo height={28} /></Link>
-        <div className="flex items-center gap-8">
-          <Link href="/pricing" className="text-[10px] font-black text-[#64748B] hover:text-[#0F172A] transition-colors uppercase tracking-widest">Pricing</Link>
-          <a href={`${APP_URL}/auth/login`} className="text-[10px] font-black text-[#0F172A] hover:text-[#4F46E5] transition-colors uppercase tracking-widest">Log In</a>
-        </div>
+      {/* Navigation: logo only, so nothing pulls attention from the offer */}
+      <nav className="max-w-7xl mx-auto px-8 py-6 flex justify-center items-center border-b border-gray-50">
+        <Image src="/logos/wordmark-indigo.svg" alt="PreachingHub" width={498} height={77} unoptimized priority className="h-8 w-auto" />
       </nav>
 
       {/* Hero */}
@@ -101,14 +112,21 @@ export function AcceleratorPage() {
         <div className="flex flex-col items-center gap-6">
           <a
             href="#enroll"
-            onClick={() => posthog.capture("accelerator_cta_clicked", { location: "hero_see_offer", intent: "scroll" })}
+            onClick={(e) => {
+              e.preventDefault();
+              posthog.capture("accelerator_cta_clicked", { location: "hero_see_offer", intent: "scroll" });
+              fastScrollTo("enroll");
+            }}
             className="inline-flex items-center gap-3 bg-[#4F46E5] text-white px-12 py-5 rounded-full font-black text-sm shadow-[0_20px_50px_-12px_rgba(79,70,229,0.1)] hover:-translate-y-1 transition-all uppercase tracking-widest [color:#fff]"
           >
             See the offer
           </a>
-          <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
-            Cohort {COHORT.number} starts {COHORT.startsOn} • {spotsLeft}
-          </p>
+          <div className="space-y-1.5">
+            <p className="text-sm sm:text-base font-black text-gray-500 uppercase tracking-widest">
+              {cohortLine} • {spots}
+            </p>
+            <p className="text-sm sm:text-base font-medium text-[#64748B]">Account access today, coaching available that week</p>
+          </div>
         </div>
       </header>
 
@@ -118,19 +136,20 @@ export function AcceleratorPage() {
           <div className="text-center space-y-4">
             <p className="text-[10px] font-black uppercase tracking-[0.3em] text-[#4F46E5]">The 30-Day Preaching Growth Accelerator</p>
             <h2 className={`text-4xl md:text-5xl font-black text-[#0F172A] tracking-tight leading-tight ${H}`}>Join this cohort and get $350 of personal coaching, free.</h2>
-            <p className="text-[#64748B] font-medium">Every new member in Cohort {COHORT.number} gets these two bonuses with their PreachingHub membership.</p>
+            <p className="text-[#64748B] font-medium">Every new member in this cohort gets these two bonuses with their PreachingHub membership.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Bonus card 1 */}
             <div className={`bg-white rounded-[2.5rem] border border-gray-200 overflow-hidden group ${SHADOW_PREMIUM}`}>
               <div className="relative h-80 bg-[#0F172A] overflow-hidden">
+                {/* Slightly zoomed in for a tighter shot, anchored at the top so his head stays in frame. */}
                 <Image
                   src="/images/founder/founder-blazer.jpg"
                   alt="Bryson"
                   fill
                   sizes="(min-width: 768px) 560px, 100vw"
-                  className="object-cover object-top group-hover:scale-105 transition-transform duration-700"
+                  className="object-cover object-[45%_0%] scale-[1.28] origin-[45%_0%] group-hover:scale-[1.34] transition-transform duration-700"
                 />
               </div>
               <div className="p-10 space-y-6">
@@ -168,6 +187,22 @@ export function AcceleratorPage() {
               </div>
             </div>
           </div>
+
+          {/* Testimonial: sits right above the offer card */}
+          <div className="text-center space-y-8 pt-8">
+            <p className={`text-xl md:text-2xl font-medium leading-relaxed text-[#0F172A] italic max-w-3xl mx-auto ${SERIF}`}>
+              &quot;{BRENT_GARRARD.quote}&quot;
+            </p>
+            <div className="flex flex-col items-center gap-4">
+              <div className="relative w-16 h-16 rounded-full bg-gray-200 overflow-hidden border-2 border-white shadow-sm">
+                <Image src="/images/testimonials/brent-garrard.jpg" alt={BRENT_GARRARD.name} fill sizes="64px" className="object-cover" />
+              </div>
+              <div className="space-y-0.5">
+                <p className="text-sm font-black text-[#0F172A] uppercase tracking-widest">{BRENT_GARRARD.name}</p>
+                <p className="text-[10px] font-bold text-[#64748B] uppercase tracking-widest">{BRENT_GARRARD.role}</p>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -201,7 +236,8 @@ export function AcceleratorPage() {
             <div className="w-full lg:w-72 flex flex-col items-center gap-6">
               <div className="text-center">
                 <p className={`text-5xl font-black text-[#0F172A] ${H}`}>$49<span className="text-lg text-[#64748B] font-bold">/mo</span></p>
-                <p className="text-[10px] font-bold text-[#64748B] mt-2">Cohort starts {COHORT.startsOn} • {spotsLeft}</p>
+                <p className="text-sm font-bold text-[#64748B] mt-3">{cohortLine} • {spots}</p>
+                <p className="text-xs font-medium text-[#64748B] mt-1">Account access today, coaching available that week</p>
               </div>
               <button
                 type="button"
@@ -210,39 +246,21 @@ export function AcceleratorPage() {
               >
                 Claim my spot
               </button>
-              <p className="text-[9px] font-bold text-gray-400 text-center">Money-back guarantee • Cancel anytime</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonial */}
-      <section className="max-w-4xl mx-auto px-8 pt-32 pb-16">
-        <div className="text-center space-y-8">
-          <p className={`text-2xl md:text-3xl font-medium leading-relaxed text-[#0F172A] italic max-w-3xl mx-auto ${SERIF}`}>
-            &quot;{BRENT_GARRARD.quote}&quot;
-          </p>
-          <div className="flex flex-col items-center gap-4">
-            <div className="relative w-16 h-16 rounded-full bg-gray-200 overflow-hidden border-2 border-white shadow-sm">
-              <Image src="/images/testimonials/brent-garrard.jpg" alt={BRENT_GARRARD.name} fill sizes="64px" className="object-cover" />
-            </div>
-            <div className="space-y-0.5">
-              <p className="text-sm font-black text-[#0F172A] uppercase tracking-widest">{BRENT_GARRARD.name}</p>
-              <p className="text-[10px] font-bold text-[#64748B] uppercase tracking-widest">{BRENT_GARRARD.role}</p>
+              <p className="text-sm font-bold text-gray-500 text-center">Money-back guarantee • Cancel anytime</p>
             </div>
           </div>
         </div>
       </section>
 
       {/* Guarantee */}
-      <section className="max-w-3xl mx-auto px-8 pb-32">
+      <section className="max-w-3xl mx-auto px-8 pt-24 pb-32">
         <div className="p-8 sm:p-12 md:p-16 rounded-[2.5rem] border border-gray-200 bg-white space-y-6 relative text-center">
           <div className="w-10 h-10 bg-indigo-50 rounded-full flex items-center justify-center text-[#4F46E5] mx-auto">
             <Icon d={["M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z", "m9 12 2 2 4-4"]} size={20} strokeWidth={2} />
           </div>
           <h2 className={`text-3xl font-black text-[#0F172A] tracking-tight ${H}`}>Better preaching, or your money back</h2>
           <p className="text-lg text-[#64748B] font-medium leading-relaxed">
-            Run at least two sermons through PreachingHub and prepare at least one in it during your first 30 days. If you don&apos;t feel more confident and less stressed, email me and I&apos;ll refund every penny.
+            Use PreachingHub for 30 days. If you don&apos;t walk into the pulpit with more confidence and less stress, email me and I&apos;ll refund every penny, even if we&apos;ve already had our coaching session.
             <br /><br />
             No hoops, no hard feelings.
           </p>
@@ -358,15 +376,15 @@ export function AcceleratorPage() {
               onClick={() => openSignup("final_cta")}
               className="inline-flex items-center gap-3 bg-white text-[#0F172A] px-8 sm:px-12 py-5 rounded-full font-black text-sm shadow-[0_20px_50px_-12px_rgba(79,70,229,0.1)] hover:-translate-y-1 transition-all uppercase tracking-widest"
             >
-              Claim my spot in Cohort {COHORT.number}
+              Claim my spot in this cohort
             </button>
             <p className="text-xs font-bold text-white/50">
-              $49/month • Free 1:1 session + growth plan • {COHORT.spotsLeft} spots left
+              $49/month • Free 1:1 session + growth plan • {spotsText}
             </p>
             <button
               type="button"
               onClick={() => openSignup("no_thanks_trial", "trial")}
-              className="text-[10px] text-white/30 hover:text-white transition-colors uppercase tracking-widest font-black"
+              className="text-xs text-white/70 underline underline-offset-4 hover:text-white transition-colors uppercase tracking-widest font-black"
             >
               No thanks, I&apos;ll start with the free 7-day trial
             </button>
