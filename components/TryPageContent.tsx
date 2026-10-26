@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import posthog from "posthog-js";
 import { Icon } from "@/components/Icon";
+import { SmsConsentNotice } from "@/components/SmsConsentNotice";
 import { YouTubeSearchInput } from "@/components/YouTubeSearchInput";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -616,7 +617,8 @@ export function TryPageContent({
           <div className="order-2 lg:order-none lg:col-start-2 lg:row-start-1">
             <SampleReportTeaser onOpen={openSample} />
           </div>
-          <form id="try-form" onSubmit={handleSubmit} onFocusCapture={trackFormStarted} noValidate className="scroll-mt-24 order-1 lg:order-none lg:col-start-1 lg:row-start-1 lg:row-span-2 bg-white rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/60 p-6 sm:p-8 space-y-8">
+          <div className="order-1 lg:order-none lg:col-start-1 lg:row-start-1 lg:row-span-2">
+          <form id="try-form" onSubmit={handleSubmit} onFocusCapture={trackFormStarted} noValidate className="scroll-mt-24 bg-white rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/60 p-6 sm:p-8 space-y-8">
             {submitError && (
               <div className="rounded-lg bg-red-50 border border-red-100 text-red-700 text-sm px-4 py-3">
                 {submitError}
@@ -844,6 +846,14 @@ export function TryPageContent({
               {!isChecking && <Icon d="M5 12h14M12 5l7 7-7 7" size={16} color="white" strokeWidth={2.5} className="shrink-0" />}
             </button>
           </form>
+          {showPhoneField && (
+            <SmsConsentNotice
+              buttonLabel="Get My Free Report"
+              messages="updates about your report"
+              className="mt-4 px-2"
+            />
+          )}
+          </div>
 
           {/* What you'll receive */}
           <div className="order-3 lg:order-none lg:col-start-2 lg:row-start-2 bg-white rounded-2xl border border-slate-200 p-6 lg:sticky lg:top-16">

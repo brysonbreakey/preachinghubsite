@@ -65,28 +65,41 @@ async function upsertContact(contact: SlickTextContact): Promise<void> {
     return
   }
 
-  const body = JSON.stringify({
+  const fields = {
     mobile_number: `+1${phone10}`,
     first_name: contact.firstName,
     last_name: contact.lastName ?? '',
     ...(contact.email ? { email: contact.email } : {}),
-    ...(contact.customFields ? { custom_fields: contact.customFields } : {}),
-  })
+    // Custom fields are top-level keys named by the field's internal name. A nested
+    // `custom_fields` object is rejected on writes ("not a savable attribute"),
+    // even though responses use that shape.
+    ...(contact.customFields ?? {}),
+  }
+  // The form's consent notice covers a brand-new contact. An existing one keeps
+  // whatever status it has: re-subscribing would undo a STOP they sent earlier.
+  const createBody = JSON.stringify({ ...fields, opt_in_status: 'subscribed' })
+  const updateBody = JSON.stringify(fields)
 
   try {
-    const created = await request(`/brands/${brandId}/contacts`, apiKey, { method: 'POST', body })
-    if (created.ok) {
-      console.log('slicktext: contact created')
-      return
-    }
-    const createFailure = await errorSummary(created)
+    // Look the contact up first: only a brand-new one is created as subscribed.
+    // An existing contact is just updated, so a STOP they sent earlier stands.
+    let existingId = await findContactId(brandId, apiKey, phone10)
 
-    const existingId = await findContactId(brandId, apiKey, phone10)
     if (existingId == null) {
-      console.error('slicktext: create failed and no existing contact found:', createFailure)
-      return
+      const created = await request(`/brands/${brandId}/contacts`, apiKey, { method: 'POST', body: createBody })
+      if (created.ok) {
+        console.log('slicktext: contact created')
+        return
+      }
+      const createFailure = await errorSummary(created)
+      existingId = await findContactId(brandId, apiKey, phone10)
+      if (existingId == null) {
+        console.error('slicktext: create failed and no existing contact found:', createFailure)
+        return
+      }
     }
-    const updated = await request(`/brands/${brandId}/contacts/${existingId}`, apiKey, { method: 'PUT', body })
+
+    const updated = await request(`/brands/${brandId}/contacts/${existingId}`, apiKey, { method: 'PUT', body: updateBody })
     if (updated.ok) {
       console.log('slicktext: existing contact updated')
     } else {

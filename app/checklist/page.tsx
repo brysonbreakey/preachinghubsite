@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import posthog from "posthog-js";
 import { PHMark } from "@/components/Logo";
+import { SmsConsentNotice } from "@/components/SmsConsentNotice";
 
 const NAVY = "#3760ad";
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -129,6 +130,7 @@ export default function ChecklistPage() {
               </div>
 
               {/* Form */}
+              <div>
               <div className="bg-white rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/60 p-8">
                 <p className="text-slate-500 leading-relaxed mb-6">
                   Most sermons don&apos;t fail Sunday morning. They fail Thursday afternoon &mdash; in the gap between &ldquo;the outline is done&rdquo; and &ldquo;I know this like the back of my hand.&rdquo; This free checklist contains 5 things that will close that gap.
@@ -183,6 +185,8 @@ export default function ChecklistPage() {
                   <br />
                   Unsubscribe any time.
                 </p>
+              </div>
+              <SmsConsentNotice buttonLabel="Get the Checklist" messages="your checklist" className="mt-4 px-2" />
               </div>
           </div>
         </div>
