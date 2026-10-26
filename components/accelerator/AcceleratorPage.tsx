@@ -135,7 +135,7 @@ export function AcceleratorPage({ cohort, spotsLeft }: { cohort: Cohort; spotsLe
         <div className="max-w-6xl mx-auto px-8 space-y-16">
           <div id="accelerator" className="text-center space-y-5 scroll-mt-6">
             <h2 className={`text-4xl sm:text-5xl md:text-6xl font-black text-[#0F172A] tracking-tight leading-[1.05] ${H}`}>The 30-Day Preaching Growth Accelerator</h2>
-            <p className={`text-xl md:text-2xl font-bold text-[#4F46E5] leading-snug ${H}`}>Join this cohort and get $350 of personal coaching, free.</p>
+            <p className={`text-xl md:text-2xl font-bold text-[#4F46E5] leading-snug ${H}`}>Join and get $350 of personal coaching, free.</p>
             <p className="text-[#64748B] font-medium">Every new member in this cohort gets these two bonuses with their PreachingHub membership.</p>
           </div>
 
