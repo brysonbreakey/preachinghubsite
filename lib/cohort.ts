@@ -1,21 +1,18 @@
-// Cohort schedule for the 30-Day Preaching Growth Accelerator: a new cohort starts every
-// 2 weeks, each with 6 spots. When a cohort's start date passes, the next one is 2 weeks later
-// with a fresh 6 spots. Dates are computed in Central time so "today" matches Bryson's calendar.
-export const COHORT_ANCHOR = "2026-11-04"; // first cohort start (YYYY-MM-DD)
-export const COHORT_LENGTH_DAYS = 14;
+// Cohort schedule for the 30-Day Preaching Growth Accelerator: a new cohort starts on the FIRST
+// and THIRD MONDAY of every month, each with 6 spots. When a cohort's start date passes, the next
+// one is current with a fresh 6 spots. Dates are computed in Central time so "today" matches
+// Bryson's calendar.
 export const COHORT_SPOTS = 6;
+const COHORT_MONDAYS = [1, 3]; // which Mondays of the month start a cohort
 const TIME_ZONE = "America/Chicago";
 
-const DAY_MS = 86400000;
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
-function dayNumber(iso: string): number {
-  const [y, m, d] = iso.split("-").map(Number);
-  return Date.UTC(y, m - 1, d) / DAY_MS;
-}
-
-function isoFromDayNumber(n: number): string {
-  return new Date(n * DAY_MS).toISOString().slice(0, 10);
+// ISO date (YYYY-MM-DD) of the nth Monday of a month (month is 0-based; Date.UTC rolls over years).
+function nthMonday(year: number, month: number, n: number): string {
+  const first = new Date(Date.UTC(year, month, 1));
+  const toMonday = (1 - first.getUTCDay() + 7) % 7;
+  return new Date(Date.UTC(year, month, 1 + toMonday + (n - 1) * 7)).toISOString().slice(0, 10);
 }
 
 function ordinal(n: number): string {
@@ -32,10 +29,15 @@ export type Cohort = {
 
 export function currentCohort(now: Date = new Date()): Cohort {
   const today = new Intl.DateTimeFormat("en-CA", { timeZone: TIME_ZONE, year: "numeric", month: "2-digit", day: "2-digit" }).format(now);
-  const diff = dayNumber(today) - dayNumber(COHORT_ANCHOR);
-  const steps = diff <= 0 ? 0 : Math.ceil(diff / COHORT_LENGTH_DAYS);
-  const start = dayNumber(COHORT_ANCHOR) + steps * COHORT_LENGTH_DAYS;
-  const key = isoFromDayNumber(start);
+  const [year, month] = today.split("-").map(Number);
+  // The first start date on or after today, looking at this month and the next two.
+  let key = "";
+  for (let offset = 0; offset < 3 && !key; offset++) {
+    for (const n of COHORT_MONDAYS) {
+      const candidate = nthMonday(year, month - 1 + offset, n);
+      if (candidate >= today) { key = candidate; break; }
+    }
+  }
   const [, m, d] = key.split("-").map(Number);
   return { key, startsOn: `${MONTHS[m - 1]} ${ordinal(d)}`, startsToday: key === today };
 }

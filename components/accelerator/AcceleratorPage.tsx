@@ -83,7 +83,7 @@ export function AcceleratorPage({ cohort, spotsLeft }: { cohort: Cohort; spotsLe
       </nav>
 
       {/* Hero */}
-      <header className="acc-fade-in max-w-5xl mx-auto px-8 pt-20 pb-24 text-center">
+      <header className="acc-fade-in max-w-5xl mx-auto px-8 pt-8 md:pt-10 pb-24 text-center">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 text-[#4F46E5] text-[10px] font-black uppercase tracking-[0.2em] mb-8">
           Before you go: A limited coaching offer
         </div>
@@ -115,7 +115,7 @@ export function AcceleratorPage({ cohort, spotsLeft }: { cohort: Cohort; spotsLe
             onClick={(e) => {
               e.preventDefault();
               posthog.capture("accelerator_cta_clicked", { location: "hero_see_offer", intent: "scroll" });
-              fastScrollTo("enroll");
+              fastScrollTo("accelerator");
             }}
             className="inline-flex items-center gap-3 bg-[#4F46E5] text-white px-12 py-5 rounded-full font-black text-sm shadow-[0_20px_50px_-12px_rgba(79,70,229,0.1)] hover:-translate-y-1 transition-all uppercase tracking-widest [color:#fff]"
           >
@@ -133,9 +133,9 @@ export function AcceleratorPage({ cohort, spotsLeft }: { cohort: Cohort; spotsLe
       {/* Bonus Accelerator */}
       <section className="bg-[#F8FAFC] py-32 border-y border-gray-100">
         <div className="max-w-6xl mx-auto px-8 space-y-16">
-          <div className="text-center space-y-4">
-            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-[#4F46E5]">The 30-Day Preaching Growth Accelerator</p>
-            <h2 className={`text-4xl md:text-5xl font-black text-[#0F172A] tracking-tight leading-tight ${H}`}>Join this cohort and get $350 of personal coaching, free.</h2>
+          <div id="accelerator" className="text-center space-y-5 scroll-mt-6">
+            <h2 className={`text-4xl sm:text-5xl md:text-6xl font-black text-[#0F172A] tracking-tight leading-[1.05] ${H}`}>The 30-Day Preaching Growth Accelerator</h2>
+            <p className={`text-xl md:text-2xl font-bold text-[#4F46E5] leading-snug ${H}`}>Join this cohort and get $350 of personal coaching, free.</p>
             <p className="text-[#64748B] font-medium">Every new member in this cohort gets these two bonuses with their PreachingHub membership.</p>
           </div>
 
