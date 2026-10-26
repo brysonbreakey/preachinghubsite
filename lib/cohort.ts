@@ -1,13 +1,15 @@
-// Cohort schedule for the 30-Day Preaching Growth Accelerator: a new cohort starts on the FIRST
-// and THIRD MONDAY of every month, each with 6 spots. When a cohort's start date passes, the next
-// one is current with a fresh 6 spots. Dates are computed in Central time so "today" matches
-// Bryson's calendar.
+// Fallback schedule for the 30-Day Preaching Growth Accelerator ("rounds"): a new cohort starts on
+// the FIRST and THIRD MONDAY of every month with 6 coaching slots, and enrollment for it closes the
+// Sunday before. The app (GET /api/coaching/spaces) is the source of truth; this copy is used only
+// when the app can't be reached, so keep it in step with lib/cohort.ts in the app repo. Dates are
+// computed in Central time so "today" matches Bryson's calendar.
 import { APP_URL } from "@/lib/urls";
 
 export const COHORT_SPOTS = 6;
 const COHORT_MONDAYS = [1, 3]; // which Mondays of the month start a cohort
 const TIME_ZONE = "America/Chicago";
 
+const WEEKDAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
 // ISO date (YYYY-MM-DD) of the nth Monday of a month (month is 0-based; Date.UTC rolls over years).
@@ -24,24 +26,48 @@ function ordinal(n: number): string {
 }
 
 export type Cohort = {
-  key: string; // start date, YYYY-MM-DD: also the id spots are counted against
-  startsOn: string; // "November 4th"
+  key: string; // start date (a Monday), YYYY-MM-DD: also the id spots are counted against
+  startsOn: string; // "November 2nd"
   startsToday: boolean;
+  closesOn: string; // when enrollment closes (the Sunday before): "Sunday, November 1"
+  closesToday: boolean;
 };
 
+function dayBefore(iso: string): string {
+  const [y, m, d] = iso.split("-").map(Number);
+  return new Date(Date.UTC(y, m - 1, d - 1)).toISOString().slice(0, 10);
+}
+
+export function todayCentral(now: Date = new Date()): string {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: TIME_ZONE, year: "numeric", month: "2-digit", day: "2-digit" }).format(now);
+}
+
+export function describeCohort(key: string, today: string): Cohort {
+  const [, m, d] = key.split("-").map(Number);
+  const closes = dayBefore(key);
+  const [cy, cm, cd] = closes.split("-").map(Number);
+  const closesWeekday = WEEKDAYS[new Date(Date.UTC(cy, cm - 1, cd)).getUTCDay()];
+  return {
+    key,
+    startsOn: `${MONTHS[m - 1]} ${ordinal(d)}`,
+    startsToday: key === today,
+    closesOn: `${closesWeekday}, ${MONTHS[cm - 1]} ${cd}`,
+    closesToday: closes === today,
+  };
+}
+
 export function currentCohort(now: Date = new Date()): Cohort {
-  const today = new Intl.DateTimeFormat("en-CA", { timeZone: TIME_ZONE, year: "numeric", month: "2-digit", day: "2-digit" }).format(now);
+  const today = todayCentral(now);
   const [year, month] = today.split("-").map(Number);
-  // The first start date on or after today, looking at this month and the next two.
+  // The first round still open (enrollment runs through the day before it starts), looking at this month and the next two.
   let key = "";
   for (let offset = 0; offset < 3 && !key; offset++) {
     for (const n of COHORT_MONDAYS) {
       const candidate = nthMonday(year, month - 1 + offset, n);
-      if (candidate >= today) { key = candidate; break; }
+      if (dayBefore(candidate) >= today) { key = candidate; break; }
     }
   }
-  const [, m, d] = key.split("-").map(Number);
-  return { key, startsOn: `${MONTHS[m - 1]} ${ordinal(d)}`, startsToday: key === today };
+  return describeCohort(key, today);
 }
 
 export type LiveCohort = {
@@ -61,10 +87,11 @@ export async function getLiveCohort(): Promise<LiveCohort | null> {
     const d = await res.json();
     const c = d?.cohort;
     const valid =
-      typeof c?.key === "string" && /^\d{4}-\d{2}-\d{2}$/.test(c.key) && typeof c?.startsOn === "string" &&
+      typeof c?.key === "string" && /^\d{4}-\d{2}-\d{2}$/.test(c.key) &&
       Number.isInteger(d?.remaining) && d.remaining >= 0 && ["open", "full", "downsell_only"].includes(d?.state);
     if (!valid) return null;
-    return { cohort: { key: c.key, startsOn: c.startsOn, startsToday: !!c.startsToday }, remaining: d.remaining, state: d.state };
+    // Labels are built here from the key, so the wording is always this site's.
+    return { cohort: describeCohort(c.key, todayCentral()), remaining: d.remaining, state: d.state };
   } catch {
     return null;
   }

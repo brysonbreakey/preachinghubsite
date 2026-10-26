@@ -46,13 +46,14 @@ export function AcceleratorPage({ cohort, spotsLeft }: { cohort: Cohort; spotsLe
   }
 
   // Never a made-up number: with no real count available the page just says "Limited spots".
-  const spotsText = spotsLeft === null ? "Limited spots" : spotsLeft === 0 ? "This cohort is full" : spotsLeft === 1 ? "1 spot left" : `${spotsLeft} spots left`;
+  const spotsText = spotsLeft === null ? "Limited coaching slots" : spotsLeft === 0 ? "This round is full" : spotsLeft === 1 ? "1 coaching slot left" : `${spotsLeft} coaching slots left`;
   const spots = <span className="text-rose-500">{spotsText}</span>;
-  // "6 SPOTS LEFT IN THIS COHORT • NEXT ONE STARTS NOVEMBER 2ND"
+  // "6 COACHING SLOTS LEFT THIS ROUND • ROUND CLOSES SUNDAY, NOVEMBER 1"
+  // (When the round is full the page will need its own version; see the spec.)
   const cohortLine = (
     <>
       {spots}
-      {spotsLeft === 0 ? "" : " in this cohort"} • next one starts {cohort.startsToday ? "today" : cohort.startsOn}
+      {spotsLeft === 0 || spotsLeft === null ? "" : " this round"} • round closes {cohort.closesToday ? "today" : cohort.closesOn}
     </>
   );
 
@@ -131,7 +132,7 @@ export function AcceleratorPage({ cohort, spotsLeft }: { cohort: Cohort; spotsLe
             <p className="text-sm sm:text-base font-black text-gray-500 uppercase tracking-widest">
               {cohortLine}
             </p>
-            <p className="text-sm sm:text-base font-medium text-[#64748B]">Account access today, coaching available that week</p>
+            <p className="text-sm sm:text-base font-medium text-[#64748B]">Account access today, coaching the week of {cohort.startsOn}</p>
           </div>
         </div>
       </header>
@@ -142,7 +143,7 @@ export function AcceleratorPage({ cohort, spotsLeft }: { cohort: Cohort; spotsLe
           <div id="accelerator" className="text-center space-y-5 scroll-mt-6">
             <h2 className={`text-4xl sm:text-5xl md:text-6xl font-black text-[#0F172A] tracking-tight leading-[1.05] ${H}`}>The 30-Day Preaching Growth Accelerator</h2>
             <p className={`text-xl md:text-2xl font-bold text-[#4F46E5] leading-snug ${H}`}>Join and get $350 of personal coaching, free.</p>
-            <p className="text-[#64748B] font-medium">Every new member in this cohort gets these two bonuses with their PreachingHub membership.</p>
+            <p className="text-[#64748B] font-medium">Every new member gets these two bonuses with their PreachingHub membership.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -238,19 +239,20 @@ export function AcceleratorPage({ cohort, spotsLeft }: { cohort: Cohort; spotsLe
                 </li>
               </ul>
               <p className="text-[10px] text-[#64748B] leading-relaxed italic">A single coaching session runs $225. You get one, plus a growth plan, plus coaching on every sermon, for $49/month.</p>
+              <p className="border-l-2 border-[#4F46E5] pl-4 text-sm font-semibold leading-relaxed text-[#0F172A]">I personally coach 6 pastors every two weeks. That&apos;s all my calendar allows.</p>
             </div>
             <div className="w-full lg:w-72 flex flex-col items-center gap-6">
               <div className="text-center">
                 <p className={`text-5xl font-black text-[#0F172A] ${H}`}>$49<span className="text-lg text-[#64748B] font-bold">/mo</span></p>
                 <p className="text-sm font-bold text-[#64748B] mt-3">{cohortLine}</p>
-                <p className="text-xs font-medium text-[#64748B] mt-1">Account access today, coaching available that week</p>
+                <p className="text-xs font-medium text-[#64748B] mt-1">Account access today, coaching the week of {cohort.startsOn}</p>
               </div>
               <button
                 type="button"
                 onClick={() => openSignup("pricing_block")}
                 className="w-full py-5 rounded-2xl bg-[#4F46E5] text-white font-black text-sm uppercase tracking-widest text-center hover:bg-indigo-600 transition-all shadow-[0_10px_40px_-10px_rgba(15,23,42,0.05)] [color:#fff]"
               >
-                Claim my spot
+                Claim my slot
               </button>
               <p className="text-sm font-bold text-gray-500 text-center">Money-back guarantee • Cancel anytime</p>
             </div>
@@ -382,7 +384,7 @@ export function AcceleratorPage({ cohort, spotsLeft }: { cohort: Cohort; spotsLe
               onClick={() => openSignup("final_cta")}
               className="inline-flex items-center gap-3 bg-white text-[#0F172A] px-8 sm:px-12 py-5 rounded-full font-black text-sm shadow-[0_20px_50px_-12px_rgba(79,70,229,0.1)] hover:-translate-y-1 transition-all uppercase tracking-widest"
             >
-              Claim my spot in this cohort
+              Claim my slot
             </button>
             <p className="text-xs font-bold text-white/50">
               $49/month • Free 1:1 session + growth plan • {spotsText}
