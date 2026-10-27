@@ -13,6 +13,9 @@ const SERIF = "font-[family-name:var(--font-lora)]";
 const SHADOW_PREMIUM = "shadow-[0_10px_40px_-10px_rgba(15,23,42,0.05),0_2px_10px_-2px_rgba(15,23,42,0.02)]";
 const SHADOW_ELEVATED = "shadow-[0_20px_50px_-12px_rgba(79,70,229,0.1)]";
 
+// Paste the walkthrough video's embed URL here to replace the sample report in the hero.
+const WALKTHROUGH_VIDEO_EMBED_URL = "";
+
 type Intent = "accelerator" | "trial";
 
 // A quick, eased scroll (about 0.45s) to a section, instead of the browser's slower default.
@@ -102,18 +105,46 @@ export function AcceleratorPage({ cohort, spotsLeft }: { cohort: Cohort; spotsLe
           PreachingHub is your sermon prep space with a preaching coach built in. Get honest, expert feedback before you preach and after, and a personal plan to grow.
         </p>
 
-        {/* Video placeholder */}
+        {/* Hero visual: the walkthrough video once WALKTHROUGH_VIDEO_EMBED_URL is set, a sample coaching report until then */}
         <div className="max-w-4xl mx-auto mb-12">
-          <div className="group relative aspect-video overflow-hidden rounded-3xl border border-white/10 bg-[#020617] shadow-[0_20px_50px_-12px_rgba(79,70,229,0.1)] cursor-pointer">
-            <div className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/20 transition-all">
-              <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center text-[#0F172A] shadow-2xl group-hover:scale-110 transition-transform">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" className="ml-1" aria-hidden="true"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12-7.5a1 1 0 0 0 0-1.72l-12-7.5A1 1 0 0 0 7 4.5Z" /></svg>
+          {WALKTHROUGH_VIDEO_EMBED_URL ? (
+            <div className={`relative aspect-video overflow-hidden rounded-3xl border border-gray-100 bg-[#020617] ${SHADOW_ELEVATED}`}>
+              <iframe
+                src={WALKTHROUGH_VIDEO_EMBED_URL}
+                title="See PreachingHub in 2 minutes"
+                allow="autoplay; fullscreen; picture-in-picture"
+                allowFullScreen
+                className="absolute inset-0 h-full w-full"
+              />
+            </div>
+          ) : (
+            <figure>
+              <div className={`relative overflow-hidden rounded-2xl border border-gray-200 bg-[#F8FAFC] text-left ${SHADOW_ELEVATED}`}>
+                <div className="flex items-center gap-2 border-b border-gray-200 bg-white px-4 py-3">
+                  <span className="h-2.5 w-2.5 rounded-full bg-gray-200" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-gray-200" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-gray-200" />
+                  <span className="mx-auto rounded-md bg-gray-100 px-4 py-1 text-[11px] font-medium text-[#64748B]">app.preachinghub.com</span>
+                  <span className="w-[42px]" />
+                </div>
+                <div className="relative max-h-[420px] overflow-hidden sm:max-h-[700px]">
+                  <Image
+                    src="/images/sample-coaching-report.jpg"
+                    alt="A PreachingHub coaching report: an overall summary, strengths and growth areas across the sermon, and the biggest wins"
+                    width={1800}
+                    height={2293}
+                    sizes="(min-width: 896px) 896px, 100vw"
+                    priority
+                    className="h-auto w-full"
+                  />
+                  <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-white to-transparent" />
+                </div>
               </div>
-            </div>
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-white/50 text-[10px] font-bold uppercase tracking-widest whitespace-nowrap">
-              [Walkthrough video: see PreachingHub in 2 minutes]
-            </div>
-          </div>
+              <figcaption className="mt-4 text-xs font-bold uppercase tracking-widest text-[#64748B]">
+                A sample PreachingHub coaching report
+              </figcaption>
+            </figure>
+          )}
         </div>
 
         <div className="flex flex-col items-center gap-6">
