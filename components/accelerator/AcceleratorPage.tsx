@@ -130,7 +130,7 @@ export function AcceleratorPage({ cohort, spotsLeft }: { cohort: Cohort; spotsLe
                 </div>
                 <div className="relative max-h-[360px] overflow-hidden sm:max-h-[480px]">
                   <Image
-                    src="/images/sample-coaching-report.jpg"
+                    src="/images/sample-coaching-report-v2.jpg"
                     alt="A PreachingHub coaching report: an overall summary, strengths and growth areas across the sermon, and the biggest wins"
                     width={1800}
                     height={2293}
