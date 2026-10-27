@@ -127,21 +127,23 @@ export function AcceleratorPage({ cohort, spotsLeft }: { cohort: Cohort; spotsLe
                   <span className="mx-auto rounded-md bg-gray-100 px-4 py-1 text-[11px] font-medium text-[#64748B]">app.preachinghub.com</span>
                   <span className="w-[42px]" />
                 </div>
-                <div className="relative max-h-[360px] overflow-hidden sm:max-h-[480px]">
+                <div className="relative">
+                <div className="h-[360px] overflow-y-auto sm:h-[480px]" tabIndex={0} role="region" aria-label="Sample coaching report, scrollable">
                   <Image
-                    src="/images/sample-coaching-report-v3.jpg"
+                    src="/images/sample-coaching-report-v4.jpg"
                     alt="A PreachingHub coaching report: an overall summary, strengths and growth areas across the sermon, and the biggest wins"
                     width={1800}
-                    height={2293}
+                    height={3889}
                     sizes="(min-width: 672px) 672px, 100vw"
                     priority
                     className="h-auto w-full"
                   />
-                  <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-white to-transparent" />
+                </div>
+                  <div className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-white/90 to-transparent" />
                 </div>
               </div>
               <figcaption className="mt-4 text-xs font-bold uppercase tracking-widest text-[#64748B]">
-                A sample PreachingHub coaching report
+                A sample PreachingHub coaching report. Scroll to explore.
               </figcaption>
               <div className="mx-auto mt-8 flex max-w-xl items-center gap-4 rounded-2xl border border-indigo-100 bg-indigo-50/60 p-3 pr-5 text-left">
                 <Image
