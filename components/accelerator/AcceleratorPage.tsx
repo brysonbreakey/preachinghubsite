@@ -118,7 +118,7 @@ export function AcceleratorPage({ cohort, spotsLeft }: { cohort: Cohort; spotsLe
               />
             </div>
           ) : (
-            <figure>
+            <figure className="mx-auto max-w-2xl">
               <div className={`relative overflow-hidden rounded-2xl border border-gray-200 bg-[#F8FAFC] text-left ${SHADOW_ELEVATED}`}>
                 <div className="flex items-center gap-2 border-b border-gray-200 bg-white px-4 py-3">
                   <span className="h-2.5 w-2.5 rounded-full bg-gray-200" />
@@ -127,13 +127,13 @@ export function AcceleratorPage({ cohort, spotsLeft }: { cohort: Cohort; spotsLe
                   <span className="mx-auto rounded-md bg-gray-100 px-4 py-1 text-[11px] font-medium text-[#64748B]">app.preachinghub.com</span>
                   <span className="w-[42px]" />
                 </div>
-                <div className="relative max-h-[420px] overflow-hidden sm:max-h-[700px]">
+                <div className="relative max-h-[360px] overflow-hidden sm:max-h-[480px]">
                   <Image
                     src="/images/sample-coaching-report.jpg"
                     alt="A PreachingHub coaching report: an overall summary, strengths and growth areas across the sermon, and the biggest wins"
                     width={1800}
                     height={2293}
-                    sizes="(min-width: 896px) 896px, 100vw"
+                    sizes="(min-width: 672px) 672px, 100vw"
                     priority
                     className="h-auto w-full"
                   />
@@ -312,7 +312,7 @@ export function AcceleratorPage({ cohort, spotsLeft }: { cohort: Cohort; spotsLe
         <div className="max-w-4xl mx-auto px-8 relative z-10 text-center space-y-16">
           <div className="space-y-4">
             <p className="text-[10px] font-black uppercase tracking-[0.4em] text-indigo-400">The Preacher&apos;s Plateau</p>
-            <h2 className={`text-4xl md:text-6xl font-black tracking-tight leading-none text-left md:text-center [color:#fff] ${H}`}>Nobody tells you the truth on Sunday. PreachingHub does.</h2>
+            <h2 className={`text-4xl md:text-6xl font-black tracking-tight leading-none text-left md:text-center [color:#fff] ${H}`}>Most people won't tell you the truth on Sunday. PreachingHub does.</h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center text-left">
