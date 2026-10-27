@@ -119,7 +119,6 @@ export function AcceleratorPage({ cohort, spotsLeft }: { cohort: Cohort; spotsLe
             </div>
           ) : (
             <figure className="mx-auto max-w-2xl">
-              <div className="relative">
               <div className={`relative overflow-hidden rounded-2xl border border-gray-200 bg-[#F8FAFC] text-left ${SHADOW_ELEVATED}`}>
                 <div className="flex items-center gap-2 border-b border-gray-200 bg-white px-4 py-3">
                   <span className="h-2.5 w-2.5 rounded-full bg-gray-200" />
@@ -130,7 +129,7 @@ export function AcceleratorPage({ cohort, spotsLeft }: { cohort: Cohort; spotsLe
                 </div>
                 <div className="relative max-h-[360px] overflow-hidden sm:max-h-[480px]">
                   <Image
-                    src="/images/sample-coaching-report-v2.jpg"
+                    src="/images/sample-coaching-report-v3.jpg"
                     alt="A PreachingHub coaching report: an overall summary, strengths and growth areas across the sermon, and the biggest wins"
                     width={1800}
                     height={2293}
@@ -141,23 +140,23 @@ export function AcceleratorPage({ cohort, spotsLeft }: { cohort: Cohort; spotsLe
                   <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-white to-transparent" />
                 </div>
               </div>
-                <div className="absolute -bottom-5 -right-2 w-36 sm:-right-8 sm:w-56 overflow-hidden rounded-2xl border-4 border-white shadow-[0_20px_40px_-10px_rgba(15,23,42,0.35)]">
-                  <Image
-                    src="/images/coaching-call.jpg"
-                    alt="A pastor on a video call with a preaching coach, Bible open on the desk"
-                    width={800}
-                    height={640}
-                    sizes="224px"
-                    className="h-auto w-full"
-                  />
-                  <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent px-3 pb-2 pt-6 text-left text-[10px] font-black uppercase tracking-widest text-white [color:#fff]">
-                    + 1:1 coaching
-                  </span>
-                </div>
-              </div>
-              <figcaption className="mt-8 text-xs font-bold uppercase tracking-widest text-[#64748B]">
+              <figcaption className="mt-4 text-xs font-bold uppercase tracking-widest text-[#64748B]">
                 A sample PreachingHub coaching report
               </figcaption>
+              <div className="mx-auto mt-8 flex max-w-xl items-center gap-4 rounded-2xl border border-indigo-100 bg-indigo-50/60 p-3 pr-5 text-left">
+                <Image
+                  src="/images/coaching-call.jpg"
+                  alt="A pastor on a video call with a preaching coach, Bible open on the desk"
+                  width={800}
+                  height={640}
+                  sizes="112px"
+                  className="h-16 w-20 shrink-0 rounded-xl object-cover"
+                />
+                <p className="text-sm font-medium leading-snug text-[#0F172A] sm:text-base">
+                  <span className="font-black">Then we go through it together.</span>{" "}
+                  <span className="text-[#64748B]">Your 1:1 coaching session turns the report into a plan.</span>
+                </p>
+              </div>
             </figure>
           )}
         </div>
