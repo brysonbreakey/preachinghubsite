@@ -164,7 +164,7 @@ export function AcceleratorPage({ cohort, spotsLeft }: { cohort: Cohort; spotsLe
                 </div>
               </div>
               <figcaption className="mt-4 text-xs font-bold uppercase tracking-widest text-[#64748B]">
-                A sample PreachingHub coaching report. Scroll to explore.
+                A sample PreachingHub coaching report
               </figcaption>
               <div className="mx-auto mt-8 flex max-w-xl items-center gap-4 rounded-2xl border border-indigo-100 bg-indigo-50/60 p-3 pr-5 text-left">
                 <Image
