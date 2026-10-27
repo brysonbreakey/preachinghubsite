@@ -119,6 +119,7 @@ export function AcceleratorPage({ cohort, spotsLeft }: { cohort: Cohort; spotsLe
             </div>
           ) : (
             <figure className="mx-auto max-w-2xl">
+              <div className="relative">
               <div className={`relative overflow-hidden rounded-2xl border border-gray-200 bg-[#F8FAFC] text-left ${SHADOW_ELEVATED}`}>
                 <div className="flex items-center gap-2 border-b border-gray-200 bg-white px-4 py-3">
                   <span className="h-2.5 w-2.5 rounded-full bg-gray-200" />
@@ -140,7 +141,21 @@ export function AcceleratorPage({ cohort, spotsLeft }: { cohort: Cohort; spotsLe
                   <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-white to-transparent" />
                 </div>
               </div>
-              <figcaption className="mt-4 text-xs font-bold uppercase tracking-widest text-[#64748B]">
+                <div className="absolute -bottom-5 -right-2 w-36 sm:-right-8 sm:w-56 overflow-hidden rounded-2xl border-4 border-white shadow-[0_20px_40px_-10px_rgba(15,23,42,0.35)]">
+                  <Image
+                    src="/images/coaching-call.jpg"
+                    alt="A pastor on a video call with a preaching coach, Bible open on the desk"
+                    width={800}
+                    height={640}
+                    sizes="224px"
+                    className="h-auto w-full"
+                  />
+                  <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent px-3 pb-2 pt-6 text-left text-[10px] font-black uppercase tracking-widest text-white [color:#fff]">
+                    + 1:1 coaching
+                  </span>
+                </div>
+              </div>
+              <figcaption className="mt-8 text-xs font-bold uppercase tracking-widest text-[#64748B]">
                 A sample PreachingHub coaching report
               </figcaption>
             </figure>
@@ -312,7 +327,7 @@ export function AcceleratorPage({ cohort, spotsLeft }: { cohort: Cohort; spotsLe
         <div className="max-w-4xl mx-auto px-8 relative z-10 text-center space-y-16">
           <div className="space-y-4">
             <p className="text-[10px] font-black uppercase tracking-[0.4em] text-indigo-400">The Preacher&apos;s Plateau</p>
-            <h2 className={`text-4xl md:text-6xl font-black tracking-tight leading-none text-left md:text-center [color:#fff] ${H}`}>Most people won't tell you the truth on Sunday. PreachingHub does.</h2>
+            <h2 className={`text-4xl md:text-6xl font-black tracking-tight leading-none text-left md:text-center [color:#fff] ${H}`}>Most people won&apos;t tell you the truth on Sunday. PreachingHub does.</h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center text-left">
