@@ -130,7 +130,7 @@ export function AcceleratorPage({ cohort, spotsLeft }: { cohort: Cohort; spotsLe
                 <div className="relative">
                 <div className="h-[360px] overflow-y-auto sm:h-[480px]" tabIndex={0} role="region" aria-label="Sample coaching report, scrollable">
                   <Image
-                    src="/images/sample-coaching-report-v4.jpg"
+                    src="/images/sample-coaching-report-v5.jpg"
                     alt="A PreachingHub coaching report: an overall summary, strengths and growth areas across the sermon, and the biggest wins"
                     width={1800}
                     height={3889}
