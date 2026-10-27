@@ -89,7 +89,7 @@ export function AcceleratorPage({ cohort, spotsLeft }: { cohort: Cohort; spotsLe
   return (
     <main className="font-[family-name:var(--font-jakarta)] bg-white text-[#0F172A] overflow-x-hidden antialiased">
       <style>{`@keyframes acc-fade-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } } .acc-fade-in { animation: acc-fade-in 0.8s ease-out; }`}</style>
-      {modal && <AcceleratorSignupModal intent={modal} onClose={() => setModal(null)} />}
+      {modal && <AcceleratorSignupModal intent={modal} startsOn={cohort.startsOn} onClose={() => setModal(null)} />}
 
       {/* Top banner: kept exactly as it is on the current /checklist/thank-you page */}
       <div className="bg-blue-50 border-b border-blue-100 py-3 px-6 text-center">
