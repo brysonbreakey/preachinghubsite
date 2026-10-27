@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import posthog from "posthog-js";
 import { Icon } from "@/components/Icon";
@@ -38,6 +38,32 @@ function fastScrollTo(id: string) {
     if (t < 1) requestAnimationFrame(step);
   }
   requestAnimationFrame(step);
+}
+
+// The scrollable sample report. Once it reaches the top or bottom, further wheel / trackpad
+// movement (including momentum) is handed to the page, so the scroll never hits a hard stop.
+function ScrollableReport({ children }: { children: React.ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const onWheel = (e: WheelEvent) => {
+      if (e.ctrlKey) return;
+      const atTop = el.scrollTop <= 0;
+      const atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 1;
+      if ((e.deltaY > 0 && atBottom) || (e.deltaY < 0 && atTop)) {
+        e.preventDefault();
+        window.scrollBy(0, e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY);
+      }
+    };
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => el.removeEventListener("wheel", onWheel);
+  }, []);
+  return (
+    <div ref={ref} className="h-[360px] overflow-y-auto sm:h-[480px]" tabIndex={0} role="region" aria-label="Sample coaching report, scrollable">
+      {children}
+    </div>
+  );
 }
 
 export function AcceleratorPage({ cohort, spotsLeft }: { cohort: Cohort; spotsLeft: number | null }) {
@@ -123,7 +149,7 @@ export function AcceleratorPage({ cohort, spotsLeft }: { cohort: Cohort; spotsLe
                   <span className="w-[42px]" />
                 </div>
                 <div className="relative">
-                <div className="h-[360px] overflow-y-auto sm:h-[480px]" tabIndex={0} role="region" aria-label="Sample coaching report, scrollable">
+                <ScrollableReport>
                   <Image
                     src="/images/sample-coaching-report-v5.jpg"
                     alt="A PreachingHub coaching report: an overall summary, strengths and growth areas across the sermon, and the biggest wins"
@@ -133,7 +159,7 @@ export function AcceleratorPage({ cohort, spotsLeft }: { cohort: Cohort; spotsLe
                     priority
                     className="h-auto w-full"
                   />
-                </div>
+                </ScrollableReport>
                   <div className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-white/90 to-transparent" />
                 </div>
               </div>
