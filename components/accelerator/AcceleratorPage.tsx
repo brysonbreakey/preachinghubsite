@@ -153,7 +153,7 @@ export function AcceleratorPage({ cohort, spotsLeft }: { cohort: Cohort; spotsLe
                   className="h-16 w-20 shrink-0 rounded-xl object-cover"
                 />
                 <p className="text-sm font-medium leading-snug text-[#0F172A] sm:text-base">
-                  Your Personalized <span className="font-black">1:1 Coaching</span> session turns the report into a plan.
+                  Your personalized <span className="font-black">1:1 Coaching</span> session turns the report into a plan.
                 </p>
               </div>
             </figure>
