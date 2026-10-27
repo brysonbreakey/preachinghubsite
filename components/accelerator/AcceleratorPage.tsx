@@ -87,13 +87,8 @@ export function AcceleratorPage({ cohort, spotsLeft }: { cohort: Cohort; spotsLe
         </a>
       </div>
 
-      {/* Navigation: logo only, so nothing pulls attention from the offer */}
-      <nav className="max-w-7xl mx-auto px-8 py-6 flex justify-center items-center border-b border-gray-50">
-        <Image src="/logos/wordmark-indigo.svg" alt="PreachingHub" width={498} height={77} unoptimized priority className="h-8 w-auto" />
-      </nav>
-
       {/* Hero */}
-      <header className="acc-fade-in max-w-5xl mx-auto px-8 pt-8 md:pt-10 pb-24 text-center">
+      <header className="acc-fade-in max-w-5xl mx-auto px-8 pt-12 md:pt-16 pb-24 text-center">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 text-[#4F46E5] text-[10px] font-black uppercase tracking-[0.2em] mb-8">
           Before you go: A limited coaching offer
         </div>
