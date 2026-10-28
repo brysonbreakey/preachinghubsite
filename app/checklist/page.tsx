@@ -6,6 +6,7 @@ import { PHMark } from "@/components/Logo";
 import { SmsConsentNotice } from "@/components/SmsConsentNotice";
 
 const NAVY = "#3760ad";
+const INDIGO = "#4F46E5";
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function splitName(fullName: string): { firstName: string; lastName: string } {
@@ -111,7 +112,7 @@ export default function ChecklistPage() {
           <div className="lg:grid lg:grid-cols-2 lg:gap-8 lg:items-center">
               {/* Left column — headline, subheadline, creative */}
               <div className="text-center lg:text-left">
-                <p className="text-sm font-bold uppercase tracking-wide mb-3" style={{ color: NAVY }}>
+                <p className="text-sm font-bold uppercase tracking-wide mb-3" style={{ color: INDIGO }}>
                   (Free Download)
                 </p>
                 <h1 className="text-4xl sm:text-5xl lg:text-7xl font-extrabold text-slate-900 mb-8 tracking-tight leading-[1.05]">
@@ -175,7 +176,7 @@ export default function ChecklistPage() {
                     type="submit"
                     disabled={status === "loading"}
                     className="w-full inline-flex items-center justify-center gap-2 text-white font-semibold px-6 py-4 rounded-xl text-base transition-colors disabled:opacity-60"
-                    style={{ backgroundColor: NAVY }}
+                    style={{ backgroundColor: INDIGO }}
                   >
                     {status === "loading" ? "Sending..." : "Get the Checklist"}
                   </button>
