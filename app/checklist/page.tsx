@@ -5,7 +5,6 @@ import posthog from "posthog-js";
 import { PHMark } from "@/components/Logo";
 import { SmsConsentNotice } from "@/components/SmsConsentNotice";
 
-const NAVY = "#3760ad";
 const INDIGO = "#4F46E5";
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -104,7 +103,7 @@ export default function ChecklistPage() {
       <div className="flex-1 flex items-center justify-center px-6 py-10 sm:py-16">
         <div className="w-full max-w-md lg:max-w-4xl">
           <div className="flex justify-center mb-6 lg:hidden">
-            <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{ backgroundColor: NAVY }}>
+            <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{ backgroundColor: INDIGO }}>
               <PHMark size={22} color="#fff" />
             </div>
           </div>
@@ -123,7 +122,7 @@ export default function ChecklistPage() {
                 <div className="hidden lg:flex justify-start">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src="/images/Checklist 2 Part Mockup.png"
+                    src="/images/checklist-pdf-and-phone.png"
                     alt="The Pre-Preaching Checklist as a printable PDF and on the mobile interactive version"
                     className="w-full max-w-lg"
                   />
@@ -143,8 +142,8 @@ export default function ChecklistPage() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Name"
-                    className={`w-full rounded-lg border px-3.5 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#3760ad] ${
-                      status === "error" ? "border-red-300" : "border-slate-300 focus:border-[#3760ad]"
+                    className={`w-full rounded-lg border px-3.5 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#4F46E5] ${
+                      status === "error" ? "border-red-300" : "border-slate-300 focus:border-[#4F46E5]"
                     }`}
                   />
                   <input
@@ -153,8 +152,8 @@ export default function ChecklistPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Email address"
-                    className={`w-full rounded-lg border px-3.5 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#3760ad] ${
-                      status === "error" ? "border-red-300" : "border-slate-300 focus:border-[#3760ad]"
+                    className={`w-full rounded-lg border px-3.5 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#4F46E5] ${
+                      status === "error" ? "border-red-300" : "border-slate-300 focus:border-[#4F46E5]"
                     }`}
                   />
                   <input
@@ -164,8 +163,8 @@ export default function ChecklistPage() {
                     value={phone}
                     onChange={(e) => setPhone(formatPhone(e.target.value))}
                     placeholder="Phone number"
-                    className={`w-full rounded-lg border px-3.5 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#3760ad] ${
-                      status === "error" ? "border-red-300" : "border-slate-300 focus:border-[#3760ad]"
+                    className={`w-full rounded-lg border px-3.5 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#4F46E5] ${
+                      status === "error" ? "border-red-300" : "border-slate-300 focus:border-[#4F46E5]"
                     }`}
                   />
                   <p className="text-xs text-slate-600 -mt-1.5">We&apos;ll send the interactive mobile version to your phone 📲</p>
