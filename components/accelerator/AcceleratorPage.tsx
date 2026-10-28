@@ -74,6 +74,17 @@ export type AcceleratorVariant = "thank-you" | "landing";
 export function AcceleratorPage({ cohort, spotsLeft, variant = "thank-you" }: { cohort: Cohort; spotsLeft: number | null; variant?: AcceleratorVariant }) {
   const [modal, setModal] = useState<Intent | null>(null);
 
+  // One named event per visit (PostHog's automatic $pageview also fires): the funnel's first step,
+  // with what the visitor was shown. `page` tells /checklist/thank-you and /accelerator apart.
+  useEffect(() => {
+    posthog.capture("accelerator_page_viewed", {
+      page: variant === "thank-you" ? "checklist_thank_you" : "accelerator",
+      spots_left: spotsLeft,
+      round_starts_on: cohort.startsOn,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   function openSignup(location: string, intent: Intent = "accelerator") {
     posthog.capture("accelerator_cta_clicked", { location, intent });
     setModal(intent);
