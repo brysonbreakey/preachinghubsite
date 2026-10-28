@@ -186,7 +186,7 @@ export default function ChecklistPage() {
                   Unsubscribe any time.
                 </p>
               </div>
-              <SmsConsentNotice buttonLabel="Get the Checklist" messages="your checklist" className="mt-4 px-2" />
+              <SmsConsentNotice buttonLabel="Get the Checklist" className="mt-4 px-2" />
               </div>
           </div>
         </div>

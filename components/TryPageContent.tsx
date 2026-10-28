@@ -849,7 +849,6 @@ export function TryPageContent({
           {showPhoneField && (
             <SmsConsentNotice
               buttonLabel="Get My Free Report"
-              messages="updates about your report"
               className="mt-4 px-2"
             />
           )}
