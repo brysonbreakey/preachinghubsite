@@ -181,7 +181,9 @@ function PayStep({
       <div className="flex flex-col items-center gap-2 text-sm pt-1">
         {pay.skipTokenHash && (
           <button type="button" onClick={onSkipTrial} disabled={submitting} className="text-center text-slate-500 hover:text-slate-900 underline underline-offset-2 disabled:opacity-50">
-            No thanks, start my free week instead (No 1:1 coaching or 30-Day Growth Plan)
+            No thanks, start my free week instead
+            <br />
+            (No 1:1 coaching or 30-Day Growth Plan)
           </button>
         )}
         <button type="button" onClick={onBack} disabled={submitting} className="text-slate-400 hover:text-slate-900 underline underline-offset-2 disabled:opacity-50">← Back</button>
