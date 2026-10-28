@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import posthog from "posthog-js";
 import { PHLogo } from "@/components/Logo";
 import { Icon } from "@/components/Icon";
 import { APP_URL, SIGNUP_URL } from "@/lib/urls";
@@ -11,6 +12,18 @@ const NAV_LINKS = [
   { href: "/teams", label: "Teams" },
   { href: "/try", label: "Free Coaching Report" },
 ];
+
+// Sits apart from NAV_LINKS: it's the offer, so it gets its own emphasized treatment.
+const ACCELERATOR_LINK = { href: "/accelerator", label: "30-Day Growth Accelerator" };
+
+function AcceleratorDot() {
+  return (
+    <span className="relative flex h-2 w-2 shrink-0" aria-hidden="true">
+      <span className="absolute inline-flex h-full w-full rounded-full bg-[#4F46E5] opacity-60 motion-safe:animate-ping group-hover:bg-white" />
+      <span className="relative inline-flex h-2 w-2 rounded-full bg-[#4F46E5] group-hover:bg-white" />
+    </span>
+  );
+}
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
@@ -23,6 +36,14 @@ export function Navbar() {
           {NAV_LINKS.map((link) => (
             <a key={link.href} href={link.href} className="hover:text-slate-900 transition-colors">{link.label}</a>
           ))}
+          <a
+            href={ACCELERATOR_LINK.href}
+            onClick={() => posthog.capture("accelerator_nav_clicked", { location: "desktop_nav" })}
+            className="group inline-flex items-center gap-2 whitespace-nowrap rounded-full border border-indigo-200 bg-indigo-50 px-3.5 py-1.5 font-semibold text-[#4F46E5] transition-colors hover:border-[#4F46E5] hover:bg-[#4F46E5] hover:text-white"
+          >
+            <AcceleratorDot />
+            {ACCELERATOR_LINK.label}
+          </a>
         </nav>
         <div className="flex items-center gap-3">
           <a href={`${APP_URL}/auth/login`} className="hidden lg:block text-sm text-slate-600 hover:text-slate-900 transition-colors">Sign in</a>
@@ -44,6 +65,17 @@ export function Navbar() {
       {open && (
         <div className="lg:hidden border-t border-slate-200 bg-white px-6 py-4">
           <nav className="flex flex-col gap-1">
+            <a
+              href={ACCELERATOR_LINK.href}
+              onClick={() => {
+                posthog.capture("accelerator_nav_clicked", { location: "mobile_menu" });
+                setOpen(false);
+              }}
+              className="group mb-1 flex items-center gap-2.5 rounded-lg border border-indigo-200 bg-indigo-50 px-2 py-3 font-semibold text-[#4F46E5] transition-colors hover:border-[#4F46E5] hover:bg-[#4F46E5] hover:text-white"
+            >
+              <AcceleratorDot />
+              {ACCELERATOR_LINK.label}
+            </a>
             {NAV_LINKS.map((link) => (
               <a
                 key={link.href}
