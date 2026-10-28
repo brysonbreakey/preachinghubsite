@@ -29,6 +29,17 @@ function splitName(fullName: string): { firstName: string; lastName: string } {
   return { firstName: trimmed.slice(0, idx), lastName: trimmed.slice(idx + 1) };
 }
 
+// Formats as the person types: digits only, shown as 555-123-4567. A leading country code "1" (from
+// autofill or a pasted +1 number) is dropped so it doesn't push the real number past ten digits.
+function formatPhone(raw: string): string {
+  let digits = raw.replace(/\D/g, "");
+  if (digits.length > 10 && digits.startsWith("1")) digits = digits.slice(1);
+  digits = digits.slice(0, 10);
+  if (digits.length <= 3) return digits;
+  if (digits.length <= 6) return `${digits.slice(0, 3)}-${digits.slice(3)}`;
+  return `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6)}`;
+}
+
 function SettingUpOverlay({ firstName, steps, heading }: { firstName: string; steps: string[]; heading?: string }) {
   const [active, setActive] = useState(0);
   useEffect(() => {
@@ -434,7 +445,7 @@ export function AcceleratorSignupModal({
               {isPaidMode && (
                 <div>
                   <label htmlFor="acc-phone" className="block text-sm font-medium text-slate-700 mb-1.5">Mobile number</label>
-                  <input id="acc-phone" type="tel" inputMode="tel" value={phone} onChange={(e) => setPhone(e.target.value)} autoComplete="tel" placeholder="(555) 123-4567" className={INPUT_CLASS} />
+                  <input id="acc-phone" type="tel" inputMode="tel" value={phone} onChange={(e) => setPhone(formatPhone(e.target.value))} autoComplete="tel" placeholder="555-123-4567" className={INPUT_CLASS} />
                   <p className="mt-1.5 text-[11px] leading-snug text-slate-400">
                     By continuing, you agree to receive text messages from PreachingHub about your coaching session and your account. Msg frequency varies. Msg &amp; data rates may apply. Reply STOP to cancel, HELP for help. See our{" "}
                     <a href="/terms" target="_blank" rel="noopener noreferrer" className="underline">Terms</a> and{" "}
