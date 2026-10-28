@@ -25,11 +25,15 @@ const APP_ONLY_PATHS = [
 
 const nextConfig: NextConfig = {
   async redirects() {
-    return APP_ONLY_PATHS.map((path) => ({
-      source: `/${path}/:rest*`,
-      destination: `${APP_URL}/${path}/:rest*`,
-      permanent: false,
-    }));
+    return [
+      // Short link to the app's signup page; query params (utm etc.) carry through.
+      { source: "/start", destination: `${APP_URL}/auth/login?mode=signup`, permanent: false },
+      ...APP_ONLY_PATHS.map((path) => ({
+        source: `/${path}/:rest*`,
+        destination: `${APP_URL}/${path}/:rest*`,
+        permanent: false,
+      })),
+    ];
   },
   async rewrites() {
     return [

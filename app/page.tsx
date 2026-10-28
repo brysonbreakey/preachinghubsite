@@ -4,6 +4,7 @@ import { Icon } from "@/components/Icon";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { PricingTeaser } from "@/components/PricingTeaser";
+import { SampleReportShowcase } from "@/components/SampleReportShowcase";
 import { FeedbackReportMockup } from "@/components/FeedbackReportMockup";
 import { SIGNUP_URL } from "@/lib/urls";
 
@@ -618,6 +619,7 @@ export default function Page() {
       <Testimonials />
       <AboutCompany />
       <PricingTeaser />
+      <SampleReportShowcase />
       <FinalCTA />
       <Footer />
     </main>
