@@ -366,7 +366,7 @@ export function AcceleratorSignupModal({
             {onPayStep
               ? `Almost done, ${splitName(name).firstName || "Pastor"}. Your card is charged $49 today.`
               : isPaidMode
-                ? "$49 today includes your free 1:1 coaching session."
+                ? "$49 today includes your platform access, 1:1 coaching session, and 30-day growth plan."
                 : "Try PreachingHub first. No card is needed to get started, and you'll choose how to continue when you're ready."}
           </p>
 
