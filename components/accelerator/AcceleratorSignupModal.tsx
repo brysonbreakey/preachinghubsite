@@ -10,7 +10,7 @@ import { APP_URL } from "@/lib/urls";
 //  - "accelerator" (Claim my slot): account details, then the card on the next step, then $49 is
 //    charged and they're signed straight into the app with their coaching slot claimed.
 //  - "trial" (the small "no thanks, free week" link): the original no-card account creation, the
-//    same flow as /checklist/thank-you (ChecklistThankYouTrial). Kept as its own copy so the new
+//    same flow the old /checklist/thank-you page used (ChecklistThankYouTrial). Kept as its own copy so the new
 //    page can be built and tested without touching the live one.
 // The app does the real work (/api/accelerator/start and /finish); this file is the screens.
 

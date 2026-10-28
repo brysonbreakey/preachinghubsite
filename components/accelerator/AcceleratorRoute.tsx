@@ -6,7 +6,7 @@ const jakarta = Plus_Jakarta_Sans({ subsets: ["latin"], weight: ["400", "500", "
 const lora = Lora({ subsets: ["latin"], style: ["normal", "italic"], variable: "--font-lora" });
 
 // Server-side body shared by every route that serves the 30-Day Preaching Growth Accelerator page
-// (/checklist/thank-you-v2 and /accelerator), so the two can't drift apart. Each route supplies its
+// (/checklist/thank-you and /accelerator), so the two can't drift apart. Each route supplies its
 // own metadata and `dynamic = "force-dynamic"` (the cohort date rolls over at midnight Central).
 export async function AcceleratorRoute({ variant, searchParams }: { variant: AcceleratorVariant; searchParams: Promise<{ spots?: string }> }) {
   // Ask the app which cohort is current and how many spots are left; fall back to the local

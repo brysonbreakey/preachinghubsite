@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { AcceleratorRoute } from "@/components/accelerator/AcceleratorRoute";
 
-// The same offer as /checklist/thank-you-v2, as its own page for visitors who didn't just download
+// The same offer as /checklist/thank-you, as its own page for visitors who didn't just download
 // the checklist (no "your checklist is on its way" banner).
 export const metadata: Metadata = {
   title: "30-Day Preaching Growth Accelerator — PreachingHub",
