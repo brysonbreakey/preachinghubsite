@@ -66,7 +66,12 @@ function ScrollableReport({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function AcceleratorPage({ cohort, spotsLeft }: { cohort: Cohort; spotsLeft: number | null }) {
+// "thank-you": shown right after the checklist signup (has the "your checklist is on its way" banner
+// and the "Before you go" opener). "landing": the same offer as its own page at /accelerator, for
+// visitors who didn't just download anything.
+export type AcceleratorVariant = "thank-you" | "landing";
+
+export function AcceleratorPage({ cohort, spotsLeft, variant = "thank-you" }: { cohort: Cohort; spotsLeft: number | null; variant?: AcceleratorVariant }) {
   const [modal, setModal] = useState<Intent | null>(null);
 
   function openSignup(location: string, intent: Intent = "accelerator") {
@@ -91,32 +96,36 @@ export function AcceleratorPage({ cohort, spotsLeft }: { cohort: Cohort; spotsLe
       <style>{`@keyframes acc-fade-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } } .acc-fade-in { animation: acc-fade-in 0.8s ease-out; }`}</style>
       {modal && <AcceleratorSignupModal intent={modal} startsOn={cohort.startsOn} onClose={() => setModal(null)} />}
 
-      {/* Top banner: kept exactly as it is on the current /checklist/thank-you page */}
-      <div className="bg-blue-50 border-b border-blue-100 py-3 px-6 text-center">
-        <p className="text-sm sm:text-base text-blue-900">
-          🎉 Your checklist is on its way — check your inbox (and spam folder) in a few minutes.
-        </p>
-        {/* Opens in a new tab so this page (and the offer below) stays open behind it. */}
-        <a
-          href="/downloads/pre-preaching-checklist.pdf"
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={() => posthog.capture("checklist_pdf_opened", { page: "checklist_thank_you", variant: "accelerator" })}
-          className="mt-2.5 inline-flex items-center gap-1.5 rounded-lg border-2 border-[#3760ad] bg-white px-4 py-1.5 text-sm font-semibold text-[#3760ad] shadow-sm hover:bg-blue-100 transition-colors"
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <path d="M12 3v12" />
-            <path d="m7 10 5 5 5-5" />
-            <path d="M5 21h14" />
-          </svg>
-          Get your checklist now (PDF)
-        </a>
-      </div>
+      {variant === "thank-you" && (
+        <>
+          {/* Top banner: kept exactly as it is on the current /checklist/thank-you page */}
+          <div className="bg-blue-50 border-b border-blue-100 py-3 px-6 text-center">
+            <p className="text-sm sm:text-base text-blue-900">
+              🎉 Your checklist is on its way — check your inbox (and spam folder) in a few minutes.
+            </p>
+            {/* Opens in a new tab so this page (and the offer below) stays open behind it. */}
+            <a
+              href="/downloads/pre-preaching-checklist.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => posthog.capture("checklist_pdf_opened", { page: "checklist_thank_you", variant: "accelerator" })}
+              className="mt-2.5 inline-flex items-center gap-1.5 rounded-lg border-2 border-[#3760ad] bg-white px-4 py-1.5 text-sm font-semibold text-[#3760ad] shadow-sm hover:bg-blue-100 transition-colors"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M12 3v12" />
+                <path d="m7 10 5 5 5-5" />
+                <path d="M5 21h14" />
+              </svg>
+              Get your checklist now (PDF)
+            </a>
+          </div>
+        </>
+      )}
 
       {/* Hero */}
       <header className="acc-fade-in max-w-5xl mx-auto px-8 pt-12 md:pt-16 pb-24 text-center">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 text-[#4F46E5] text-[10px] font-black uppercase tracking-[0.2em] mb-8">
-          Before you go: A limited coaching offer
+          {variant === "thank-you" ? "Before you go: A limited coaching offer" : "A limited coaching offer"}
         </div>
         <h1 className={`text-5xl md:text-7xl font-black leading-[1.05] mb-8 text-[#0F172A] tracking-tight ${H}`}>
           Better preaching in 30 days, or{" "}
