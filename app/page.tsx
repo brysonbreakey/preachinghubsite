@@ -599,7 +599,7 @@ function FinalCTA() {
           Start Your Free Trial
           <Icon d="M5 12h14M12 5l7 7-7 7" size={16} color="#0b1230" strokeWidth={2.5} />
         </a>
-        <p className="text-blue-100/60 text-xs mt-5">Start free, cancel anytime. $29/month for your first 3 months, then $49/month.</p>
+        <p className="text-blue-100/60 text-xs mt-5">Start free, cancel anytime. $49/month after your 7-day trial.</p>
       </div>
     </section>
   );

@@ -544,7 +544,7 @@ export function TryPageContent({
             >
               Start Your Free Trial →
             </a>
-            <p className="text-xs text-slate-400">Start free, cancel anytime. $29/month for your first 3 months, then $49/month after your trial.</p>
+            <p className="text-xs text-slate-400">Start free, cancel anytime. $49/month after your trial.</p>
           </div>
         </section>
         <Footer />

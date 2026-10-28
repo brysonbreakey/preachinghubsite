@@ -192,7 +192,7 @@ export function ChecklistThankYouTrial() {
               One 5-minute step done twice and you&apos;ll walk into the pulpit confident that your sermon is excellent ... and that you wrote it yourself.
             </p>
             <p className="text-sm font-bold uppercase tracking-wide" style={{ color: "#3760ad" }}>
-              Free for 7 Days · Then $29/Month for 3 Months
+              Free for 7 Days · Then $49/Month
             </p>
           </div>
 
@@ -264,7 +264,7 @@ export function ChecklistThankYouTrial() {
             <p className="text-xs text-slate-400 text-center mt-3 leading-relaxed">
               You won&apos;t be charged for 7 days.
               <br />
-              After that, it&apos;s $29/month for 3 months, then $49/month.{" "}
+              After that, it&apos;s $49/month.{" "}
               <strong className="font-semibold text-slate-500">Cancel anytime.</strong>
             </p>
           </div>
