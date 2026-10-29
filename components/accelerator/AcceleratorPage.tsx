@@ -13,8 +13,10 @@ const SERIF = "font-[family-name:var(--font-lora)]";
 const SHADOW_PREMIUM = "shadow-[0_10px_40px_-10px_rgba(15,23,42,0.05),0_2px_10px_-2px_rgba(15,23,42,0.02)]";
 const SHADOW_ELEVATED = "shadow-[0_20px_50px_-12px_rgba(79,70,229,0.1)]";
 
-// Paste the walkthrough video's embed URL here to replace the sample report in the hero.
-const WALKTHROUGH_VIDEO_EMBED_URL = "";
+// The sales video at the top of the page. Both files live in public/video/. If the video is ever
+// re-exported, give the new file a new name (and update these) so browsers don't serve the old one.
+const VSL_SRC = "/video/accelerator-vsl.mp4";
+const VSL_POSTER = "/video/accelerator-vsl-poster.jpg";
 
 type Intent = "accelerator" | "trial";
 
@@ -38,6 +40,43 @@ function fastScrollTo(id: string) {
     if (t < 1) requestAnimationFrame(step);
   }
   requestAnimationFrame(step);
+}
+
+// Click-to-play (browsers block autoplay with sound). Reports how far people watch to PostHog: one
+// "played" per visit, then the first time playback reaches 25 / 50 / 75%, and "completed" at the end.
+function VslPlayer() {
+  const played = useRef(false);
+  const reached = useRef(new Set<number>());
+  return (
+    <div className={`relative aspect-video overflow-hidden rounded-3xl border border-gray-100 bg-[#020617] ${SHADOW_ELEVATED}`}>
+      <video
+        className="h-full w-full"
+        controls
+        playsInline
+        preload="metadata"
+        poster={VSL_POSTER}
+        onPlay={() => {
+          if (played.current) return;
+          played.current = true;
+          posthog.capture("accelerator_vsl_played");
+        }}
+        onTimeUpdate={(e) => {
+          const v = e.currentTarget;
+          if (!v.duration || v.seeking) return;
+          const pct = (v.currentTime / v.duration) * 100;
+          for (const mark of [25, 50, 75]) {
+            if (pct >= mark && !reached.current.has(mark)) {
+              reached.current.add(mark);
+              posthog.capture("accelerator_vsl_progress", { percent: mark });
+            }
+          }
+        }}
+        onEnded={() => posthog.capture("accelerator_vsl_completed")}
+      >
+        <source src={VSL_SRC} type="video/mp4" />
+      </video>
+    </div>
+  );
 }
 
 // The scrollable sample report. Once it reaches the top or bottom, further wheel / trackpad
@@ -146,61 +185,9 @@ export function AcceleratorPage({ cohort, spotsLeft, variant = "thank-you" }: { 
           PreachingHub is your sermon prep space with a preaching coach built in. Get honest, expert feedback before you preach and after, and a personal plan to grow.
         </p>
 
-        {/* Hero visual: the walkthrough video once WALKTHROUGH_VIDEO_EMBED_URL is set, a sample coaching report until then */}
+        {/* Hero video: the sales video */}
         <div className="max-w-4xl mx-auto mb-12">
-          {WALKTHROUGH_VIDEO_EMBED_URL ? (
-            <div className={`relative aspect-video overflow-hidden rounded-3xl border border-gray-100 bg-[#020617] ${SHADOW_ELEVATED}`}>
-              <iframe
-                src={WALKTHROUGH_VIDEO_EMBED_URL}
-                title="See PreachingHub in 2 minutes"
-                allow="autoplay; fullscreen; picture-in-picture"
-                allowFullScreen
-                className="absolute inset-0 h-full w-full"
-              />
-            </div>
-          ) : (
-            <figure className="mx-auto max-w-2xl">
-              <div className={`relative overflow-hidden rounded-2xl border border-gray-200 bg-[#F8FAFC] text-left ${SHADOW_ELEVATED}`}>
-                <div className="flex items-center gap-2 border-b border-gray-200 bg-white px-4 py-3">
-                  <span className="h-2.5 w-2.5 rounded-full bg-gray-200" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-gray-200" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-gray-200" />
-                  <span className="mx-auto rounded-md bg-gray-100 px-4 py-1 text-[11px] font-medium text-[#64748B]">app.preachinghub.com</span>
-                  <span className="w-[42px]" />
-                </div>
-                <div className="relative">
-                <ScrollableReport>
-                  <Image
-                    src="/images/sample-coaching-report-v5.jpg"
-                    alt="A PreachingHub coaching report: an overall summary, strengths and growth areas across the sermon, and the biggest wins"
-                    width={1800}
-                    height={3889}
-                    sizes="(min-width: 672px) 672px, 100vw"
-                    priority
-                    className="h-auto w-full"
-                  />
-                </ScrollableReport>
-                  <div className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-white/90 to-transparent" />
-                </div>
-              </div>
-              <figcaption className="mt-4 text-xs font-bold uppercase tracking-widest text-[#64748B]">
-                A sample PreachingHub coaching report
-              </figcaption>
-              <div className="mx-auto mt-8 flex max-w-xl items-center gap-4 rounded-2xl border border-indigo-100 bg-indigo-50/60 p-3 pr-5 text-left">
-                <Image
-                  src="/images/coaching-call.jpg"
-                  alt="A pastor on a video call with a preaching coach, Bible open on the desk"
-                  width={800}
-                  height={640}
-                  sizes="112px"
-                  className="h-16 w-20 shrink-0 rounded-xl object-cover"
-                />
-                <p className="text-sm font-medium leading-snug text-[#0F172A] sm:text-base">
-                  Your personalized <span className="font-black">1:1 Coaching</span> session turns the report into a plan.
-                </p>
-              </div>
-            </figure>
-          )}
+          <VslPlayer />
         </div>
 
         <div className="flex flex-col items-center gap-6">
@@ -222,6 +209,35 @@ export function AcceleratorPage({ cohort, spotsLeft, variant = "thank-you" }: { 
             <p className="text-sm sm:text-base font-medium text-[#64748B]">Account access today, coaching the week of {cohort.startsOn}</p>
           </div>
         </div>
+
+        {/* A look at the coaching report, between the button and the offer it scrolls to */}
+        <figure className="mx-auto mt-20 max-w-2xl">
+          <div className={`relative overflow-hidden rounded-2xl border border-gray-200 bg-[#F8FAFC] text-left ${SHADOW_ELEVATED}`}>
+            <div className="flex items-center gap-2 border-b border-gray-200 bg-white px-4 py-3">
+              <span className="h-2.5 w-2.5 rounded-full bg-gray-200" />
+              <span className="h-2.5 w-2.5 rounded-full bg-gray-200" />
+              <span className="h-2.5 w-2.5 rounded-full bg-gray-200" />
+              <span className="mx-auto rounded-md bg-gray-100 px-4 py-1 text-[11px] font-medium text-[#64748B]">app.preachinghub.com</span>
+              <span className="w-[42px]" />
+            </div>
+            <div className="relative">
+            <ScrollableReport>
+              <Image
+                src="/images/sample-coaching-report-v5.jpg"
+                alt="A PreachingHub coaching report: an overall summary, strengths and growth areas across the sermon, and the biggest wins"
+                width={1800}
+                height={3889}
+                sizes="(min-width: 672px) 672px, 100vw"
+                className="h-auto w-full"
+              />
+            </ScrollableReport>
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-white/90 to-transparent" />
+            </div>
+          </div>
+          <figcaption className="mt-4 text-xs font-bold uppercase tracking-widest text-[#64748B]">
+            A sample PreachingHub coaching report
+          </figcaption>
+        </figure>
       </header>
 
       {/* Bonus Accelerator */}
