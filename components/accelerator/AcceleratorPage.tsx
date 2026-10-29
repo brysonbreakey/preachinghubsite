@@ -16,7 +16,7 @@ const SHADOW_ELEVATED = "shadow-[0_20px_50px_-12px_rgba(79,70,229,0.1)]";
 // The sales video at the top of the page. Both files live in public/video/. If the video is ever
 // re-exported, give the new file a new name (and update these) so browsers don't serve the old one.
 const VSL_SRC = "/video/accelerator-vsl.mp4";
-const VSL_POSTER = "/video/accelerator-vsl-poster.jpg";
+const VSL_POSTER = "/video/accelerator-vsl-poster-v2.jpg";
 
 type Intent = "accelerator" | "trial";
 
