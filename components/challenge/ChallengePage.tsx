@@ -105,10 +105,12 @@ export function ChallengePage() {
             Join the free challenge
           </button>
           <p className="text-sm sm:text-base font-black text-gray-500 uppercase tracking-widest">
-            <span className="text-emerald-600">Free</span> • No card required
+            <span className="text-emerald-600">Free</span>{" "}
+            • No card required
           </p>
           <p className="max-w-md text-sm sm:text-base font-medium leading-relaxed text-[#64748B]">
-            Sign up now to receive the pre-challenge homework. <span className="whitespace-nowrap">(It&apos;s not a lot, don&apos;t worry.)</span>
+            <span className="font-bold text-red-600">Sign up now to receive the pre-challenge homework.</span>{" "}
+            <span className="whitespace-nowrap">(It&apos;s not a lot, don&apos;t worry.)</span>
           </p>
         </div>
 
@@ -129,7 +131,8 @@ export function ChallengePage() {
       {/* Who it's for */}
       <section className="max-w-3xl mx-auto px-8 pb-24 text-center space-y-8">
         <h2 className={`text-2xl md:text-3xl font-black text-[#0F172A] tracking-tight ${H}`}>
-          This is for preachers who want to grow, and will <span className={`text-[#4F46E5] italic ${SERIF}`}>show up.</span>
+          This is for <span className={`text-[#4F46E5] italic ${SERIF}`}>you</span>{" "}
+          if&hellip;
         </h2>
         <ul className="space-y-4 text-left">
           {[
@@ -147,7 +150,8 @@ export function ChallengePage() {
           ))}
         </ul>
         <p className="mx-auto max-w-xl text-base font-medium leading-relaxed text-[#64748B]">
-          <span className="font-black text-[#0F172A]">Free doesn&apos;t mean casual.</span> It only works if you do. If you&apos;re not ready to commit for the week, this one isn&apos;t for you yet.
+          <span className="font-black text-[#0F172A]">Free doesn&apos;t mean casual.</span>{" "}
+          It only works if you do. If you&apos;re not ready to commit for the week, this one isn&apos;t for you yet.
         </p>
       </section>
 
@@ -197,7 +201,10 @@ export function ChallengePage() {
             About 15 minutes a day, for{" "}
             <span className={`text-[#4F46E5] italic ${SERIF}`}>7 days.</span>
           </h2>
-          <p className="text-[#64748B] font-medium">Runs Tuesday, November 10 through Thursday, November 19.</p>
+          <p className="text-[#64748B] font-medium">
+            Runs Tuesday, November 10 through Thursday, November 19.{" "}
+            <span className="text-sm text-[#94A3B8]">(with two days off for rest)</span>
+          </p>
         </div>
         <ol className="space-y-6">
           {STEPS.map((step) => (
