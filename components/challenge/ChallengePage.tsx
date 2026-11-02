@@ -24,8 +24,8 @@ const INCLUDED = [
   },
   {
     icon: ["M9 11l3 3L22 4", "M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"],
-    title: "7 days of prompts and growth exercises",
-    body: "One focused prompt and exercise a day, all built around the sermon you're already working on. About 15 minutes each day.",
+    title: "7 days of prompts, check-ins, and growth exercises",
+    body: "Each day brings focused prompts, check-ins, and growth exercises for your sermon. About 15 minutes a day.",
   },
   {
     icon: ["M12 2L2 7l10 5 10-5-10-5z", "M2 17l10 5 10-5", "M2 12l10 5 10-5"],
@@ -41,14 +41,14 @@ const INCLUDED = [
 
 const STEPS = [
   { n: "1", title: "Kick off together", body: "Join the kickoff video call at 1 PM CST and get started with everyone else." },
-  { n: "2", title: "Work on your own sermon", body: "Seven days of focused prompts and exercises, about 15 minutes a day. Your day off and Sunday are off." },
+  { n: "2", title: "Work on your own sermon", body: "Seven days of prompts, check-ins, and growth exercises, about 15 minutes a day. Your day off and Sunday are off." },
   { n: "3", title: "Make your plan", body: "Finish with a 1:1 call to make a plan for your growth." },
 ];
 
 const FAQ = [
   ["Is it really free?", "Yes. All of it is free: the kickoff call, the daily exercises, access to PreachingHub and the 1:1 call. No card is required."],
   ["How much time does it take?", "About 15 minutes a day for 7 days, not counting your day off and Sunday."],
-  ["Which sermon do I use?", "The one you're already working on. The prompts and exercises are built around the sermon in front of you right now."],
+  ["Which sermon do I use?", "The one you're already working on (or start a new one during the challenge)."],
 ];
 
 export function ChallengePage() {
@@ -85,9 +85,15 @@ export function ChallengePage() {
             className="mx-auto h-auto w-full max-w-3xl mix-blend-multiply"
           />
         </h1>
-        <p className="text-xl text-[#64748B] mb-12 max-w-2xl mx-auto leading-relaxed font-medium">
-          Use the sermon you&apos;re already working on as your training ground. A kickoff video call, seven days of focused prompts and growth exercises, and a 1:1 call at the end to make a plan for your growth.
-        </p>
+        <div className="mx-auto mb-12 max-w-2xl space-y-5">
+          <p className={`text-2xl md:text-3xl font-black leading-tight text-[#0F172A] ${H}`}>
+            We&apos;re looking for a group of preachers who want to take a week to{" "}
+            <span className={`text-[#4F46E5] italic ${SERIF}`}>go to the next level.</span>
+          </p>
+          <p className="text-lg text-[#64748B] leading-relaxed font-medium">
+            Bring the sermon you&apos;re already working on, or start a new one. You&apos;ll get a kickoff video call, seven days of prompts, check-ins, and growth exercises, and a 1:1 call at the end to make a plan for your growth.
+          </p>
+        </div>
 
         <div className="flex flex-col items-center gap-6">
           <button
@@ -115,6 +121,27 @@ export function ChallengePage() {
           ))}
         </div>
       </header>
+
+      {/* Who it's for */}
+      <section className="max-w-3xl mx-auto px-8 pb-24 text-center space-y-8">
+        <h2 className={`text-2xl md:text-3xl font-black text-[#0F172A] tracking-tight ${H}`}>
+          This is for preachers who want to <span className={`text-[#4F46E5] italic ${SERIF}`}>grow.</span>
+        </h2>
+        <ul className="space-y-4 text-left">
+          {[
+            "You want to grow as a preacher, not just get through Sunday.",
+            "You're willing to set aside about 15 minutes a day for a week.",
+            "You're working on a sermon right now, or ready to start one.",
+          ].map((line) => (
+            <li key={line} className="flex items-start gap-4 text-lg font-medium text-[#0F172A]">
+              <span className="mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-white [color:#fff]">
+                <Icon d="M20 6L9 17l-5-5" size={16} strokeWidth={3} />
+              </span>
+              {line}
+            </li>
+          ))}
+        </ul>
+      </section>
 
       {/* What's included */}
       <section className="bg-[#F8FAFC] py-32 border-y border-gray-100">
@@ -181,12 +208,12 @@ export function ChallengePage() {
       <section className="py-32 bg-[#F8FAFC] border-y border-gray-100">
         <div className="max-w-4xl mx-auto px-8 flex flex-col md:flex-row items-center gap-12">
           <div className={`relative w-48 h-48 rounded-[2rem] overflow-hidden shrink-0 bg-gray-200 ${SHADOW_PREMIUM}`}>
-            <Image src="/images/founder/founder-sweater.jpg" alt="Bryson" fill sizes="192px" className="object-cover object-[50%_15%]" />
+            <Image src="/images/founder/founder-sweater.jpg" alt="Bryson Breakey" fill sizes="192px" className="object-cover object-[50%_15%]" />
           </div>
           <div className="space-y-6 text-center md:text-left">
-            <h2 className={`text-3xl font-black text-[#0F172A] tracking-tight ${H}`}>Led by Bryson</h2>
+            <h2 className={`text-3xl font-black text-[#0F172A] tracking-tight ${H}`}>Led by Bryson Breakey</h2>
             <p className="text-[#64748B] font-medium leading-relaxed italic">
-              Bryson is a pastor and preaching coach, and the founder of PreachingHub. He built PreachingHub to give every preacher the honest, specific feedback that most never get.
+              Bryson Breakey is a pastor and preaching coach, and the founder of PreachingHub. He built PreachingHub to give every preacher the honest, specific feedback that most never get.
             </p>
           </div>
         </div>
@@ -209,7 +236,7 @@ export function ChallengePage() {
       <footer className="bg-[#0F172A] text-white py-32 px-8 text-center relative overflow-hidden">
         <div className="max-w-4xl mx-auto space-y-12 relative z-10">
           <h2 className={`text-4xl md:text-6xl font-black tracking-tight leading-tight [color:#fff] ${H}`}>
-            Start Tuesday. Grow as a preacher in 7 days.
+            Grow as a preacher in 7 days.
           </h2>
           <div className="flex flex-col items-center gap-6">
             <button
