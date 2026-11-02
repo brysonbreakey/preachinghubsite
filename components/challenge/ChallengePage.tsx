@@ -91,10 +91,10 @@ export function ChallengePage({ initialNow }: { initialNow: number }) {
 
       {/* Hero */}
       <header className="acc-fade-in max-w-5xl mx-auto px-8 pt-12 md:pt-16 pb-24 text-center">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 text-[#4F46E5] text-[10px] font-black uppercase tracking-[0.2em] mb-8">
+        <div className={`inline-flex items-center gap-2.5 px-6 py-2.5 rounded-full border text-[10px] font-black uppercase tracking-[0.2em] mb-8 ${phase === "closed" ? "bg-indigo-50 border-indigo-100 text-[#4F46E5]" : "bg-red-50 border-red-100 text-red-600"}`}>
           {phase === "before" && (
             <>
-              Starts in <span className="tabular-nums">{formatCountdown(now)}</span>
+              Starts in <span className="text-lg normal-case tracking-normal tabular-nums">{formatCountdown(now)}</span>
             </>
           )}
           {phase === "started" && "Started today. Enrollment closes tonight"}
@@ -130,8 +130,7 @@ export function ChallengePage({ initialNow }: { initialNow: number }) {
             {ctaLabel}
           </button>
           <p className="text-sm sm:text-base font-black text-gray-500 uppercase tracking-widest">
-            <span className="text-emerald-600">Free</span>{" "}
-            • No card required
+            Free • No card required
           </p>
           <p className="max-w-md text-sm sm:text-base font-medium leading-relaxed text-[#64748B]">
             {phase === "before" && <span className="font-bold text-red-600">Sign up now to receive the pre-challenge homework.</span>}
