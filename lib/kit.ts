@@ -113,6 +113,34 @@ export async function addChecklistContact({
 }
 
 /**
+ * Adds/updates a contact in Kit tagged "7-day-challenge", for the Free 7-Day
+ * Preaching Growth Challenge signup.
+ */
+export async function addSevenDayChallengeContact({
+  email,
+  firstName,
+  lastName,
+  phone,
+}: {
+  email: string
+  firstName?: string
+  lastName?: string
+  phone?: string
+}): Promise<void> {
+  // last_name and mobile_phone are Kit custom fields; each is only sent when there is a
+  // value so it can't blank one already on file (same pattern as the other lead magnets).
+  const fields: Record<string, string> = {}
+  if (lastName) fields.last_name = lastName
+  if (phone) fields.mobile_phone = phone
+  await upsertContact({
+    email,
+    firstName,
+    tags: ['7-day-challenge'],
+    fields: Object.keys(fields).length ? fields : undefined,
+  })
+}
+
+/**
  * Adds/updates a contact in Kit tagged "try", for the free sermon
  * evaluator — shared by /try and /checklist/thank-you.
  */
