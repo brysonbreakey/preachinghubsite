@@ -91,10 +91,10 @@ export function ChallengePage({ initialNow }: { initialNow: number }) {
 
       {/* Hero */}
       <header className="acc-fade-in max-w-5xl mx-auto px-8 pt-12 md:pt-16 pb-24 text-center">
-        <div className={`inline-flex items-center gap-2.5 px-6 py-2.5 rounded-full border text-[10px] font-black uppercase tracking-[0.2em] mb-8 ${phase === "closed" ? "bg-indigo-50 border-indigo-100 text-[#4F46E5]" : "bg-red-50 border-red-100 text-red-600"}`}>
+        <div className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full border text-[10px] font-black uppercase tracking-[0.2em] mb-8 ${phase === "closed" ? "bg-indigo-50 border-indigo-100 text-[#4F46E5]" : "bg-red-50 border-red-100 text-red-600"}`}>
           {phase === "before" && (
             <>
-              Starts in <span className="text-lg normal-case tracking-normal tabular-nums">{formatCountdown(now)}</span>
+              Starts in <span className="text-xs normal-case tracking-normal tabular-nums">{formatCountdown(now)}</span>
             </>
           )}
           {phase === "started" && "Started today. Enrollment closes tonight"}
@@ -107,8 +107,8 @@ export function ChallengePage({ initialNow }: { initialNow: number }) {
             width={2000}
             height={770}
             priority
-            sizes="(min-width: 768px) 768px, 100vw"
-            className="mx-auto h-auto w-full max-w-3xl mix-blend-multiply"
+            sizes="(min-width: 640px) 768px, 150vw"
+            className="relative left-1/2 h-auto w-[150%] max-w-none -translate-x-1/2 mix-blend-multiply sm:left-auto sm:mx-auto sm:w-full sm:max-w-3xl sm:translate-x-0"
           />
         </h1>
         <div className="mx-auto mb-12 max-w-2xl space-y-5">
