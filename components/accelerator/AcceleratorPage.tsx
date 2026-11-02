@@ -245,8 +245,12 @@ export function AcceleratorPage({ cohort, spotsLeft, variant = "thank-you" }: { 
         <div className="max-w-6xl mx-auto px-8 space-y-16">
           <div id="accelerator" className="text-center space-y-5 scroll-mt-6">
             <h2 className={`text-4xl sm:text-5xl md:text-6xl font-black text-[#0F172A] tracking-tight leading-[1.05] ${H}`}>The 30-Day Preaching Growth Accelerator</h2>
-            <p className={`text-xl md:text-2xl font-bold text-[#4F46E5] leading-snug ${H}`}>Join and get $350 of personal coaching, free.</p>
-            <p className="text-[#64748B] font-medium">Every new member gets these two bonuses with their PreachingHub membership.</p>
+            {/* The $350 is the value, not the price: struck through and gray, with a loud FREE next to it. */}
+            <p className={`text-2xl md:text-3xl font-bold text-[#0F172A] leading-snug ${H}`}>
+              Join and get <span className="text-gray-400 line-through decoration-2">$350</span> of personal coaching{" "}
+              <span className="ml-1 inline-block rounded-full bg-emerald-500 px-5 py-1.5 align-middle text-base font-black uppercase tracking-widest text-white shadow-lg shadow-emerald-200 md:text-lg [color:#fff]">FREE</span>
+            </p>
+            <p className="text-[#64748B] font-medium">Every new member gets these two bonuses at no extra cost with their PreachingHub membership.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
