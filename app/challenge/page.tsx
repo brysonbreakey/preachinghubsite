@@ -6,7 +6,7 @@ import { serverNow } from "@/lib/challenge";
 export const metadata: Metadata = {
   title: "Free 7-Day Preaching Growth Challenge — PreachingHub",
   description:
-    "A free 7-day challenge for preachers who want to grow: a kickoff video call, daily prompts, check-ins, and growth exercises (about 15 minutes a day), free access to PreachingHub, and a 1:1 call to plan your growth. Starts Tuesday, November 10.",
+    "A free 7-day challenge for preachers who want to grow: a kickoff video call, daily prompts, check-ins, and growth exercises (about 15 minutes a day), free access to PreachingHub, and a 1:1 call to plan your growth. Starts Tuesday, November 10. By day 7 you'll have a stronger sermon and a written plan to keep growing.",
   alternates: { canonical: "/challenge" },
 };
 

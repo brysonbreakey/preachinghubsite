@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import posthog from "posthog-js";
 import { Icon } from "@/components/Icon";
+import { BRENT_GARRARD } from "@/lib/testimonials";
 import { challengePhase, formatCountdown } from "@/lib/challenge";
 import { ChallengeSignupModal } from "./ChallengeSignupModal";
 
@@ -36,7 +37,7 @@ const INCLUDED = [
   {
     icon: "M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z",
     title: "A 1:1 call to plan your growth",
-    body: "We finish with a one-on-one call to turn what you learned into a plan for how you'll keep growing.",
+    body: "We finish with a one-on-one call to turn what you learned into a plan for how you'll keep growing, whether you continue with PreachingHub or not!",
   },
 ];
 
@@ -115,6 +116,9 @@ export function ChallengePage({ initialNow }: { initialNow: number }) {
           <p className={`text-2xl md:text-3xl font-black leading-tight text-[#0F172A] ${H}`}>
             We&apos;re looking for a group of preachers who will give a week to{" "}
             <span className={`text-[#4F46E5] italic ${SERIF}`}>take their preaching to the next level.</span>
+          </p>
+          <p className={`text-xl md:text-2xl font-bold leading-snug text-[#0F172A] ${H}`}>
+            By day 7 you&apos;ll have a stronger sermon and a written plan to keep growing.
           </p>
           <p className="text-lg text-[#64748B] leading-relaxed font-medium">
             Bring the sermon you&apos;re already working on, or start a new one. You&apos;ll get a kickoff video call, seven days of prompts, check-ins, and growth exercises, and a 1:1 call at the end to make a plan for your growth.
@@ -205,6 +209,22 @@ export function ChallengePage({ initialNow }: { initialNow: number }) {
                 <p className="text-[#64748B] text-sm leading-relaxed font-medium">{item.body}</p>
               </div>
             ))}
+          </div>
+
+          {/* Testimonial: sits right above the join button */}
+          <div className="text-center space-y-8 pt-8">
+            <p className={`text-xl md:text-2xl font-medium leading-relaxed text-[#0F172A] italic max-w-3xl mx-auto ${SERIF}`}>
+              &quot;{BRENT_GARRARD.quote}&quot;
+            </p>
+            <div className="flex flex-col items-center gap-4">
+              <div className="relative w-16 h-16 rounded-full bg-gray-200 overflow-hidden border-2 border-white shadow-sm">
+                <Image src="/images/testimonials/brent-garrard.jpg" alt={BRENT_GARRARD.name} fill sizes="64px" className="object-cover" />
+              </div>
+              <div className="space-y-0.5">
+                <p className="text-sm font-black text-[#0F172A] uppercase tracking-widest">{BRENT_GARRARD.name}</p>
+                <p className="text-[10px] font-bold text-[#64748B] uppercase tracking-widest">{BRENT_GARRARD.role}</p>
+              </div>
+            </div>
           </div>
 
           <div className="flex flex-col items-center gap-4">
