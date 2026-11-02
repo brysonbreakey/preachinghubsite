@@ -19,8 +19,8 @@ const FREE_PILL = "px-4 py-1.5 bg-emerald-500 text-white font-black uppercase tr
 const INCLUDED = [
   {
     icon: ["M23 7l-7 5 7 5V7z", "M3 5h11a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"],
-    title: "A kickoff Zoom call",
-    body: "We start the challenge together, live, on a Zoom call.",
+    title: "A kickoff video call",
+    body: "We start the challenge together, live, on a video call at 1 PM CST.",
   },
   {
     icon: ["M9 11l3 3L22 4", "M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"],
@@ -40,7 +40,7 @@ const INCLUDED = [
 ];
 
 const STEPS = [
-  { n: "1", title: "Kick off together", body: "Join the kickoff Zoom call and get started with everyone else." },
+  { n: "1", title: "Kick off together", body: "Join the kickoff video call at 1 PM CST and get started with everyone else." },
   { n: "2", title: "Work on your own sermon", body: "Seven days of focused prompts and exercises, about 15 minutes a day. Your day off and Sunday are off." },
   { n: "3", title: "Make your plan", body: "Finish with a 1:1 call to make a plan for your growth." },
 ];
@@ -86,7 +86,7 @@ export function ChallengePage() {
           />
         </h1>
         <p className="text-xl text-[#64748B] mb-12 max-w-2xl mx-auto leading-relaxed font-medium">
-          Use the sermon you&apos;re already working on as your training ground. A kickoff Zoom call, seven days of focused prompts and growth exercises, and a 1:1 call at the end to make a plan for your growth.
+          Use the sermon you&apos;re already working on as your training ground. A kickoff video call, seven days of focused prompts and growth exercises, and a 1:1 call at the end to make a plan for your growth.
         </p>
 
         <div className="flex flex-col items-center gap-6">

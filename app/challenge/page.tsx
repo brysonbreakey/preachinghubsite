@@ -5,7 +5,7 @@ import { ChallengePage } from "@/components/challenge/ChallengePage";
 export const metadata: Metadata = {
   title: "Free 7-Day Preaching Growth Challenge — PreachingHub",
   description:
-    "A free 7-day challenge for the sermon you're already working on: a kickoff Zoom call, focused daily prompts and growth exercises (about 15 minutes a day), free access to PreachingHub, and a 1:1 call to plan your growth. Starts Tuesday, November 10.",
+    "A free 7-day challenge for the sermon you're already working on: a kickoff video call, focused daily prompts and growth exercises (about 15 minutes a day), free access to PreachingHub, and a 1:1 call to plan your growth. Starts Tuesday, November 10.",
   alternates: { canonical: "/challenge" },
 };
 
