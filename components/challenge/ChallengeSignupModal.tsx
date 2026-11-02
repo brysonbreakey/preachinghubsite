@@ -90,7 +90,7 @@ export function ChallengeSignupModal({ onClose }: { onClose: () => void }) {
             <p className="text-5xl mb-4">🎉</p>
             <h2 id="challenge-signup-title" className="text-2xl font-extrabold text-slate-900 tracking-tight mb-2">You&apos;re in!</h2>
             <p className="text-sm text-slate-500 leading-relaxed mb-6">
-              Watch your inbox (and your spam folder) for what happens next. The challenge starts Tuesday, November 10.
+              Watch your inbox (and your spam folder) for your pre-challenge homework (it&apos;s not a lot, don&apos;t worry) and what happens next. The challenge starts Tuesday, November 10.
             </p>
             <button type="button" onClick={onClose} className="w-full rounded-2xl bg-[#4F46E5] hover:bg-indigo-600 text-white font-black text-sm uppercase tracking-widest py-4 transition-colors [color:#fff]">
               Done
@@ -100,7 +100,7 @@ export function ChallengeSignupModal({ onClose }: { onClose: () => void }) {
           <>
             <h2 id="challenge-signup-title" className="text-2xl font-extrabold text-slate-900 tracking-tight pr-8">Join the free challenge</h2>
             <p className="text-sm text-slate-500 mt-2 mb-6 leading-relaxed">
-              Starts Tuesday, November 10. All of it is free, and no card is required.
+              Starts Tuesday, November 10. All of it is free, and no card is required. Sign up now to receive the pre-challenge homework. Join if you&apos;re ready to show up for the week.
             </p>
             <form onSubmit={handleSubmit} noValidate className="space-y-3">
               {status === "error" && (

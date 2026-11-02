@@ -40,9 +40,10 @@ const INCLUDED = [
 ];
 
 const STEPS = [
-  { n: "1", title: "Kick off together", body: "Join the kickoff video call at 1 PM CST and get started with everyone else." },
-  { n: "2", title: "Work on your own sermon", body: "Seven days of prompts, check-ins, and growth exercises, about 15 minutes a day. Your day off and Sunday are off." },
-  { n: "3", title: "Make your plan", body: "Finish with a 1:1 call to make a plan for your growth." },
+  { n: "1", title: "Do the pre-challenge homework", body: "Sign up now and we'll send it before the challenge starts. It's not a lot, don't worry." },
+  { n: "2", title: "Kick off together", body: "Join the kickoff video call at 1 PM CST and get started with everyone else." },
+  { n: "3", title: "Work on your own sermon", body: "Seven days of prompts, check-ins, and growth exercises, about 15 minutes a day. Your day off and Sunday are off." },
+  { n: "4", title: "Make your plan", body: "Finish with a 1:1 call to make a plan for your growth." },
 ];
 
 const FAQ = [
@@ -87,8 +88,8 @@ export function ChallengePage() {
         </h1>
         <div className="mx-auto mb-12 max-w-2xl space-y-5">
           <p className={`text-2xl md:text-3xl font-black leading-tight text-[#0F172A] ${H}`}>
-            We&apos;re looking for a group of preachers who want to take a week to{" "}
-            <span className={`text-[#4F46E5] italic ${SERIF}`}>go to the next level.</span>
+            We&apos;re looking for a group of preachers who will give a week to{" "}
+            <span className={`text-[#4F46E5] italic ${SERIF}`}>take their preaching to the next level.</span>
           </p>
           <p className="text-lg text-[#64748B] leading-relaxed font-medium">
             Bring the sermon you&apos;re already working on, or start a new one. You&apos;ll get a kickoff video call, seven days of prompts, check-ins, and growth exercises, and a 1:1 call at the end to make a plan for your growth.
@@ -105,6 +106,9 @@ export function ChallengePage() {
           </button>
           <p className="text-sm sm:text-base font-black text-gray-500 uppercase tracking-widest">
             <span className="text-emerald-600">Free</span> • No card required
+          </p>
+          <p className="max-w-md text-sm sm:text-base font-medium leading-relaxed text-[#64748B]">
+            Sign up now to receive the pre-challenge homework. <span className="whitespace-nowrap">(It&apos;s not a lot, don&apos;t worry.)</span>
           </p>
         </div>
 
@@ -125,12 +129,13 @@ export function ChallengePage() {
       {/* Who it's for */}
       <section className="max-w-3xl mx-auto px-8 pb-24 text-center space-y-8">
         <h2 className={`text-2xl md:text-3xl font-black text-[#0F172A] tracking-tight ${H}`}>
-          This is for preachers who want to <span className={`text-[#4F46E5] italic ${SERIF}`}>grow.</span>
+          This is for preachers who want to grow, and will <span className={`text-[#4F46E5] italic ${SERIF}`}>show up.</span>
         </h2>
         <ul className="space-y-4 text-left">
           {[
             "You want to grow as a preacher, not just get through Sunday.",
-            "You're willing to set aside about 15 minutes a day for a week.",
+            "You'll show up to the kickoff video call and the 1:1 call at the end.",
+            "You'll set aside about 15 minutes a day for a week and do the work.",
             "You're working on a sermon right now, or ready to start one.",
           ].map((line) => (
             <li key={line} className="flex items-start gap-4 text-lg font-medium text-[#0F172A]">
@@ -141,6 +146,9 @@ export function ChallengePage() {
             </li>
           ))}
         </ul>
+        <p className="mx-auto max-w-xl text-base font-medium leading-relaxed text-[#64748B]">
+          <span className="font-black text-[#0F172A]">Free doesn&apos;t mean casual.</span> It only works if you do. If you&apos;re not ready to commit for the week, this one isn&apos;t for you yet.
+        </p>
       </section>
 
       {/* What's included */}
@@ -246,7 +254,7 @@ export function ChallengePage() {
             >
               Join the free challenge
             </button>
-            <p className="text-xs font-bold text-white/50">Free • No card required • Starts Tuesday, November 10</p>
+            <p className="text-xs font-bold text-white/50">Free • No card required • Starts Tuesday, November 10 • Sign up now to get the pre-challenge homework</p>
           </div>
         </div>
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-gradient-to-b from-[#4F46E5]/10 to-transparent pointer-events-none" aria-hidden="true" />
