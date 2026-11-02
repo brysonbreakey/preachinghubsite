@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import posthog from "posthog-js";
 import { Icon } from "@/components/Icon";
+import { challengePhase, formatCountdown } from "@/lib/challenge";
 import { ChallengeSignupModal } from "./ChallengeSignupModal";
 
 // The Free 7-Day Preaching Growth Challenge landing page. Same look as the 30-Day Preaching Growth
@@ -52,28 +53,52 @@ const FAQ = [
   ["Which sermon do I use?", "The one you're already working on (or start a new one during the challenge)."],
 ];
 
-export function ChallengePage() {
+export function ChallengePage({ initialNow }: { initialNow: number }) {
   const [modalOpen, setModalOpen] = useState(false);
+
+  // The page knows the time the server rendered it at (so a visitor never sees the wrong state
+  // flash in), then keeps its own clock: the countdown ticks, and the page flips to the waitlist
+  // by itself if it's open when enrollment closes. The signup API makes its own decision from
+  // its own clock, so this only changes what's shown.
+  const [now, setNow] = useState(initialNow);
+  useEffect(() => {
+    const offset = initialNow - Date.now(); // the server's clock minus this device's clock
+    const id = setInterval(() => {
+      const t = Date.now() + offset;
+      setNow(t);
+      if (challengePhase(t) === "closed") clearInterval(id);
+    }, 1000);
+    return () => clearInterval(id);
+  }, [initialNow]);
+  const phase = challengePhase(now);
+  const waitlist = phase === "closed";
+  const ctaLabel = waitlist ? "Join the waitlist" : "Join the free challenge";
 
   // One named event per visit, alongside PostHog's automatic $pageview.
   useEffect(() => {
-    posthog.capture("challenge_page_viewed");
-  }, []);
+    posthog.capture("challenge_page_viewed", { phase: challengePhase(initialNow) });
+  }, [initialNow]);
 
   function openSignup(location: string) {
-    posthog.capture("challenge_cta_clicked", { location });
+    posthog.capture("challenge_cta_clicked", { location, phase });
     setModalOpen(true);
   }
 
   return (
     <main className="font-[family-name:var(--font-jakarta)] bg-white text-[#0F172A] overflow-x-hidden antialiased">
       <style>{`@keyframes acc-fade-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } } .acc-fade-in { animation: acc-fade-in 0.8s ease-out; }`}</style>
-      {modalOpen && <ChallengeSignupModal onClose={() => setModalOpen(false)} />}
+      {modalOpen && <ChallengeSignupModal phase={phase} onClose={() => setModalOpen(false)} />}
 
       {/* Hero */}
       <header className="acc-fade-in max-w-5xl mx-auto px-8 pt-12 md:pt-16 pb-24 text-center">
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 text-[#4F46E5] text-[10px] font-black uppercase tracking-[0.2em] mb-8">
-          Starts Tuesday, November 10
+          {phase === "before" && (
+            <>
+              Starts in <span className="tabular-nums">{formatCountdown(now)}</span>
+            </>
+          )}
+          {phase === "started" && "Started today. Enrollment closes tonight"}
+          {phase === "closed" && "Enrollment is closed"}
         </div>
         <h1 className="mb-8">
           <Image
@@ -102,14 +127,16 @@ export function ChallengePage() {
             onClick={() => openSignup("hero")}
             className="inline-flex items-center gap-3 bg-[#4F46E5] text-white px-12 py-5 rounded-full font-black text-sm shadow-[0_20px_50px_-12px_rgba(79,70,229,0.1)] hover:-translate-y-1 transition-all uppercase tracking-widest [color:#fff]"
           >
-            Join the free challenge
+            {ctaLabel}
           </button>
           <p className="text-sm sm:text-base font-black text-gray-500 uppercase tracking-widest">
             <span className="text-emerald-600">Free</span>{" "}
             • No card required
           </p>
           <p className="max-w-md text-sm sm:text-base font-medium leading-relaxed text-[#64748B]">
-            <span className="font-bold text-red-600">Sign up now to receive the pre-challenge homework.</span>
+            {phase === "before" && <span className="font-bold text-red-600">Sign up now to receive the pre-challenge homework.</span>}
+            {phase === "started" && <span className="font-bold text-red-600">Enrollment closes tonight at midnight CST.</span>}
+            {phase === "closed" && "Enrollment for this challenge is closed. Join the waitlist and we'll let you know about the next one."}
           </p>
         </div>
 
@@ -187,7 +214,7 @@ export function ChallengePage() {
               onClick={() => openSignup("what_you_get")}
               className="inline-flex items-center gap-3 bg-[#4F46E5] text-white px-12 py-5 rounded-full font-black text-sm shadow-[0_20px_50px_-12px_rgba(79,70,229,0.1)] hover:-translate-y-1 transition-all uppercase tracking-widest [color:#fff]"
             >
-              Join the free challenge
+              {ctaLabel}
             </button>
           </div>
         </div>
@@ -258,9 +285,13 @@ export function ChallengePage() {
               onClick={() => openSignup("final_cta")}
               className="inline-flex items-center gap-3 bg-white text-[#0F172A] px-8 sm:px-12 py-5 rounded-full font-black text-sm shadow-[0_20px_50px_-12px_rgba(79,70,229,0.1)] hover:-translate-y-1 transition-all uppercase tracking-widest"
             >
-              Join the free challenge
+              {ctaLabel}
             </button>
-            <p className="text-xs font-bold text-white/50">Free • No card required • Starts Tuesday, November 10 • Sign up now to get the pre-challenge homework</p>
+            <p className="text-xs font-bold text-white/50">
+              {phase === "before" && "Free • No card required • Starts Tuesday, November 10 • Sign up now to get the pre-challenge homework"}
+              {phase === "started" && "Free • No card required • Enrollment closes tonight at midnight CST"}
+              {phase === "closed" && "Enrollment is closed • Join the waitlist and we'll let you know about the next one"}
+            </p>
           </div>
         </div>
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-gradient-to-b from-[#4F46E5]/10 to-transparent pointer-events-none" aria-hidden="true" />

@@ -114,9 +114,45 @@ export async function addChecklistContact({
 
 /**
  * Adds/updates a contact in Kit tagged "7-day-challenge", for the Free 7-Day
- * Preaching Growth Challenge signup.
+ * Preaching Growth Challenge signup. challengeLink is their personal "Open
+ * PreachingHub" link, saved to the `challenge_link` custom field for the welcome email.
  */
 export async function addSevenDayChallengeContact({
+  email,
+  firstName,
+  lastName,
+  phone,
+  challengeLink,
+}: {
+  email: string
+  firstName?: string
+  lastName?: string
+  phone?: string
+  challengeLink?: string | null
+}): Promise<void> {
+  // last_name, mobile_phone and challenge_link are Kit custom fields; each is only sent when there
+  // is a value so it can't blank one already on file (same pattern as the other lead magnets).
+  const base: Record<string, string> = {}
+  if (lastName) base.last_name = lastName
+  if (phone) base.mobile_phone = phone
+  const withLink = challengeLink ? { ...base, challenge_link: challengeLink } : base
+  const toFields = (f: Record<string, string>) => (Object.keys(f).length ? f : undefined)
+  try {
+    await upsertContact({ email, firstName, tags: ['7-day-challenge'], fields: toFields(withLink) })
+  } catch (err) {
+    // If the challenge_link field hasn't been created in Kit yet, the signup must still go
+    // through (and be tagged): retry without it and say so loudly in the logs.
+    if (!challengeLink) throw err
+    console.error('kit: signup with challenge_link failed; retrying without it (is the field created in Kit?)', err)
+    await upsertContact({ email, firstName, tags: ['7-day-challenge'], fields: toFields(base) })
+  }
+}
+
+/**
+ * Adds/updates a contact in Kit tagged "7-day-challenge-waitlist", for people who sign up after
+ * enrollment for the challenge has closed.
+ */
+export async function addSevenDayChallengeWaitlistContact({
   email,
   firstName,
   lastName,
@@ -127,15 +163,13 @@ export async function addSevenDayChallengeContact({
   lastName?: string
   phone?: string
 }): Promise<void> {
-  // last_name and mobile_phone are Kit custom fields; each is only sent when there is a
-  // value so it can't blank one already on file (same pattern as the other lead magnets).
   const fields: Record<string, string> = {}
   if (lastName) fields.last_name = lastName
   if (phone) fields.mobile_phone = phone
   await upsertContact({
     email,
     firstName,
-    tags: ['7-day-challenge'],
+    tags: ['7-day-challenge-waitlist'],
     fields: Object.keys(fields).length ? fields : undefined,
   })
 }

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Lora } from "next/font/google";
 import { ChallengePage } from "@/components/challenge/ChallengePage";
+import { serverNow } from "@/lib/challenge";
 
 export const metadata: Metadata = {
   title: "Free 7-Day Preaching Growth Challenge — PreachingHub",
@@ -12,10 +13,15 @@ export const metadata: Metadata = {
 const jakarta = Plus_Jakarta_Sans({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"], variable: "--font-jakarta" });
 const lora = Lora({ subsets: ["latin"], style: ["normal", "italic"], variable: "--font-lora" });
 
-export default function Page() {
+// Enrollment closes at a set time and the countdown runs to the kickoff, so never serve a cached
+// copy: the page is rendered per request with the server's clock (see lib/challenge.ts).
+export const dynamic = "force-dynamic";
+
+export default async function Page({ searchParams }: { searchParams: Promise<{ now?: string }> }) {
+  const { now } = await searchParams; // ?now=<ISO time> fakes the clock when testing locally only
   return (
     <div className={`${jakarta.variable} ${lora.variable}`}>
-      <ChallengePage />
+      <ChallengePage initialNow={serverNow(now)} />
     </div>
   );
 }

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import posthog from "posthog-js";
 import { SmsConsentNotice } from "@/components/SmsConsentNotice";
+import type { ChallengePhase } from "@/lib/challenge";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const INPUT_CLASS =
@@ -22,14 +23,17 @@ function formatPhone(value: string): string {
 }
 
 // The signup popup for the Free 7-Day Preaching Growth Challenge: name, email, phone, then a
-// confirmation right in the popup. The server (/api/challenge-signup) adds them to Kit with the
-// 7-day-challenge tag.
-export function ChallengeSignupModal({ onClose }: { onClose: () => void }) {
+// confirmation right in the popup. The server (/api/challenge-signup) adds them to Kit: tagged
+// 7-day-challenge (with their personal access link, emailed by Kit) until enrollment closes, and
+// 7-day-challenge-waitlist after. The server decides which, so the confirmation follows its answer.
+export function ChallengeSignupModal({ phase, onClose }: { phase: ChallengePhase; onClose: () => void }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [status, setStatus] = useState<"form" | "loading" | "error" | "done">("form");
   const [errorMessage, setErrorMessage] = useState("");
+  const [result, setResult] = useState<"joined" | "waitlist" | null>(null);
+  const waitlistView = result ? result === "waitlist" : phase === "closed";
   const nameRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -62,7 +66,9 @@ export function ChallengeSignupModal({ onClose }: { onClose: () => void }) {
       });
       const data = await res.json().catch(() => null);
       if (!res.ok) throw new Error(data?.error || "submit_failed");
-      posthog.capture("challenge_signup_submitted");
+      const mode: "joined" | "waitlist" = data?.mode === "waitlist" ? "waitlist" : "joined";
+      setResult(mode);
+      posthog.capture(mode === "waitlist" ? "challenge_waitlist_submitted" : "challenge_signup_submitted", { phase });
       // So the accelerator signup popup, if they open it later, doesn't make them retype these.
       try {
         sessionStorage.setItem("ph_checklist_thank_you_prefill", JSON.stringify({ name: name.trim(), email: email.trim() }));
@@ -88,9 +94,15 @@ export function ChallengeSignupModal({ onClose }: { onClose: () => void }) {
         {status === "done" ? (
           <div className="text-center py-4">
             <p className="text-5xl mb-4">🎉</p>
-            <h2 id="challenge-signup-title" className="text-2xl font-extrabold text-slate-900 tracking-tight mb-2">You&apos;re in!</h2>
+            <h2 id="challenge-signup-title" className="text-2xl font-extrabold text-slate-900 tracking-tight mb-2">
+              {waitlistView ? "You\u2019re on the waitlist" : "You\u2019re in!"}
+            </h2>
             <p className="text-sm text-slate-500 leading-relaxed mb-6">
-              Watch your inbox (and your spam folder) for your pre-challenge homework (it&apos;s not a lot, don&apos;t worry) and what happens next. The challenge starts Tuesday, November 10.
+              {waitlistView
+                ? "We'll email you if a spot opens or when we run it again."
+                : phase === "before"
+                  ? "Watch your inbox (and your spam folder) for your PreachingHub access link, your pre-challenge homework (it's not a lot, don't worry) and what happens next. The challenge starts Tuesday, November 10."
+                  : "Watch your inbox (and your spam folder) for your PreachingHub access link and what happens next."}
             </p>
             <button type="button" onClick={onClose} className="w-full rounded-2xl bg-[#4F46E5] hover:bg-indigo-600 text-white font-black text-sm uppercase tracking-widest py-4 transition-colors [color:#fff]">
               Done
@@ -98,9 +110,15 @@ export function ChallengeSignupModal({ onClose }: { onClose: () => void }) {
           </div>
         ) : (
           <>
-            <h2 id="challenge-signup-title" className="text-2xl font-extrabold text-slate-900 tracking-tight pr-8">Join the free challenge</h2>
+            <h2 id="challenge-signup-title" className="text-2xl font-extrabold text-slate-900 tracking-tight pr-8">
+              {waitlistView ? "Join the waitlist" : "Join the free challenge"}
+            </h2>
             <p className="text-sm text-slate-500 mt-2 mb-6 leading-relaxed">
-              Starts Tuesday, November 10. All of it is free, and no card is required. Sign up now to receive the pre-challenge homework. Join if you&apos;re ready to show up for the week.
+              {phase === "closed"
+                ? "Enrollment for this challenge has closed. Join the waitlist and we'll let you know if a spot opens or when we run it again."
+                : phase === "started"
+                  ? "The challenge has started, and you can still join until midnight CST tonight. All of it is free, and no card is required. Join if you're ready to show up for the week."
+                  : "Starts Tuesday, November 10. All of it is free, and no card is required. Sign up now to receive the pre-challenge homework. Join if you're ready to show up for the week."}
             </p>
             <form onSubmit={handleSubmit} noValidate className="space-y-3">
               {status === "error" && (
@@ -123,9 +141,9 @@ export function ChallengeSignupModal({ onClose }: { onClose: () => void }) {
                 disabled={status === "loading"}
                 className="mt-2 w-full rounded-2xl bg-[#4F46E5] hover:bg-indigo-600 text-white font-black text-sm uppercase tracking-widest py-4 transition-colors disabled:opacity-60 [color:#fff]"
               >
-                {status === "loading" ? "Joining…" : "Join the Challenge"}
+                {status === "loading" ? "Joining…" : phase === "closed" ? "Join the Waitlist" : "Join the Challenge"}
               </button>
-              <SmsConsentNotice buttonLabel="Join the Challenge" className="pt-1" />
+              <SmsConsentNotice buttonLabel={phase === "closed" ? "Join the Waitlist" : "Join the Challenge"} className="pt-1" />
             </form>
           </>
         )}
