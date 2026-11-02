@@ -109,8 +109,7 @@ export function ChallengePage() {
             • No card required
           </p>
           <p className="max-w-md text-sm sm:text-base font-medium leading-relaxed text-[#64748B]">
-            <span className="font-bold text-red-600">Sign up now to receive the pre-challenge homework.</span>{" "}
-            <span className="whitespace-nowrap">(It&apos;s not a lot, don&apos;t worry.)</span>
+            <span className="font-bold text-red-600">Sign up now to receive the pre-challenge homework.</span>
           </p>
         </div>
 
@@ -203,7 +202,7 @@ export function ChallengePage() {
           </h2>
           <p className="text-[#64748B] font-medium">
             Runs Tuesday, November 10 through Thursday, November 19.{" "}
-            <span className="text-sm text-[#94A3B8]">(with two days off for rest)</span>
+            <span className="text-sm text-[#94A3B8]">(two days are included for rest)</span>
           </p>
         </div>
         <ol className="space-y-6">
