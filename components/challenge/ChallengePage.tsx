@@ -46,6 +46,7 @@ const STEPS = [
   { n: "2", title: "Kick off together", body: "Join the kickoff video call at 1 PM CST and get started with everyone else." },
   { n: "3", title: "Work on your own sermon", body: "Seven days of prompts, check-ins, and growth exercises, about 15 minutes a day. Your day off and Sunday are off." },
   { n: "4", title: "Sharpen your plan", body: "Finish with a 1:1 call to sharpen your growth plan." },
+  { n: "5", title: "Unlock your rewards", body: "Complete the challenge and special rewards are unlocked for you." },
 ];
 
 const FAQ = [
