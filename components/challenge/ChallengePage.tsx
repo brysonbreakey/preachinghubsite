@@ -96,7 +96,7 @@ export function ChallengePage({ initialNow }: { initialNow: number }) {
         <div className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full border text-[10px] font-black uppercase tracking-[0.2em] mb-8 ${phase === "closed" ? "bg-indigo-50 border-indigo-100 text-[#4F46E5]" : "bg-red-50 border-red-100 text-red-600"}`}>
           {phase === "before" && (
             <>
-              Starts in <span className="text-xs normal-case tracking-normal tabular-nums inline-flex gap-1.5">{formatCountdown(now).split(" ").map((part) => <span key={part.slice(-1)}>{part}</span>)}</span>
+              Starts in <span className="text-xs normal-case tracking-normal tabular-nums inline-flex gap-3">{formatCountdown(now).split(" ").map((part) => <span key={part.slice(-1)}>{part}</span>)}</span>
             </>
           )}
           {phase === "started" && "Started today. Enrollment closes tonight"}
