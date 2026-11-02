@@ -44,7 +44,7 @@ const INCLUDED = [
 const STEPS = [
   { n: "1", title: "Do the pre-challenge homework", body: "Sign up now and we'll send it before the challenge starts. It's not a lot, don't worry." },
   { n: "2", title: "Kick off together", body: "Join the kickoff video call at 1 PM CST and get started with everyone else." },
-  { n: "3", title: "Work on your own sermon", body: "Seven days of prompts, check-ins, and growth exercises, about 15 minutes a day. On day 7 you draft your growth plan. Your day off and Sunday are off." },
+  { n: "3", title: "Work on your own sermon", body: "Seven days of prompts, check-ins, and growth exercises, about 15 minutes a day. Your day off and Sunday are off." },
   { n: "4", title: "Sharpen your plan", body: "Finish with a 1:1 call to sharpen your growth plan." },
 ];
 
@@ -262,10 +262,6 @@ export function ChallengePage({ initialNow }: { initialNow: number }) {
             </li>
           ))}
         </ol>
-        <p className={`text-center text-xl md:text-2xl font-black leading-snug text-[#0F172A] ${H}`}>
-          7 days is the start.{" "}
-          <span className={`text-[#4F46E5] italic ${SERIF}`}>The plan you leave with is how you keep growing.</span>
-        </p>
       </section>
 
       {/* Who's leading it */}
