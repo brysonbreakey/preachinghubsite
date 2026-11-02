@@ -1,0 +1,22 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//PreachingHub//7-Day Preaching Growth Challenge//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:challenge-kickoff-20261110@preachinghub.com
+DTSTAMP:20261102T180000Z
+DTSTART:20261110T190000Z
+DTEND:20261110T194500Z
+SUMMARY:7-Day Preaching Growth Challenge Kickoff
+LOCATION:https://meet.google.com/duy-uura-vdt
+URL:https://meet.google.com/duy-uura-vdt
+DESCRIPTION:Join on Google Meet: https://meet.google.com/duy-uura-vdt\n\n
+ Bring the sermon you're working on\, or be ready to start a new one.
+BEGIN:VALARM
+TRIGGER:-PT15M
+ACTION:DISPLAY
+DESCRIPTION:Challenge kickoff starts in 15 minutes
+END:VALARM
+END:VEVENT
+END:VCALENDAR
