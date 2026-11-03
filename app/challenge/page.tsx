@@ -4,7 +4,7 @@ import { ChallengeRoute } from "@/components/challenge/ChallengeRoute";
 export const metadata: Metadata = {
   title: { absolute: "PreachingHub 7-Day Growth Challenge" },
   description:
-    "A free 7-day challenge for preachers who want to grow: a kickoff video call, daily prompts, check-ins, and growth exercises (about 15 minutes a day), free access to PreachingHub, and a free 1:1 call with Bryson when you finish all 7 days. Starts Tuesday, November 10. By day 7 you'll have a stronger sermon and a written plan to keep growing.",
+    "A free 7-day challenge for preachers who want to grow: a kickoff video call, daily prompts, check-ins, and growth exercises (about 15 minutes a day), free access to PreachingHub, and a free 20-minute coaching call with Bryson when you finish all 7 days. Starts Tuesday, November 10. By day 7 you'll have a stronger sermon and a written plan to keep growing.",
   alternates: { canonical: "/challenge" },
   openGraph: {
     title: "PreachingHub 7-Day Growth Challenge",

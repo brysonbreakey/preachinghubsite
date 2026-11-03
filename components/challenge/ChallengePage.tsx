@@ -36,8 +36,8 @@ const INCLUDED = [
   },
   {
     icon: "M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z",
-    title: "A free 1:1 call with Bryson",
-    body: "Finish all 7 days and get a free 1:1 call with Bryson to tighten your growth plan, whether you continue with PreachingHub or not!",
+    title: "A free 20-minute coaching call",
+    body: "Finish all 7 days and get a free 20-minute 1:1 coaching call with Bryson to tighten your growth plan, whether you continue with PreachingHub or not!",
   },
 ];
 
@@ -45,12 +45,12 @@ const STEPS = [
   { n: "1", title: "Do the pre-challenge homework", body: "Sign up now and we'll send it before the challenge starts. It's not a lot, don't worry." },
   { n: "2", title: "Kick off together", body: "Join the kickoff video call at 1 PM CST and get started with everyone else." },
   { n: "3", title: "Work on your own sermon", body: "Seven days of prompts, check-ins, and growth exercises, about 15 minutes a day. Your day off and Sunday are off." },
-  { n: "4", title: "Sharpen your plan", body: "Finish all 7 days and get a free 1:1 call with Bryson to tighten your growth plan." },
+  { n: "4", title: "Sharpen your plan", body: "Finish all 7 days and get a free 20-minute 1:1 coaching call with Bryson to tighten your growth plan." },
   { n: "5", title: "Unlock your rewards", body: "Complete the challenge and special rewards are unlocked for you." },
 ];
 
 const FAQ = [
-  ["Is it really free?", "Yes. All of it is free: the kickoff call, the daily exercises, access to PreachingHub and the 1:1 call you earn by finishing all 7 days. No card is required."],
+  ["Is it really free?", "Yes. All of it is free: the kickoff call, the daily exercises, access to PreachingHub and the 20-minute coaching call you earn by finishing all 7 days. No card is required."],
   ["How much time does it take?", "About 15 minutes a day for 7 days, not counting your day off and Sunday."],
   ["Which sermon do I use?", "The one you're already working on (or start a new one during the challenge)."],
 ];
@@ -155,7 +155,7 @@ export function ChallengePage({ initialNow, variant = "landing" }: { initialNow:
             <span className={`text-[#4F46E5] italic ${SERIF}`}>take their preaching to the next level.</span>
           </p>
           <p className="text-lg text-[#64748B] leading-relaxed font-medium">
-            Bring the sermon you&apos;re already working on, or start a new one. You&apos;ll get a kickoff video call, seven days of prompts, check-ins, and growth exercises, and a free 1:1 call with Bryson when you finish all 7 days to tighten your growth plan.
+            Bring the sermon you&apos;re already working on, or start a new one. You&apos;ll get a kickoff video call, seven days of prompts, check-ins, and growth exercises, and a free 20-minute coaching call with Bryson when you finish all 7 days to tighten your growth plan.
           </p>
           <p className={`text-xl md:text-2xl font-bold leading-snug text-[#0F172A] ${H}`}>
             By day 7 you&apos;ll have a stronger sermon and a written plan to keep growing.
@@ -203,7 +203,7 @@ export function ChallengePage({ initialNow, variant = "landing" }: { initialNow:
         <ul className="space-y-4 text-left">
           {[
             "You want to grow as a preacher, not just get through Sunday.",
-            "You'll show up to the kickoff video call and the 1:1 call at the end.",
+            "You'll show up to the kickoff video call and the 20-minute coaching call at the end.",
             "You'll set aside about 15 minutes a day for a week and do the work.",
             "You're working on a sermon right now, or ready to start one.",
           ].map((line) => (
