@@ -96,7 +96,7 @@ export default function ChallengePopup() {
           className="mx-auto mb-5 h-auto w-full max-w-[22rem] mix-blend-multiply"
         />
         <p className="mb-6 text-base font-medium leading-relaxed text-slate-600">
-          A free week to take your preaching to the next level. Starts Tuesday, November 10. About 15 minutes a day, with free access to PreachingHub and a 1:1 call at the end.
+          A free week to take your preaching to the next level. Starts Tuesday, November 10. About 15 minutes a day, with free access to PreachingHub and a free 1:1 call with Bryson when you finish.
         </p>
         <Link
           href="/challenge?utm_source=site_popup"
