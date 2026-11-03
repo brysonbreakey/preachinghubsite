@@ -11,7 +11,7 @@ import { ChallengeSignupModal } from "./ChallengeSignupModal";
 // The Free 7-Day Preaching Growth Challenge landing page. Same look as the 30-Day Preaching Growth
 // Accelerator page (components/accelerator/AcceleratorPage.tsx); the signup is a popup that adds
 // people to Kit with the 7-day-challenge tag. Dates are written out (Tuesday, November 10 to
-// Thursday, November 19, 2026), so this page needs retiring or updating after the challenge.
+// Wednesday, November 18, 2026), so this page needs retiring or updating after the challenge.
 
 const H = "font-[family-name:var(--font-inter)] tracking-[-0.04em]";
 const SERIF = "font-[family-name:var(--font-lora)]";
@@ -36,8 +36,8 @@ const INCLUDED = [
   },
   {
     icon: "M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z",
-    title: "A 1:1 call to plan your growth",
-    body: "We finish with a one-on-one call to turn what you learned into a plan for how you'll keep growing, whether you continue with PreachingHub or not!",
+    title: "A free 1:1 call with Bryson",
+    body: "Finish all 7 days and get a free 1:1 call with Bryson to tighten your growth plan, whether you continue with PreachingHub or not!",
   },
 ];
 
@@ -45,12 +45,12 @@ const STEPS = [
   { n: "1", title: "Do the pre-challenge homework", body: "Sign up now and we'll send it before the challenge starts. It's not a lot, don't worry." },
   { n: "2", title: "Kick off together", body: "Join the kickoff video call at 1 PM CST and get started with everyone else." },
   { n: "3", title: "Work on your own sermon", body: "Seven days of prompts, check-ins, and growth exercises, about 15 minutes a day. Your day off and Sunday are off." },
-  { n: "4", title: "Sharpen your plan", body: "Finish with a 1:1 call to sharpen your growth plan." },
+  { n: "4", title: "Sharpen your plan", body: "Finish all 7 days and get a free 1:1 call with Bryson to tighten your growth plan." },
   { n: "5", title: "Unlock your rewards", body: "Complete the challenge and special rewards are unlocked for you." },
 ];
 
 const FAQ = [
-  ["Is it really free?", "Yes. All of it is free: the kickoff call, the daily exercises, access to PreachingHub and the 1:1 call. No card is required."],
+  ["Is it really free?", "Yes. All of it is free: the kickoff call, the daily exercises, access to PreachingHub and the 1:1 call you earn by finishing all 7 days. No card is required."],
   ["How much time does it take?", "About 15 minutes a day for 7 days, not counting your day off and Sunday."],
   ["Which sermon do I use?", "The one you're already working on (or start a new one during the challenge)."],
 ];
@@ -155,7 +155,7 @@ export function ChallengePage({ initialNow, variant = "landing" }: { initialNow:
             <span className={`text-[#4F46E5] italic ${SERIF}`}>take their preaching to the next level.</span>
           </p>
           <p className="text-lg text-[#64748B] leading-relaxed font-medium">
-            Bring the sermon you&apos;re already working on, or start a new one. You&apos;ll get a kickoff video call, seven days of prompts, check-ins, and growth exercises, and a 1:1 call at the end to make a plan for your growth.
+            Bring the sermon you&apos;re already working on, or start a new one. You&apos;ll get a kickoff video call, seven days of prompts, check-ins, and growth exercises, and a free 1:1 call with Bryson when you finish all 7 days to tighten your growth plan.
           </p>
           <p className={`text-xl md:text-2xl font-bold leading-snug text-[#0F172A] ${H}`}>
             By day 7 you&apos;ll have a stronger sermon and a written plan to keep growing.
@@ -183,7 +183,7 @@ export function ChallengePage({ initialNow, variant = "landing" }: { initialNow:
         <div className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto">
           {[
             ["15 min", "a day, for 7 days"],
-            ["Nov 10 – 19", "Tuesday to Thursday"],
+            ["Nov 10 – 18", "Tuesday to Wednesday"],
             ["$0", "No card required"],
           ].map(([big, small]) => (
             <div key={big} className={`rounded-2xl border border-gray-100 bg-white px-6 py-6 ${SHADOW_PREMIUM}`}>
@@ -284,7 +284,7 @@ export function ChallengePage({ initialNow, variant = "landing" }: { initialNow:
             <span className={`text-[#4F46E5] italic ${SERIF}`}>7 days.</span>
           </h2>
           <p className="text-[#64748B] font-medium">
-            Runs Tuesday, November 10 through Thursday, November 19.{" "}
+            Runs Tuesday, November 10 through Wednesday, November 18.{" "}
             <span className="text-sm text-[#94A3B8]">(two days are included for rest)</span>
           </p>
         </div>
