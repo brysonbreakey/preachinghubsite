@@ -23,3 +23,15 @@ export function createChallengeLink({ email, firstName, lastName }: { email: str
   const sig = createHmac("sha256", secret).update(`challenge:${payload}`).digest("hex");
   return `${APP_URL}/api/challenge/start?t=${payload}.${sig}`;
 }
+
+// A short-lived "claim" for the popup's second step (create the account with a chosen password). It
+// is returned to the browser, so unlike the emailed link it can never sign anyone in: the app only
+// accepts it to CREATE an account for an email that has none (/api/challenge/account), or from
+// someone already signed in as that email (/api/challenge/claim). Different prefix, one hour.
+export function createChallengeClaim({ email, firstName, lastName }: { email: string; firstName?: string; lastName?: string }): string | null {
+  const secret = process.env.OFFER_SIGNING_SECRET;
+  if (!secret) return null;
+  const payload = b64url(JSON.stringify({ e: email.trim().toLowerCase(), f: firstName ?? "", l: lastName ?? "", x: Date.now() + 60 * 60 * 1000 }));
+  const sig = createHmac("sha256", secret).update(`challengeclaim:${payload}`).digest("hex");
+  return `${payload}.${sig}`;
+}

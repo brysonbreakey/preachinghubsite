@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { resolveMx } from "dns/promises";
 import { addSevenDayChallengeContact, addSevenDayChallengeWaitlistContact } from "@/lib/kit";
 import { challengePhase, serverNow } from "@/lib/challenge";
-import { createChallengeLink } from "@/lib/challengeToken";
+import { createChallengeLink, createChallengeClaim } from "@/lib/challengeToken";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
 
@@ -56,5 +56,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Something went wrong on our end. Please try again." }, { status: 500 });
   }
 
-  return NextResponse.json({ ok: true, mode: waitlist ? "waitlist" : "joined" });
+  // The popup's second step (create the account right now) needs a short-lived claim; see
+  // createChallengeClaim for why returning it is safe when returning the emailed link is not.
+  const claim = waitlist ? null : createChallengeClaim({ email, firstName, lastName });
+  return NextResponse.json({ ok: true, mode: waitlist ? "waitlist" : "joined", ...(claim ? { claim } : {}) });
 }
