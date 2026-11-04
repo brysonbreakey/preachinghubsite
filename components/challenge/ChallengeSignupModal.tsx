@@ -146,7 +146,7 @@ export function ChallengeSignupModal({ phase, onClose }: { phase: ChallengePhase
                   Sign in with your PreachingHub email and we&apos;ll add your free challenge access and take you to your homework.
                 </p>
                 <a
-                  href={`${APP_URL}/auth/login?next=${encodeURIComponent(`/evaluate?from=challenge&c=${claim}`)}`}
+                  href={`${APP_URL}/auth/login?mode=login&next=${encodeURIComponent(`/evaluate?from=challenge&c=${claim}`)}`}
                   onClick={() => posthog.capture("challenge_existing_signin_clicked", { phase })}
                   className="block w-full rounded-2xl bg-[#4F46E5] hover:bg-indigo-600 text-white font-black text-sm uppercase tracking-widest py-4 transition-colors [color:#fff]"
                 >
