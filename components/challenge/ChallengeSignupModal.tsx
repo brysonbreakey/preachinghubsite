@@ -157,7 +157,7 @@ export function ChallengeSignupModal({ phase, onClose }: { phase: ChallengePhase
               <>
                 <h2 id="challenge-signup-title" className="text-2xl font-extrabold text-slate-900 tracking-tight mb-2">You&apos;re in! Let&apos;s start your homework.</h2>
                 <p className="text-sm text-slate-500 leading-relaxed mb-5">
-                  Choose a password to open your free PreachingHub account. Your pre-challenge homework takes about 15 minutes: upload a sermon and get your first coaching report.
+                  Choose a password to open your free PreachingHub account. Your pre-challenge homework takes less than 5 minutes: upload a sermon and get your first coaching report.
                 </p>
                 <form onSubmit={handleCreateAccount} noValidate className="space-y-3 text-left">
                   {accountError && <div role="alert" className="rounded-lg bg-red-50 border border-red-100 text-red-700 text-sm px-4 py-3">{accountError}</div>}
