@@ -1,4 +1,5 @@
 import { CHALLENGE_START_DATE_LABEL } from '@/lib/challenge'
+import { MIN_COUNTDOWN_DAY, chicagoToday, computeDaysUntilChallengeStart } from '@/lib/startCountdown'
 const KIT_API_BASE = 'https://api.kit.com/v4'
 
 function kitHeaders(): Record<string, string> {
@@ -7,16 +8,35 @@ function kitHeaders(): Record<string, string> {
   return { 'Content-Type': 'application/json', 'X-Kit-Api-Key': apiKey }
 }
 
-async function kitFetch(path: string, init: RequestInit): Promise<any> {
-  const res = await fetch(`${KIT_API_BASE}${path}`, {
-    ...init,
-    headers: { ...kitHeaders(), ...(init.headers as Record<string, string> | undefined) },
-  })
-  if (!res.ok) {
-    const body = await res.text().catch(() => '')
-    throw new Error(`kit: ${init.method || 'GET'} ${path} failed (${res.status}): ${body}`)
+export class KitHttpError extends Error {
+  status: number
+  constructor(method: string, path: string, status: number, body: string) {
+    super(`kit: ${method} ${path} failed (${status}): ${body}`)
+    this.status = status
   }
-  return res.json()
+}
+
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
+
+/**
+ * `retries429` > 0 retries rate-limited (429) calls with backoff, honouring Retry-After. The
+ * signup path leaves it at 0 so a visitor never waits on it; the daily job sets it.
+ */
+async function kitFetch(path: string, init: RequestInit, retries429 = 0): Promise<any> {
+  for (let attempt = 0; ; attempt++) {
+    const res = await fetch(`${KIT_API_BASE}${path}`, {
+      ...init,
+      headers: { ...kitHeaders(), ...(init.headers as Record<string, string> | undefined) },
+    })
+    if (res.ok) return res.json()
+    if (res.status === 429 && attempt < retries429) {
+      const retryAfter = Number(res.headers.get('retry-after'))
+      await sleep(Math.min(Number.isFinite(retryAfter) && retryAfter > 0 ? retryAfter * 1000 : 2000 * 2 ** attempt, 60_000))
+      continue
+    }
+    const body = await res.text().catch(() => '')
+    throw new KitHttpError(init.method || 'GET', path, res.status, body)
+  }
 }
 
 async function upsertSubscriber({
@@ -139,13 +159,16 @@ export async function addSevenDayChallengeContact({
   // challenge_start_date is this cohort's kickoff day, so welcome emails can say when it starts.
   const full: Record<string, string> = { ...base, challenge_start_date: CHALLENGE_START_DATE_LABEL }
   if (challengeLink) full.challenge_link = challengeLink
+  // Late joiners land on the right countdown day right away instead of waiting for the daily job.
+  const days = computeDaysUntilChallengeStart(CHALLENGE_START_DATE_LABEL, chicagoToday())
+  if (days !== null && days >= MIN_COUNTDOWN_DAY) full.days_until_challenge_start = String(days)
   const toFields = (f: Record<string, string>) => (Object.keys(f).length ? f : undefined)
   try {
     await upsertContact({ email, firstName, tags: ['7-day-challenge'], fields: toFields(full) })
   } catch (err) {
     // If challenge_link or challenge_start_date hasn't been created in Kit yet, the signup must
     // still go through (and be tagged): retry without them and say so loudly in the logs.
-    console.error('kit: challenge signup failed; retrying without challenge_link/challenge_start_date (are the fields created in Kit?)', err)
+    console.error('kit: challenge signup failed; retrying without its custom fields (are challenge_link, challenge_start_date and days_until_challenge_start created in Kit?)', err)
     await upsertContact({ email, firstName, tags: ['7-day-challenge'], fields: toFields(base) })
   }
 }
@@ -217,4 +240,55 @@ export async function addChecklistSaveContact({
   firstName?: string
 }): Promise<void> {
   await upsertContact({ email, firstName, tags: ['checklist-interactive-save'] })
+}
+
+
+// ---- Daily countdown job helpers (used by lib/challengeCountdown.ts) ----------------------------
+
+const JOB_RETRIES = 5
+
+export type KitSubscriberRow = {
+  id: number
+  fields: Record<string, string | null> | null
+}
+
+/** One page of the subscribers carrying a tag, with their custom field values when Kit returns
+ *  them. Follow `endCursor` (Kit's `after`) while `hasNextPage`. */
+export async function kitListTagSubscribers(
+  tagId: number,
+  after?: string,
+): Promise<{ subscribers: KitSubscriberRow[]; hasNextPage: boolean; endCursor: string | null }> {
+  const qs = new URLSearchParams({ per_page: '100', include: 'fields' })
+  if (after) qs.set('after', after)
+  const data = await kitFetch(`/tags/${tagId}/subscribers?${qs}`, { method: 'GET' }, JOB_RETRIES)
+  return {
+    subscribers: (data.subscribers ?? []).map((s: { id: number; fields?: Record<string, string | null> }) => ({ id: s.id, fields: s.fields ?? null })),
+    hasNextPage: Boolean(data.pagination?.has_next_page),
+    endCursor: data.pagination?.end_cursor ?? null,
+  }
+}
+
+/** One subscriber with all custom field values. */
+export async function kitGetSubscriber(id: number): Promise<KitSubscriberRow> {
+  const data = await kitFetch(`/subscribers/${id}`, { method: 'GET' }, JOB_RETRIES)
+  return { id: data.subscriber.id, fields: data.subscriber.fields ?? null }
+}
+
+/** Looks a custom field up by its key (e.g. "days_until_challenge_start"); null if it doesn't exist. */
+export async function kitFindCustomFieldId(key: string): Promise<number | null> {
+  let after: string | undefined
+  for (;;) {
+    const qs = new URLSearchParams({ per_page: '1000' })
+    if (after) qs.set('after', after)
+    const data = await kitFetch(`/custom_fields?${qs}`, { method: 'GET' }, JOB_RETRIES)
+    const hit = (data.custom_fields ?? []).find((f: { key: string }) => f.key === key)
+    if (hit) return hit.id as number
+    if (!data.pagination?.has_next_page) return null
+    after = data.pagination.end_cursor
+  }
+}
+
+/** Writes custom field values on one subscriber, by field key. */
+export async function kitUpdateSubscriberFields(id: number, fields: Record<string, string>): Promise<void> {
+  await kitFetch(`/subscribers/${id}`, { method: 'PUT', body: JSON.stringify({ fields }) }, JOB_RETRIES)
 }
