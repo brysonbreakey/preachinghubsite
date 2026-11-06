@@ -1,3 +1,4 @@
+import { CHALLENGE_START_DATE_LABEL } from '@/lib/challenge'
 const KIT_API_BASE = 'https://api.kit.com/v4'
 
 function kitHeaders(): Record<string, string> {
@@ -135,15 +136,16 @@ export async function addSevenDayChallengeContact({
   const base: Record<string, string> = {}
   if (lastName) base.last_name = lastName
   if (phone) base.mobile_phone = phone
-  const withLink = challengeLink ? { ...base, challenge_link: challengeLink } : base
+  // challenge_start_date is this cohort's kickoff day, so welcome emails can say when it starts.
+  const full: Record<string, string> = { ...base, challenge_start_date: CHALLENGE_START_DATE_LABEL }
+  if (challengeLink) full.challenge_link = challengeLink
   const toFields = (f: Record<string, string>) => (Object.keys(f).length ? f : undefined)
   try {
-    await upsertContact({ email, firstName, tags: ['7-day-challenge'], fields: toFields(withLink) })
+    await upsertContact({ email, firstName, tags: ['7-day-challenge'], fields: toFields(full) })
   } catch (err) {
-    // If the challenge_link field hasn't been created in Kit yet, the signup must still go
-    // through (and be tagged): retry without it and say so loudly in the logs.
-    if (!challengeLink) throw err
-    console.error('kit: signup with challenge_link failed; retrying without it (is the field created in Kit?)', err)
+    // If challenge_link or challenge_start_date hasn't been created in Kit yet, the signup must
+    // still go through (and be tagged): retry without them and say so loudly in the logs.
+    console.error('kit: challenge signup failed; retrying without challenge_link/challenge_start_date (are the fields created in Kit?)', err)
     await upsertContact({ email, firstName, tags: ['7-day-challenge'], fields: toFields(base) })
   }
 }

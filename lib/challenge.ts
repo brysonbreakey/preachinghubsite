@@ -6,6 +6,16 @@
 /** The kickoff video call: Tuesday, November 10, 1:00 PM CST. The countdown runs to this. */
 export const CHALLENGE_KICKOFF = Date.parse("2026-11-10T19:00:00Z");
 
+/** The kickoff day as a plain date ("2026-11-10"), in Central time. Saved to each signup's
+ *  `challenge_start_date` field in Kit so automations can use it. It follows CHALLENGE_KICKOFF,
+ *  so changing the kickoff for a new cohort changes it too. */
+export const CHALLENGE_START_DATE_LABEL = new Intl.DateTimeFormat("en-CA", {
+  timeZone: "America/Chicago",
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+}).format(CHALLENGE_KICKOFF);
+
 /** Enrollment closes: Wednesday, November 11, 12:00 AM CST. People who join during the kickoff
  *  call still have the rest of November 10 to sign up. After this, signups are waitlist signups. */
 export const CHALLENGE_CLOSES = Date.parse("2026-11-11T06:00:00Z");
