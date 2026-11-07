@@ -106,13 +106,40 @@ export async function POST(req: NextRequest) {
 
   // SlickText: create/update the contact with the checklist link in its
   // `checklist_link` field — a SlickText automation texts them when that field
-  // changes. Best-effort (the helper never throws): a texting hiccup must never
-  // fail the signup the visitor is waiting on, but it needs waitUntil to keep
-  // running after the response is sent, since Vercel can otherwise kill an
-  // un-awaited fetch the moment the function returns.
+  // changes. Best-effort (the helper never throws).
   waitUntil(
     upsertChecklistContact({ phone, firstName, lastName, email, checklistLink })
   );
+
+  // Auto-add to the active challenge run if one exists (best-effort, non-blocking).
+  waitUntil(
+    (async () => {
+      try {
+        const { data: activeRun } = await supabaseAdmin()
+          .from('challenge_runs')
+          .select('id')
+          .eq('is_active', true)
+          .maybeSingle()
+        if (activeRun?.id) {
+          await supabaseAdmin()
+            .from('challenge_participants')
+            .upsert(
+              {
+                challenge_run_id: activeRun.id,
+                email: email.toLowerCase(),
+                first_name: firstName || null,
+                last_name: lastName || null,
+                phone: phone || null,
+                signed_up_at: new Date().toISOString(),
+              },
+              { onConflict: 'challenge_run_id,email', ignoreDuplicates: true }
+            )
+        }
+      } catch (err) {
+        console.error('checklist-signup: challenge auto-add failed', err)
+      }
+    })()
+  )
 
   return NextResponse.json({ ok: true });
 }
