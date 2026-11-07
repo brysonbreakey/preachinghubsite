@@ -1,11 +1,16 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import ScrollReveal from "@/components/ScrollReveal";
 import PostHogInit from "@/components/PostHogInit";
 import ChallengePopup from "@/components/ChallengePopup";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const jakarta = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  variable: "--font-jakarta",
+  weight: ["400", "500", "600", "700", "800"],
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://preachinghub.com"),
@@ -52,20 +57,20 @@ const animationCSS = `
 [data-animate="slide-right"] { transform: translateX(28px); }
 [data-animate].in-view { opacity: 1; transform: none; }
 .feature-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
-.feature-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px -8px rgba(55,96,173,0.15); }
+.feature-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px -8px rgba(79,70,229,0.12); }
 .cta-btn { transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease; }
-.cta-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px -4px rgba(55,96,173,0.4); }
+.cta-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px -4px rgba(79,70,229,0.35); }
 .cta-btn:active { transform: translateY(0); }
 .cta-btn-white { transition: transform 0.15s ease, box-shadow 0.15s ease; }
 .cta-btn-white:hover { transform: translateY(-2px); box-shadow: 0 8px 24px -4px rgba(0,0,0,0.2); }
 .cta-btn-white:active { transform: translateY(0); }
 .how-step-icon { transition: transform 0.25s ease, background-color 0.25s ease; }
-.how-step-icon:hover { transform: scale(1.08); background-color: #dbeafe; }
+.how-step-icon:hover { transform: scale(1.08); background-color: #eef2ff; }
 .testimonial-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
-.testimonial-card:hover { transform: translateY(-3px); box-shadow: 0 10px 28px -8px rgba(55,96,173,0.12); }
+.testimonial-card:hover { transform: translateY(-3px); box-shadow: 0 10px 28px -8px rgba(79,70,229,0.10); }
 @keyframes step-pulse-badge {
-  0%, 70%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(55,96,173,0.5); }
-  15% { transform: scale(1.18); box-shadow: 0 0 0 6px rgba(55,96,173,0); }
+  0%, 70%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(79,70,229,0.5); }
+  15% { transform: scale(1.18); box-shadow: 0 0 0 6px rgba(79,70,229,0); }
 }
 .step-pulse { animation: step-pulse-badge 2.4s ease-in-out infinite; }
 @keyframes step-arrow-flow {
@@ -78,7 +83,7 @@ const animationCSS = `
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={inter.variable}>
+    <html lang="en" className={`${inter.variable} ${jakarta.variable}`}>
       <head>
         <style dangerouslySetInnerHTML={{ __html: animationCSS }} />
       </head>

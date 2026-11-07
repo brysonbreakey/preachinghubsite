@@ -1,27 +1,27 @@
 @import "tailwindcss";
 
+/* ─── Design tokens ───────────────────────────────────────────────────────── */
+
+:root {
+  --color-primary: #4F46E5;
+  --color-primary-dark: #4338CA;
+  --color-primary-light: #EEF2FF;
+  --color-bg: #F9FAFB;
+  --font-body: var(--font-jakarta), 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-heading: var(--font-inter), 'Inter', system-ui, sans-serif;
+}
+
 body {
+  font-family: var(--font-body);
+  background-color: var(--color-bg);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ─── Hero entrance (above fold — no observer needed) ─────────────────────── */
-
-@keyframes hero-fade-up {
-  from { opacity: 0; transform: translateY(24px); }
-  to   { opacity: 1; transform: translateY(0); }
+h1, h2, h3, h4 {
+  font-family: var(--font-heading);
+  letter-spacing: -0.03em;
 }
-
-@keyframes hero-fade-in {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-
-.hero-badge   { animation: hero-fade-up 0.6s ease both; animation-delay: 0.05s; }
-.hero-h1      { animation: hero-fade-up 0.7s ease both; animation-delay: 0.18s; }
-.hero-sub     { animation: hero-fade-up 0.7s ease both; animation-delay: 0.32s; }
-.hero-cta     { animation: hero-fade-up 0.7s ease both; animation-delay: 0.44s; }
-.hero-mockup  { animation: hero-fade-up 0.9s ease both; animation-delay: 0.6s;  }
 
 /* ─── Scroll reveal ───────────────────────────────────────────────────────── */
 
@@ -31,9 +31,9 @@ body {
   transition: opacity 0.6s ease, transform 0.6s ease;
 }
 
-[data-animate="fade-up"]   { transform: translateY(36px); }
-[data-animate="fade-in"]   { transform: none; }
-[data-animate="scale-up"]  { transform: scale(0.96); }
+[data-animate="fade-up"]     { transform: translateY(36px); }
+[data-animate="fade-in"]     { transform: none; }
+[data-animate="scale-up"]    { transform: scale(0.96); }
 [data-animate="slide-left"]  { transform: translateX(-28px); }
 [data-animate="slide-right"] { transform: translateX(28px); }
 
@@ -49,7 +49,7 @@ body {
 }
 .feature-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 32px -8px rgba(55, 96, 173, 0.15);
+  box-shadow: 0 12px 32px -8px rgba(79, 70, 229, 0.12);
 }
 
 .cta-btn {
@@ -57,7 +57,7 @@ body {
 }
 .cta-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px -4px rgba(55, 96, 173, 0.4);
+  box-shadow: 0 8px 24px -4px rgba(79, 70, 229, 0.35);
 }
 .cta-btn:active {
   transform: translateY(0);
@@ -79,7 +79,7 @@ body {
 }
 .how-step-icon:hover {
   transform: scale(1.08);
-  background-color: #dbeafe;
+  background-color: #eef2ff;
 }
 
 .testimonial-card {
@@ -87,7 +87,7 @@ body {
 }
 .testimonial-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 10px 28px -8px rgba(55, 96, 173, 0.12);
+  box-shadow: 0 10px 28px -8px rgba(79, 70, 229, 0.10);
 }
 
 /* ─── Staggered children ──────────────────────────────────────────────────── */
