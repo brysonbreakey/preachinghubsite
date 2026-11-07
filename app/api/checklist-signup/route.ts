@@ -107,6 +107,35 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // Auto-add to the active challenge run if one exists (best-effort, non-blocking).
+  waitUntil(
+    (async () => {
+      try {
+        const { data: activeRun } = await supabaseAdmin()
+          .from('challenge_runs')
+          .select('id')
+          .eq('is_active', true)
+          .maybeSingle()
+        if (activeRun?.id) {
+          await supabaseAdmin()
+            .from('challenge_participants')
+            .upsert(
+              {
+                challenge_run_id: activeRun.id,
+                email: email.toLowerCase(),
+                first_name: firstName || null,
+                last_name: lastName || null,
+                signed_up_at: new Date().toISOString(),
+              },
+              { onConflict: 'challenge_run_id,email', ignoreDuplicates: true }
+            )
+        }
+      } catch (err) {
+        console.error('checklist-signup: challenge auto-add failed', err)
+      }
+    })()
+  )
+
   // Side channel to Zapier (Textla contact + SMS with the checklist link).
   // Best-effort only — a Zapier/Textla hiccup must never fail the signup
   // the visitor is actually waiting on — but it still needs waitUntil to
