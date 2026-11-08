@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { resolveMx } from "dns/promises";
+import { waitUntil } from "@vercel/functions";
 import { addSevenDayChallengeContact, addSevenDayChallengeWaitlistContact } from "@/lib/kit";
 import { challengePhase, serverNow } from "@/lib/challenge";
 import { createChallengeLink, createChallengeClaim } from "@/lib/challengeToken";
+import { supabaseAdmin } from "@/lib/supabase";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
 
@@ -54,6 +56,38 @@ export async function POST(req: NextRequest) {
   } catch (err) {
     console.error("challenge-signup: kit failed", err);
     return NextResponse.json({ error: "Something went wrong on our end. Please try again." }, { status: 500 });
+  }
+
+  // Auto-add to the active challenge run (non-waitlist only, best-effort).
+  if (!waitlist) {
+    waitUntil(
+      (async () => {
+        try {
+          const { data: activeRun } = await supabaseAdmin()
+            .from('challenge_runs')
+            .select('id')
+            .eq('is_active', true)
+            .maybeSingle()
+          if (activeRun?.id) {
+            await supabaseAdmin()
+              .from('challenge_participants')
+              .upsert(
+                {
+                  challenge_run_id: activeRun.id,
+                  email: email.toLowerCase(),
+                  first_name: firstName || null,
+                  last_name: lastName || null,
+                  phone: phone || null,
+                  signed_up_at: new Date().toISOString(),
+                },
+                { onConflict: 'challenge_run_id,email', ignoreDuplicates: true }
+              )
+          }
+        } catch (err) {
+          console.error('challenge-signup: challenge auto-add failed', err)
+        }
+      })()
+    )
   }
 
   // The popup's second step (create the account right now) needs a short-lived claim; see

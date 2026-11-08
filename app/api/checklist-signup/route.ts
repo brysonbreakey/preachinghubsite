@@ -111,35 +111,6 @@ export async function POST(req: NextRequest) {
     upsertChecklistContact({ phone, firstName, lastName, email, checklistLink })
   );
 
-  // Auto-add to the active challenge run if one exists (best-effort, non-blocking).
-  waitUntil(
-    (async () => {
-      try {
-        const { data: activeRun } = await supabaseAdmin()
-          .from('challenge_runs')
-          .select('id')
-          .eq('is_active', true)
-          .maybeSingle()
-        if (activeRun?.id) {
-          await supabaseAdmin()
-            .from('challenge_participants')
-            .upsert(
-              {
-                challenge_run_id: activeRun.id,
-                email: email.toLowerCase(),
-                first_name: firstName || null,
-                last_name: lastName || null,
-                phone: phone || null,
-                signed_up_at: new Date().toISOString(),
-              },
-              { onConflict: 'challenge_run_id,email', ignoreDuplicates: true }
-            )
-        }
-      } catch (err) {
-        console.error('checklist-signup: challenge auto-add failed', err)
-      }
-    })()
-  )
 
-  return NextResponse.json({ ok: true });
+return NextResponse.json({ ok: true });
 }
