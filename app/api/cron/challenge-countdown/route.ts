@@ -8,7 +8,11 @@ import { chicagoHourNow } from "@/lib/startCountdown";
 //
 // By hand:  curl -H "Authorization: Bearer $CRON_SECRET" "https://preachinghub.com/api/cron/challenge-countdown?dry_run=true"
 //   ?dry_run=true  log what would change, write nothing (runs at any hour)
-//   ?force=true    run now even outside the 5 AM Chicago hour
+//   ?force=true    run now even outside the usual Chicago hour
+//   ?job=day       the challenge_day flip: 9:00 AM Chicago daily, Day 1 at 2:15 PM (see
+//                  challengeDayFor). It has no hour guard: the send times are inside the calculation, so
+//                  an extra run at any time is a no-op. Without it, the 5 AM countdown runs and only
+//                  days_until_challenge_start is written.
 export const dynamic = "force-dynamic";
 export const maxDuration = 300;
 
@@ -19,11 +23,12 @@ export async function GET(req: NextRequest) {
   }
   const dryRun = req.nextUrl.searchParams.get("dry_run") === "true";
   const force = req.nextUrl.searchParams.get("force") === "true";
-  if (!dryRun && !force && chicagoHourNow() !== 5) {
+  const only = req.nextUrl.searchParams.get("job") === "day" ? "day" : "countdown";
+  if (!dryRun && !force && only === "countdown" && chicagoHourNow() !== 5) {
     return NextResponse.json({ ok: true, skipped: "not 5 AM in America/Chicago" });
   }
   try {
-    const summary = await syncChallengeCountdown({ dryRun });
+    const summary = await syncChallengeCountdown({ dryRun, only });
     return NextResponse.json({ ok: true, ...summary });
   } catch (err) {
     console.error("challenge countdown: job failed", err);

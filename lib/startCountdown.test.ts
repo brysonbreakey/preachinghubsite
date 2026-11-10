@@ -40,3 +40,58 @@ describe("computeDaysUntilChallengeStart", () => {
     expect(chicagoToday(new Date("2026-07-04T05:00:00Z"))).toBe("2026-07-04");
   });
 });
+
+import { computeChallengeDay as day } from "./startCountdown";
+
+describe("computeChallengeDay", () => {
+  it("is null for a missing or invalid start date", () => {
+    expect(day("", "2026-11-10")).toBeNull();
+    expect(day("2026-02-30", "2026-11-10")).toBeNull();
+  });
+  it("runs the Nov 10 cohort: Friday and Sunday are half days", () => {
+    const expected: Record<string, string> = {
+      "2026-11-09": "0", "2026-11-10": "1", "2026-11-11": "2", "2026-11-12": "3", "2026-11-13": "3.5",
+      "2026-11-14": "4", "2026-11-15": "4.5", "2026-11-16": "5", "2026-11-17": "6", "2026-11-18": "7",
+      "2026-11-19": "done", "2026-11-20": "done", "2026-11-22": "done",
+    };
+    for (const [today, v] of Object.entries(expected)) expect(day("2026-11-10", today), today).toBe(v);
+  });
+  it("works for other cohorts", () => {
+    expect(day("2026-11-16", "2026-11-20")).toBe("4.5"); // Mon start: 16,17,18,19 = days 1-4, Fri 20 = 4.5
+    expect(day("2026-11-16", "2026-11-21")).toBe("5");
+    expect(day("2026-11-16", "2026-11-22")).toBe("5.5");
+    expect(day("2026-11-16", "2026-11-24")).toBe("7");
+    expect(day("2026-11-16", "2026-11-25")).toBe("done");
+    expect(day("2026-11-13", "2026-11-13")).toBe("0"); // starting on an off day: not yet day 1
+    expect(day("2026-11-13", "2026-11-14")).toBe("1");
+    expect(day("2026-11-02", "2026-11-10")).toBe("7"); // Mon 2 start: day 7 is Tue 10
+    expect(day("2026-11-02", "2026-11-11")).toBe("done");
+  });
+  it("is not thrown off by daylight saving", () => {
+    expect(day("2026-10-30", "2026-11-03")).toBe("3");
+  });
+});
+
+import { challengeDayDate, challengeDayFor } from "./startCountdown";
+
+describe("send times: 9 AM daily, Day 1 at 2:15 PM (Central)", () => {
+  // Nov 2026 is CST (UTC-6): 9:00 AM = 15:00Z, 2:15 PM = 20:15Z
+  const at = (iso: string) => new Date(iso);
+  it("daily date flips at 9:00 AM", () => {
+    expect(challengeDayDate(at("2026-11-11T14:59:00Z"))).toBe("2026-11-10");
+    expect(challengeDayDate(at("2026-11-11T15:00:00Z"))).toBe("2026-11-11");
+  });
+  it("Day 1 waits for 2:15 PM, then everything else flips at 9 AM", () => {
+    const f = (iso: string) => challengeDayFor("2026-11-10", at(iso));
+    expect(f("2026-11-10T13:00:00Z")).toBe("0"); // 7:00 AM Tue
+    expect(f("2026-11-10T15:30:00Z")).toBe("0"); // 9:30 AM Tue: Day 1 not open yet
+    expect(f("2026-11-10T19:00:00Z")).toBe("0"); // 1:00 PM, the call
+    expect(f("2026-11-10T20:14:00Z")).toBe("0"); // 2:14 PM
+    expect(f("2026-11-10T20:15:00Z")).toBe("1"); // 2:15 PM
+    expect(f("2026-11-10T23:00:00Z")).toBe("1"); // 5:00 PM late signup
+    expect(f("2026-11-11T14:00:00Z")).toBe("1"); // 8:00 AM Wed: still 1
+    expect(f("2026-11-11T15:00:00Z")).toBe("2"); // 9:00 AM Wed
+    expect(f("2026-11-13T15:00:00Z")).toBe("3.5"); // Fri 9 AM
+    expect(f("2026-11-19T15:00:00Z")).toBe("done"); // Thu after day 7
+  });
+});

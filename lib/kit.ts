@@ -1,5 +1,5 @@
 import { CHALLENGE_START_DATE_LABEL } from '@/lib/challenge'
-import { MIN_COUNTDOWN_DAY, chicagoToday, computeDaysUntilChallengeStart } from '@/lib/startCountdown'
+import { MIN_COUNTDOWN_DAY, chicagoToday, challengeDayFor, computeDaysUntilChallengeStart } from '@/lib/startCountdown'
 const KIT_API_BASE = 'https://api.kit.com/v4'
 
 function kitHeaders(): Record<string, string> {
@@ -162,13 +162,16 @@ export async function addSevenDayChallengeContact({
   // Late joiners land on the right countdown day right away instead of waiting for the daily job.
   const days = computeDaysUntilChallengeStart(CHALLENGE_START_DATE_LABEL, chicagoToday())
   if (days !== null && days >= MIN_COUNTDOWN_DAY) full.days_until_challenge_start = String(days)
+  // Same for challenge_day, so someone from an earlier cohort who signs up again isn't left on "done".
+  const day = challengeDayFor(CHALLENGE_START_DATE_LABEL)
+  if (day !== null) full.challenge_day = day
   const toFields = (f: Record<string, string>) => (Object.keys(f).length ? f : undefined)
   try {
     await upsertContact({ email, firstName, tags: ['7-day-challenge'], fields: toFields(full) })
   } catch (err) {
     // If challenge_link or challenge_start_date hasn't been created in Kit yet, the signup must
     // still go through (and be tagged): retry without them and say so loudly in the logs.
-    console.error('kit: challenge signup failed; retrying without its custom fields (are challenge_link, challenge_start_date and days_until_challenge_start created in Kit?)', err)
+    console.error('kit: challenge signup failed; retrying without its custom fields (are challenge_link, challenge_start_date, days_until_challenge_start and challenge_day created in Kit?)', err)
     await upsertContact({ email, firstName, tags: ['7-day-challenge'], fields: toFields(base) })
   }
 }

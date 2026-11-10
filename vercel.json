@@ -1,6 +1,36 @@
 {
   "crons": [
-    { "path": "/api/cron/challenge-countdown?run=cdt", "schedule": "0 10 * * *" },
-    { "path": "/api/cron/challenge-countdown?run=cst", "schedule": "0 11 * * *" }
+    {
+      "path": "/api/cron/challenge-countdown?run=cdt",
+      "schedule": "0 10 * * *"
+    },
+    {
+      "path": "/api/cron/challenge-countdown?run=cst",
+      "schedule": "0 11 * * *"
+    },
+    {
+      "path": "/api/cron/challenge-countdown?job=day&run=am-cdt",
+      "schedule": "0 14 * * *"
+    },
+    {
+      "path": "/api/cron/challenge-countdown?job=day&run=am-cst",
+      "schedule": "0 15 * * *"
+    },
+    {
+      "path": "/api/cron/challenge-countdown?job=day&run=d1-cdt",
+      "schedule": "15 19 * * *"
+    },
+    {
+      "path": "/api/cron/challenge-countdown?job=day&run=d1-cdt2",
+      "schedule": "20 19 * * *"
+    },
+    {
+      "path": "/api/cron/challenge-countdown?job=day&run=d1-cst",
+      "schedule": "15 20 * * *"
+    },
+    {
+      "path": "/api/cron/challenge-countdown?job=day&run=d1-cst2",
+      "schedule": "20 20 * * *"
+    }
   ]
 }
