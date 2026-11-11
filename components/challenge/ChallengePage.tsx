@@ -390,7 +390,7 @@ export function ChallengePage({ initialNow, variant = "landing" }: { initialNow:
           {/* Pricing summary */}
           <div className={`max-w-xl mx-auto bg-white rounded-[2.5rem] border-2 border-[#4F46E5] p-10 text-center space-y-4 ${SHADOW_PREMIUM}`}>
             <p className="text-[11px] font-black uppercase tracking-[0.25em] text-[#4F46E5]">7-Day Preaching Growth Challenge</p>
-            <p className={`text-5xl font-black text-[#0F172A] ${H}`}>Free <span className="text-base font-bold text-[#64748B] tracking-normal">No Card Required</span></p>
+            <p className={`text-5xl font-black text-[#0F172A] ${H}`}>$0 <span className="text-base font-bold text-[#64748B] tracking-normal">No Card Required</span></p>
             <p className="text-[#64748B] text-sm leading-relaxed font-medium">
               Seven days of personalized training, practical tools, and an opportunity to earn a one-on-one coaching session.
             </p>
