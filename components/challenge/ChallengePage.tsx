@@ -4,55 +4,94 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import posthog from "posthog-js";
 import { Icon } from "@/components/Icon";
+import { PHMark } from "@/components/Logo";
 import { BRENT_GARRARD } from "@/lib/testimonials";
-import { challengePhase, formatCountdown } from "@/lib/challenge";
+import { CHALLENGE_PASS_END_LABEL, challengePhase, formatCountdown } from "@/lib/challenge";
 import { ChallengeSignupModal } from "./ChallengeSignupModal";
 
-// The Free 7-Day Preaching Growth Challenge landing page. Same look as the 30-Day Preaching Growth
-// Accelerator page (components/accelerator/AcceleratorPage.tsx); the signup is a popup that adds
-// people to Kit with the 7-day-challenge tag. Dates are written out (Tuesday, November 10 to
-// Wednesday, November 18, 2026), so this page needs retiring or updating after the challenge.
+// The 7-Day Preaching Growth Challenge landing page (cohort 2: November 17-23, 2026, $7 one time).
+// Same look as the 30-Day Preaching Growth Accelerator page (components/accelerator/AcceleratorPage.tsx).
+// The signup is a popup: with payments configured it sends people to Stripe Checkout and the Stripe
+// webhook (app/api/stripe/webhook) lets them in; without, it reserves a spot on the waitlist. The
+// cohort-1 free version of this page is kept at the git tag `challenge-cohort1-page`. Dates are
+// written out below, so this page needs retiring or updating after the challenge.
 
 const H = "font-[family-name:var(--font-inter)] tracking-[-0.04em]";
 const SERIF = "font-[family-name:var(--font-lora)]";
 const SHADOW_PREMIUM = "shadow-[0_10px_40px_-10px_rgba(15,23,42,0.05),0_2px_10px_-2px_rgba(15,23,42,0.02)]";
-const FREE_PILL = "px-4 py-1.5 bg-emerald-500 text-white font-black uppercase tracking-widest text-[10px] rounded-full shadow-md shadow-emerald-100 [color:#fff]";
+const IMMEDIATE_PILL = "px-4 py-1.5 bg-emerald-500 text-white font-black uppercase tracking-widest text-[10px] rounded-full shadow-md shadow-emerald-100 [color:#fff]";
+const BONUS_PILL = "px-4 py-1.5 bg-[#4F46E5] text-white font-black uppercase tracking-widest text-[10px] rounded-full shadow-md shadow-indigo-100 [color:#fff]";
 
-const INCLUDED = [
+const TRACKS = [
   {
-    icon: ["M23 7l-7 5 7 5V7z", "M3 5h11a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"],
-    title: "A kickoff video call",
-    body: "We start the challenge together, live, on a video call at 1 PM CST.",
+    icon: ["M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z", "M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"],
+    label: "Clarity",
+    title: "Make Your Message Easier to Follow.",
+    body: "You have good ideas, but they don't always connect. Learn to sharpen your main points, strengthen your sermon structure, and create a clearer flow from beginning to end.",
   },
   {
-    icon: ["M9 11l3 3L22 4", "M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"],
-    title: "7 days of prompts, check-ins, and growth exercises",
-    body: "Each day brings focused prompts, check-ins, and growth exercises for your sermon. About 15 minutes a day.",
+    icon: ["M4 19.5A2.5 2.5 0 0 1 6.5 17H20", "M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"],
+    label: "Content",
+    title: "Go Deeper. Preach Stronger.",
+    body: "You want to get more out of your study and preparation. Develop better Bible study habits, strengthen your sermon content, and communicate biblical truth with greater depth.",
   },
   {
-    icon: ["M12 2L2 7l10 5 10-5-10-5z", "M2 17l10 5 10-5", "M2 12l10 5 10-5"],
-    title: "Free access to PreachingHub",
-    body: "Use PreachingHub, our sermon prep and coaching space, while you work through the challenge.",
-  },
-  {
-    icon: "M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z",
-    title: "A free 20-minute coaching call",
-    body: "Finish all 7 days and get a free 20-minute 1:1 coaching call with Bryson to tighten your growth plan, whether you continue with PreachingHub or not!",
+    icon: "M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 16.8l-6.2 4.5 2.4-7.4L2 9.4h7.6z",
+    label: "Creativity",
+    title: "Make Your Message More Memorable.",
+    body: "You want your sermons to connect and stick. Strengthen your introductions, storytelling, and illustrations to help people engage with and remember what you're preaching.",
   },
 ];
 
-const STEPS = [
-  { n: "1", title: "Do the pre-challenge homework", body: "Sign up now and we'll send it before the challenge starts. It's not a lot, don't worry." },
-  { n: "2", title: "Kick off together", body: "Join the kickoff video call at 1 PM CST and get started with everyone else." },
-  { n: "3", title: "Work on your own sermon", body: "Seven days of prompts, check-ins, and growth exercises, about 15 minutes a day. Your day off and Sunday are off." },
-  { n: "4", title: "Sharpen your plan", body: "Finish all 7 days and get a free 20-minute 1:1 coaching call with Bryson to tighten your growth plan." },
-  { n: "5", title: "Unlock your rewards", body: "Complete the challenge and special rewards are unlocked for you." },
+type Included = { icon: string | string[] | null; pill?: string; title: string; body: string };
+const INCLUDED: Included[] = [
+  {
+    icon: ["M9 11l3 3L22 4", "M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"],
+    title: "7 Days of Personalized Training",
+    body: "Follow short, practical lessons and exercises designed around your chosen growth track: Clarity, Content, or Creativity.",
+  },
+  {
+    icon: null, // the PreachingHub logo mark is drawn instead (see the card below)
+    pill: "Immediately",
+    title: "Complimentary PreachingHub Access",
+    body: `Get access to PreachingHub's sermon preparation, rehearsal, and AI-powered feedback tools throughout the challenge and for a limited time afterward.`,
+  },
+  {
+    icon: "M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zM12 6v6l4 2",
+    title: "Just 15 Minutes a Day",
+    body: "No lengthy courses or overwhelming assignments. Make progress through focused daily exercises you can apply to your actual sermons.",
+  },
+  {
+    icon: ["M23 7l-7 5 7 5V7z", "M3 5h11a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"],
+    title: "Live Kickoff + Replay",
+    body: "Start with a live online video call where you'll identify your growth focus, understand the challenge, and prepare for the week ahead. Can't attend live? Watch the replay.",
+  },
+  {
+    icon: ["M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z", "M14 2v6h6", "M16 13H8", "M16 17H8"],
+    title: "Worksheets + Personalized 30-Day Growth Plan",
+    body: "Use practical resources to apply what you're learning and finish the challenge with a clear plan for continuing your development.",
+  },
+];
+
+const SCHEDULE = [
+  { n: "1", date: "November 17", title: "Find Your Focus", body: "Join the live kickoff, assess your preaching, and choose your growth track." },
+  { n: "2", date: "November 18", title: "Your First Breakthrough", body: "Complete your first targeted exercise in Clarity, Content, or Creativity." },
+  { n: "3", date: "November 19", title: "Edit for Impact", body: "Learn to identify what strengthens your sermon and what might be getting in the way." },
+  { n: "4", date: "November 20", title: "Prepare to Preach", body: "Develop practical pre-preaching habits that help you approach the pulpit with greater confidence." },
+  { n: "5", date: "November 21", title: "Build on Your Progress", body: "Take the next step in your personalized growth track." },
+  { n: "6", date: "November 22", title: "Put It Into Practice", body: "Apply what you've learned to a real sermon and reflect on your progress." },
+  { n: "7", date: "November 23", title: "Build Your 30-Day Growth Plan", body: "Create a practical roadmap for continued improvement and submit it to unlock your personal strategy session." },
 ];
 
 const FAQ = [
-  ["Is it really free?", "Yes. All of it is free: the kickoff call, the daily exercises, access to PreachingHub and the 20-minute coaching call you earn by finishing all 7 days. No card is required."],
-  ["How much time does it take?", "About 15 minutes a day for 7 days, not counting your day off and Sunday."],
-  ["Which sermon do I use?", "The one you're already working on (or start a new one during the challenge)."],
+  ["How much does the challenge cost?", "The entire 7-Day Preaching Growth Challenge costs just $7. That's a one-time payment, not a subscription. It doesn't nearly cover the cost to host the challenge, but we've found people see better results when they have some skin in the game."],
+  ["How much time will I need?", "Plan for approximately 15 minutes a day for the exercises and training, plus the live kickoff session. The kickoff replay will be available if you can't attend."],
+  ["What if I can't attend the live kickoff?", "No problem! You'll have access to the replay so you can catch up and continue with the challenge."],
+  ["Do I need to be an experienced preacher?", "This challenge is designed for people who are actively preaching and genuinely want to improve. Whether you're relatively new or have been preaching for years, you'll choose a growth area that fits your needs."],
+  ["What are the three growth tracks?", "You'll choose Clarity, Content, or Creativity based on the area where you most want to improve. Your track determines several of the practical exercises you'll complete throughout the week."],
+  ["Is PreachingHub included?", `Yes! Your registration includes complimentary access to PreachingHub during the challenge and through ${CHALLENGE_PASS_END_LABEL}, 2026. No additional subscription is required.`],
+  ["How do I get the one-on-one coaching session?", "Complete the seven-day challenge and submit your personalized 30-day growth plan. You'll then receive instructions for scheduling your complimentary 20-minute 1:1 Preaching Growth Strategy Session, subject to availability."],
+  ["Will I be charged monthly after the challenge?", "No. The $7 challenge payment is a one-time purchase. You can choose to continue with a paid PreachingHub subscription or coaching program afterward, but nothing automatically renews as part of your challenge registration."],
 ];
 
 // "landing": the page at /challenge. "thank-you": the same page served at /checklist/thank-you, with
@@ -60,7 +99,7 @@ const FAQ = [
 // challenge as the next step after the checklist.
 export type ChallengeVariant = "landing" | "thank-you";
 
-export function ChallengePage({ initialNow, variant = "landing" }: { initialNow: number; variant?: ChallengeVariant }) {
+export function ChallengePage({ initialNow, variant = "landing", payments = false }: { initialNow: number; variant?: ChallengeVariant; payments?: boolean }) {
   const [modalOpen, setModalOpen] = useState(false);
 
   // The page knows the time the server rendered it at (so a visitor never sees the wrong state
@@ -79,7 +118,10 @@ export function ChallengePage({ initialNow, variant = "landing" }: { initialNow:
   }, [initialNow]);
   const phase = challengePhase(now);
   const waitlist = phase === "closed";
-  const ctaLabel = waitlist ? "Join the waitlist" : "Join the free challenge";
+  // With payments on, the buttons say the price. Until Stripe is configured on this deployment the
+  // signup reserves a spot on the waitlist instead (the signup route makes the same decision).
+  const ctaLabel = waitlist ? "Join the waitlist" : payments ? "Join the Challenge for $7" : "Reserve My Spot";
+  const ctaLabelLower = waitlist ? "Join the waitlist" : payments ? "Start Growing for Just $7" : "Reserve My Spot";
 
   // One named event per visit, alongside PostHog's automatic $pageview.
   useEffect(() => {
@@ -95,7 +137,7 @@ export function ChallengePage({ initialNow, variant = "landing" }: { initialNow:
   return (
     <main className="font-[family-name:var(--font-jakarta)] bg-white text-[#0F172A] overflow-x-hidden antialiased">
       <style>{`@keyframes acc-fade-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } } .acc-fade-in { animation: acc-fade-in 0.8s ease-out; }`}</style>
-      {modalOpen && <ChallengeSignupModal phase={phase} onClose={() => setModalOpen(false)} />}
+      {modalOpen && <ChallengeSignupModal phase={phase} payments={payments} onClose={() => setModalOpen(false)} />}
 
       {variant === "thank-you" && (
         // Top bar: same as the one the accelerator version of this page has.
@@ -123,6 +165,7 @@ export function ChallengePage({ initialNow, variant = "landing" }: { initialNow:
 
       {/* Hero */}
       <header className="acc-fade-in max-w-5xl mx-auto px-8 pt-12 md:pt-16 pb-24 text-center">
+        {/* The countdown pill, back at the very top. */}
         <div className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full border text-[10px] font-black uppercase tracking-[0.2em] mb-8 ${phase === "closed" ? "bg-indigo-50 border-indigo-100 text-[#4F46E5]" : "bg-red-50 border-red-100 text-red-600"}`}>
           {phase === "before" && (
             <>
@@ -138,27 +181,26 @@ export function ChallengePage({ initialNow, variant = "landing" }: { initialNow:
             <span className={`text-[#4F46E5] italic ${SERIF}`}>you&apos;re ready for the&hellip;</span>
           </p>
         )}
-        <h1 className="mb-8">
-          <Image
-            src="/images/challenge-title.webp"
-            alt="Free 7-Day Preaching Growth Challenge"
-            width={2000}
-            height={770}
-            priority
-            sizes="(min-width: 640px) 768px, 150vw"
-            className="relative left-1/2 h-auto w-[150%] max-w-none -translate-x-1/2 mix-blend-multiply sm:left-auto sm:mx-auto sm:w-full sm:max-w-3xl sm:translate-x-0"
-          />
+        {/* The challenge title artwork (no "Free" in it). The headline below is the page's h1. */}
+        <Image
+          src="/images/challenge-title-paid.webp"
+          alt="7-Day Preaching Growth Challenge"
+          width={1752}
+          height={897}
+          priority
+          sizes="(min-width: 640px) 560px, 80vw"
+          className="mx-auto mb-10 h-auto w-4/5 max-w-[34rem] mix-blend-multiply"
+        />
+        <h1 className={`mx-auto mb-8 max-w-4xl text-balance text-3xl sm:text-4xl md:text-5xl font-black leading-[1.08] text-[#0F172A] ${H}`}>
+          Become a More <span className={`text-[#4F46E5] italic ${SERIF}`}>Confident, Clear,</span> and Impactful Preacher in Just 7 Days.
         </h1>
         <div className="mx-auto mb-12 max-w-2xl space-y-5">
-          <p className={`text-2xl md:text-3xl font-black leading-tight text-[#0F172A] ${H}`}>
-            We&apos;re looking for a group of preachers who will give a week to{" "}
-            <span className={`text-[#4F46E5] italic ${SERIF}`}>take their preaching to the next level.</span>
+          <p className="text-lg md:text-xl text-[#64748B] leading-relaxed font-medium">
+            Stop guessing how to improve. Choose the one area of your preaching that needs the most growth, follow a personalized 15-minute-a-day training plan, and start delivering sermons with greater impact.
           </p>
-          <p className="text-lg text-[#64748B] leading-relaxed font-medium">
-            Bring the sermon you&apos;re already working on, or start a new one. You&apos;ll get a kickoff video call, seven days of prompts, check-ins, and growth exercises, and a free 20-minute coaching call with Bryson when you finish all 7 days to tighten your growth plan.
-          </p>
-          <p className={`text-xl md:text-2xl font-bold leading-snug text-[#0F172A] ${H}`}>
-            By day 7 you&apos;ll have a stronger sermon and a written plan to keep growing.
+          <p className={`text-xl md:text-2xl font-bold leading-snug text-[#0F172A] ${H}`}>November 17, 2026</p>
+          <p className="text-sm sm:text-base font-black text-gray-500 uppercase tracking-widest">
+            Live Kickoff Call &bull; Personalized Training &bull; 1-on-1 Coaching Opportunity
           </p>
         </div>
 
@@ -170,21 +212,20 @@ export function ChallengePage({ initialNow, variant = "landing" }: { initialNow:
           >
             {ctaLabel}
           </button>
-          <p className="text-sm sm:text-base font-black text-gray-500 uppercase tracking-widest">
-            Free • No card required
-          </p>
-          <p className="max-w-md text-sm sm:text-base font-medium leading-relaxed text-[#64748B]">
-            {phase === "before" && <span className="font-bold text-red-600">Sign up now to receive the pre-challenge homework.</span>}
-            {phase === "started" && <span className="font-bold text-red-600">Enrollment closes tonight at midnight CST.</span>}
-            {phase === "closed" && "Enrollment for this challenge is closed. Join the waitlist and we'll let you know about the next one."}
+          <p className="max-w-md text-xs sm:text-sm font-medium leading-relaxed text-[#64748B]">
+            {phase === "closed"
+              ? "Enrollment for this challenge is closed. Join the waitlist and we'll let you know about the next one."
+              : payments
+                ? "One-time payment. No subscription required."
+                : "Reserve your spot now and we'll email you the moment enrollment opens. One-time $7 payment, no subscription."}
           </p>
         </div>
 
         <div className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto">
           {[
             ["15 min", "a day, for 7 days"],
-            ["Nov 10 – 18", "Tuesday to Wednesday"],
-            ["$0", "No card required"],
+            ["Nov 17 – 23", "100% online, Tuesday to Monday"],
+            ["$7", "One-time payment"],
           ].map(([big, small]) => (
             <div key={big} className={`rounded-2xl border border-gray-100 bg-white px-6 py-6 ${SHADOW_PREMIUM}`}>
               <p className={`text-3xl font-black text-[#4F46E5] ${H}`}>{big}</p>
@@ -194,16 +235,45 @@ export function ChallengePage({ initialNow, variant = "landing" }: { initialNow:
         </div>
       </header>
 
+      {/* Choose your growth track */}
+      <section className="bg-[#F8FAFC] py-28 border-y border-gray-100">
+        <div className="max-w-6xl mx-auto px-8 space-y-14">
+          <div className="text-center space-y-5 max-w-3xl mx-auto">
+            <h2 className={`text-4xl sm:text-5xl font-black text-[#0F172A] tracking-tight leading-[1.05] ${H}`}>
+              One Challenge. <span className={`text-[#4F46E5] italic ${SERIF}`}>Three Paths</span> to Better Preaching.
+            </h2>
+            <p className="text-lg text-[#64748B] font-medium leading-relaxed">
+              You don&apos;t need to improve everything at once. Choose the area where you want to grow most, and we&apos;ll guide you through practical exercises designed to help you make real progress.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {TRACKS.map((track) => (
+              <div key={track.label} className={`bg-white rounded-[2.5rem] border border-gray-200 p-10 space-y-5 ${SHADOW_PREMIUM}`}>
+                <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-50 text-[#4F46E5]">
+                  <Icon d={track.icon} size={22} strokeWidth={2} />
+                </span>
+                <p className="text-[11px] font-black uppercase tracking-[0.25em] text-[#4F46E5]">{track.label}</p>
+                <h3 className={`text-2xl font-black text-[#0F172A] leading-tight ${H}`}>{track.title}</h3>
+                <p className="text-[#64748B] text-sm leading-relaxed font-medium">{track.body}</p>
+              </div>
+            ))}
+          </div>
+          <p className="text-center text-base font-bold text-[#0F172A]">
+            Whichever track you choose, you&apos;ll receive practical training designed to help you grow in that specific area.
+          </p>
+        </div>
+      </section>
+
       {/* Who it's for */}
-      <section className="max-w-3xl mx-auto px-8 pb-24 text-center space-y-8">
+      <section className="max-w-3xl mx-auto px-8 py-24 text-center space-y-8">
         <h2 className={`text-2xl md:text-3xl font-black text-[#0F172A] tracking-tight ${H}`}>
           This is for <span className={`text-[#4F46E5] italic ${SERIF}`}>you</span>{" "}
           if&hellip;
         </h2>
         <ul className="space-y-4 text-left">
           {[
-            "You want to grow as a preacher, not just get through Sunday.",
-            "You'll show up to the kickoff video call and the 20-minute coaching call at the end.",
+            "You're actively preaching and want to grow, not just get through Sunday.",
+            "You'll show up to the kickoff (or watch the replay) and finish the 7 days.",
             "You'll set aside about 15 minutes a day for a week and do the work.",
             "You're working on a sermon right now, or ready to start one.",
           ].map((line) => (
@@ -216,7 +286,6 @@ export function ChallengePage({ initialNow, variant = "landing" }: { initialNow:
           ))}
         </ul>
         <p className="mx-auto max-w-xl text-base font-medium leading-relaxed text-[#64748B]">
-          <span className="font-black text-[#0F172A]">Free doesn&apos;t mean casual.</span>{" "}
           It only works if you do. If you&apos;re not ready to commit for the week, this one isn&apos;t for you yet.
         </p>
       </section>
@@ -224,13 +293,13 @@ export function ChallengePage({ initialNow, variant = "landing" }: { initialNow:
       {/* What's included */}
       <section className="bg-[#F8FAFC] py-32 border-y border-gray-100">
         <div className="max-w-6xl mx-auto px-8 space-y-16">
-          <div className="text-center space-y-5">
-            <h2 className={`text-4xl sm:text-5xl md:text-6xl font-black text-[#0F172A] tracking-tight leading-[1.05] ${H}`}>What you get</h2>
-            <p className={`text-2xl md:text-3xl font-bold text-[#0F172A] leading-snug ${H}`}>
-              All of it is{" "}
-              <span className="ml-1 inline-block rounded-full bg-emerald-500 px-5 py-1.5 align-middle text-base font-black uppercase tracking-widest text-white shadow-lg shadow-emerald-200 md:text-lg [color:#fff]">FREE</span>
+          <div className="text-center space-y-5 max-w-3xl mx-auto">
+            <h2 className={`text-4xl sm:text-5xl md:text-6xl font-black text-[#0F172A] tracking-tight leading-[1.05] ${H}`}>
+              Everything You Need to Start Preaching Better.
+            </h2>
+            <p className="text-lg text-[#64748B] font-medium leading-relaxed">
+              A practical, personalized growth experience designed to help you make meaningful progress without adding hours to your already busy schedule.
             </p>
-            <p className="text-[#64748B] font-medium">No card required.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -238,18 +307,62 @@ export function ChallengePage({ initialNow, variant = "landing" }: { initialNow:
               <div key={item.title} className={`bg-white rounded-[2.5rem] border border-gray-200 p-10 space-y-6 ${SHADOW_PREMIUM}`}>
                 <div className="flex items-center justify-between gap-4">
                   <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-50 text-[#4F46E5]">
-                    <Icon d={item.icon} size={22} strokeWidth={2} />
+                    {item.icon ? <Icon d={item.icon} size={22} strokeWidth={2} /> : <PHMark size={22} color="#4F46E5" />}
                   </span>
-                  <span className={FREE_PILL}>FREE</span>
+                  {item.pill && <span className={IMMEDIATE_PILL}>{item.pill}</span>}
                 </div>
                 <h3 className={`text-2xl font-black text-[#0F172A] leading-tight ${H}`}>{item.title}</h3>
                 <p className="text-[#64748B] text-sm leading-relaxed font-medium">{item.body}</p>
               </div>
             ))}
+            {/* The earned bonus: set apart from the included items. */}
+            <div className={`bg-indigo-50/60 rounded-[2.5rem] border-2 border-[#4F46E5]/30 p-10 space-y-6 ${SHADOW_PREMIUM}`}>
+              <div className="flex items-center justify-between gap-4">
+                <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-[#4F46E5]">
+                  <Icon d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" size={22} strokeWidth={2} />
+                </span>
+                <span className={BONUS_PILL}>Bonus</span>
+              </div>
+              <h3 className={`text-2xl font-black text-[#0F172A] leading-tight ${H}`}>1:1 Preaching Growth Strategy Session</h3>
+              <p className="text-[#0F172A] text-sm leading-relaxed font-medium">
+                Complete all seven days and submit your 30-day growth plan to unlock a complimentary 20-minute one-on-one session. We&apos;ll review your progress, identify your biggest growth opportunities, and discuss the next steps available to help you continue improving.
+              </p>
+              <p className="text-[#64748B] text-xs leading-relaxed font-medium">
+                This session is earned through challenge completion and is not automatically included upon purchase. Scheduling is subject to availability.
+              </p>
+            </div>
+          </div>
+
+          {/* PreachingHub access: the dates, spelled out. Looks different from the cards above on purpose. */}
+          <div className="max-w-4xl mx-auto rounded-[2.5rem] border border-emerald-200 bg-emerald-50/70 p-8 md:p-10">
+            <div className="flex flex-col md:flex-row md:items-center gap-8">
+              <div className="flex-1 space-y-3 text-center md:text-left">
+                <h3 className={`text-2xl font-black text-[#0F172A] ${H}`}>Complimentary PreachingHub Access Included</h3>
+                <p className="text-[#475569] text-base leading-relaxed font-medium">
+                  Experience AI-powered sermon coaching and practical tools throughout the challenge, plus an extra week to put what you&apos;ve learned into practice.
+                </p>
+              </div>
+              <ol className="md:w-72 shrink-0 space-y-3 text-left">
+                {[
+                  ["Today", "Access starts right after you join"],
+                  ["Nov 17 – 23", "Full challenge access"],
+                  [`Nov 24 – 29`, "Extra week to keep practicing"],
+                ].map(([when, what]) => (
+                  <li key={when} className="flex items-center gap-3 rounded-2xl bg-white px-4 py-3 border border-emerald-100">
+                    <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-emerald-500" aria-hidden="true" />
+                    <span className="text-sm font-medium text-[#475569]"><span className="font-black text-[#0F172A]">{when}</span> &middot; {what}</span>
+                  </li>
+                ))}
+              </ol>
+            </div>
+            <p className="mt-6 text-center text-xs font-medium text-[#64748B]">
+              Access ends after {CHALLENGE_PASS_END_LABEL} and you won&apos;t be charged. Subscribe only if you want to keep going.
+            </p>
           </div>
 
           {/* Testimonial: sits right above the join button */}
           <div className="text-center space-y-8 pt-8">
+            <h3 className={`text-sm font-black uppercase tracking-[0.25em] text-[#4F46E5]`}>Real Preachers. Real Growth.</h3>
             <p className={`text-xl md:text-2xl font-medium leading-relaxed text-[#0F172A] italic max-w-3xl mx-auto ${SERIF}`}>
               &quot;{BRENT_GARRARD.quote}&quot;
             </p>
@@ -264,35 +377,50 @@ export function ChallengePage({ initialNow, variant = "landing" }: { initialNow:
             </div>
           </div>
 
-          <div className="flex flex-col items-center gap-4">
+          {/* Pricing summary */}
+          <div className={`max-w-xl mx-auto bg-white rounded-[2.5rem] border-2 border-[#4F46E5] p-10 text-center space-y-4 ${SHADOW_PREMIUM}`}>
+            <p className="text-[11px] font-black uppercase tracking-[0.25em] text-[#4F46E5]">7-Day Preaching Growth Challenge</p>
+            <p className={`text-5xl font-black text-[#0F172A] ${H}`}>$7 <span className="text-base font-bold text-[#64748B] tracking-normal">One-Time Payment</span></p>
+            <p className="text-[#64748B] text-sm leading-relaxed font-medium">
+              Seven days of personalized training, practical tools, and an opportunity to earn a one-on-one coaching session.
+            </p>
+            <p className="flex items-center justify-center gap-2 text-sm font-black text-emerald-700">
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500 text-white [color:#fff]">
+                <Icon d="M20 6L9 17l-5-5" size={12} strokeWidth={3} />
+              </span>
+              Immediate access to the PreachingHub platform
+            </p>
             <button
               type="button"
-              onClick={() => openSignup("what_you_get")}
-              className="inline-flex items-center gap-3 bg-[#4F46E5] text-white px-12 py-5 rounded-full font-black text-sm shadow-[0_20px_50px_-12px_rgba(79,70,229,0.1)] hover:-translate-y-1 transition-all uppercase tracking-widest [color:#fff]"
+              onClick={() => openSignup("pricing")}
+              className="mt-2 inline-flex items-center gap-3 bg-[#4F46E5] text-white px-12 py-5 rounded-full font-black text-sm shadow-[0_20px_50px_-12px_rgba(79,70,229,0.1)] hover:-translate-y-1 transition-all uppercase tracking-widest [color:#fff]"
             >
-              {ctaLabel}
+              {ctaLabelLower}
             </button>
+            <p className="text-xs font-bold text-[#94A3B8]">No subscription required. No recurring challenge fees.</p>
           </div>
         </div>
       </section>
 
-      {/* How it works */}
+      {/* The schedule */}
       <section className="py-32 max-w-4xl mx-auto px-8 space-y-16">
         <div className="text-center space-y-4">
           <h2 className={`text-4xl sm:text-5xl font-black text-[#0F172A] tracking-tight leading-[1.05] ${H}`}>
-            About 15 minutes a day, for{" "}
-            <span className={`text-[#4F46E5] italic ${SERIF}`}>7 days.</span>
+            These <span className={`text-[#4F46E5] italic ${SERIF}`}>7 Days</span> Could Change How You Preach.
           </h2>
-          <p className="text-[#64748B] font-medium">
-            Runs Tuesday, November 10 through Wednesday, November 18.{" "}
-            <span className="text-sm text-[#94A3B8]">(two days are included for rest)</span>
+          <p className="text-[#64748B] font-medium leading-relaxed">
+            Every day builds on the last. You&apos;ll focus on one area of growth while developing practical habits that can strengthen your preaching long after the challenge ends.
+          </p>
+          <p className="text-sm text-[#94A3B8] font-medium">
+            Seven days, no required rest days. If you fall behind, you can catch up on the exercises.
           </p>
         </div>
         <ol className="space-y-6">
-          {STEPS.map((step) => (
+          {SCHEDULE.map((step) => (
             <li key={step.n} className={`flex items-start gap-6 rounded-[2rem] border border-gray-200 bg-white p-8 ${SHADOW_PREMIUM}`}>
               <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#4F46E5] text-xl font-black text-white [color:#fff] ${H}`}>{step.n}</span>
               <div className="space-y-1">
+                <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#4F46E5]">Day {step.n} &mdash; {step.date}</p>
                 <h3 className={`text-xl font-black text-[#0F172A] ${H}`}>{step.title}</h3>
                 <p className="text-[#64748B] text-sm font-medium leading-relaxed">{step.body}</p>
               </div>
@@ -307,11 +435,24 @@ export function ChallengePage({ initialNow, variant = "landing" }: { initialNow:
           <div className={`relative w-48 h-48 rounded-[2rem] overflow-hidden shrink-0 bg-gray-200 ${SHADOW_PREMIUM}`}>
             <Image src="/images/founder/founder-sweater.jpg" alt="Bryson Breakey" fill sizes="192px" className="object-cover object-[50%_15%]" />
           </div>
-          <div className="space-y-6 text-center md:text-left">
+          <div className="space-y-5 text-center md:text-left">
             <h2 className={`text-3xl font-black text-[#0F172A] tracking-tight ${H}`}>Led by Bryson Breakey</h2>
-            <p className="text-[#64748B] font-medium leading-relaxed italic">
-              Bryson Breakey is a pastor and preaching coach, and the founder of PreachingHub. He built PreachingHub to give every preacher the honest, specific feedback that most never get.
-            </p>
+            <div className="flex flex-wrap justify-center md:justify-start gap-2">
+              {["Lead Pastor · Nashville, TN", "Preaching Coach", "PreachingHub Founder"].map((tag) => (
+                <span key={tag} className="rounded-full border border-indigo-100 bg-indigo-50 px-3 py-1 text-[11px] font-black uppercase tracking-widest text-[#4F46E5]">{tag}</span>
+              ))}
+            </div>
+            <div className="space-y-4 text-[#64748B] font-medium leading-relaxed">
+              <p>
+                Bryson Breakey is a lead pastor in Nashville, TN, a preaching coach, and the founder of PreachingHub.
+              </p>
+              <p>
+                For years he has watched faithful preachers plateau, not because they lacked calling or skill, but because nobody was giving them honest, specific feedback week after week. He built PreachingHub to give every preacher the kind of coaching he wishes they all had.
+              </p>
+              <p>
+                He leads this challenge himself: Bryson hosts the live kickoff and is the coach you&apos;ll meet with for your 1:1 Preaching Growth Strategy Session when you complete it.
+              </p>
+            </div>
           </div>
         </div>
       </section>
@@ -331,21 +472,24 @@ export function ChallengePage({ initialNow, variant = "landing" }: { initialNow:
 
       {/* Final CTA */}
       <footer className="bg-[#0F172A] text-white py-32 px-8 text-center relative overflow-hidden">
-        <div className="max-w-4xl mx-auto space-y-12 relative z-10">
+        <div className="max-w-4xl mx-auto space-y-10 relative z-10">
           <h2 className={`text-4xl md:text-6xl font-black tracking-tight leading-tight [color:#fff] ${H}`}>
-            Grow as a preacher in 7 days.
+            The Next Challenge Begins November 17.
           </h2>
+          <p className="mx-auto max-w-2xl text-lg font-medium leading-relaxed text-white/70">
+            Join this cohort for just $7 and take the first step toward more confident, clear, and impactful preaching.
+          </p>
           <div className="flex flex-col items-center gap-6">
             <button
               type="button"
               onClick={() => openSignup("final_cta")}
               className="inline-flex items-center gap-3 bg-white text-[#0F172A] px-8 sm:px-12 py-5 rounded-full font-black text-sm shadow-[0_20px_50px_-12px_rgba(79,70,229,0.1)] hover:-translate-y-1 transition-all uppercase tracking-widest"
             >
-              {ctaLabel}
+              {ctaLabelLower}
             </button>
             <p className="text-xs font-bold text-white/50">
-              {phase === "before" && "Free • No card required • Starts Tuesday, November 10 • Sign up now to get the pre-challenge homework"}
-              {phase === "started" && "Free • No card required • Enrollment closes tonight at midnight CST"}
+              {phase === "before" && "$7 one-time payment • Live kickoff Tuesday, November 17 at 1 PM CST • Enrollment closes 11:59 PM CST on November 17"}
+              {phase === "started" && "$7 one-time payment • Enrollment closes tonight at 11:59 PM CST"}
               {phase === "closed" && "Enrollment is closed • Join the waitlist and we'll let you know about the next one"}
             </p>
           </div>

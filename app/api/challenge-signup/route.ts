@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { resolveMx } from "dns/promises";
-import { waitUntil } from "@vercel/functions";
-import { addSevenDayChallengeContact, addSevenDayChallengeWaitlistContact } from "@/lib/kit";
-import { challengePhase, serverNow } from "@/lib/challenge";
-import { createChallengeLink, createChallengeClaim } from "@/lib/challengeToken";
-import { supabaseAdmin } from "@/lib/supabase";
+import { addSevenDayChallengeCheckoutStartedContact, addSevenDayChallengeWaitlistContact } from "@/lib/kit";
+import { CHALLENGE_PRICE_ID, CHALLENGE_START_DATE_LABEL, challengePhase, serverNow } from "@/lib/challenge";
+import { createCheckoutSession, stripePaymentsConfigured } from "@/lib/stripe";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
 
@@ -18,12 +16,16 @@ async function hasMailServer(email: string): Promise<boolean> {
   }
 }
 
-// Signup for the Free 7-Day Preaching Growth Challenge. Same validation as /api/checklist-signup.
-// The SERVER decides what the signup is, from the clock (lib/challenge.ts), never the browser:
-//  - until enrollment closes (midnight CST on November 10): tagged "7-day-challenge", with their
-//    personal signed PreachingHub access link saved to Kit's challenge_link field for the welcome
-//    email (the link is never returned here: it must only reach the owner of that mailbox);
-//  - after: tagged "7-day-challenge-waitlist", no link.
+// Signup for the 7-Day Preaching Growth Challenge ($7, one time). Same validation as
+// /api/checklist-signup. The SERVER decides what the signup is, from the clock (lib/challenge.ts)
+// and its own Stripe settings, never the browser:
+//  - enrollment open and payments configured: the person is saved to Kit as
+//    "7-day-challenge-checkout-started" and sent to Stripe Checkout. They are NOT tagged
+//    "7-day-challenge" and get no access link here: that happens in /api/stripe/webhook once Stripe
+//    says the payment went through (so nobody gets in without paying);
+//  - enrollment open but Stripe isn't configured on this deployment: they are saved as a waitlist
+//    signup ("reserve my spot"), so the page still works before checkout is switched on;
+//  - enrollment closed: waitlist ("7-day-challenge-waitlist").
 // Kit's upsert and tag are idempotent, so a double-click or a resubmit just re-applies the tag.
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => null);
@@ -45,53 +47,33 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "That email address doesn't look like it can receive mail. Double-check it and try again." }, { status: 400 });
   }
 
-  const waitlist = challengePhase(serverNow(req.headers.get("x-challenge-now"))) === "closed";
+  const closed = challengePhase(serverNow(req.headers.get("x-challenge-now"))) === "closed";
+  const checkout = !closed && stripePaymentsConfigured();
   try {
-    if (waitlist) {
+    if (!checkout) {
       await addSevenDayChallengeWaitlistContact({ email, firstName, lastName, phone });
-    } else {
-      const challengeLink = createChallengeLink({ email, firstName, lastName });
-      await addSevenDayChallengeContact({ email, firstName, lastName, phone, challengeLink });
+      return NextResponse.json({ ok: true, mode: "waitlist", reserved: !closed });
     }
+    await addSevenDayChallengeCheckoutStartedContact({ email, firstName, lastName, phone });
+    const origin = "https://preachinghub.com";
+    const session = await createCheckoutSession({
+      mode: "payment",
+      "line_items[0][price]": CHALLENGE_PRICE_ID,
+      "line_items[0][quantity]": "1",
+      customer_email: email,
+      customer_creation: "always",
+      success_url: `${origin}/challenge/joined?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${origin}/challenge?checkout=cancelled`,
+      client_reference_id: email.toLowerCase(),
+      "metadata[challenge_start]": CHALLENGE_START_DATE_LABEL,
+      "metadata[first_name]": firstName,
+      "metadata[last_name]": lastName,
+      "metadata[phone]": phone,
+      "payment_intent_data[metadata][challenge_start]": CHALLENGE_START_DATE_LABEL,
+    });
+    return NextResponse.json({ ok: true, mode: "checkout", url: session.url });
   } catch (err) {
-    console.error("challenge-signup: kit failed", err);
+    console.error("challenge-signup failed", err);
     return NextResponse.json({ error: "Something went wrong on our end. Please try again." }, { status: 500 });
   }
-
-  // Auto-add to the active challenge run (non-waitlist only, best-effort).
-  if (!waitlist) {
-    waitUntil(
-      (async () => {
-        try {
-          const { data: activeRun } = await supabaseAdmin()
-            .from('challenge_runs')
-            .select('id')
-            .eq('is_active', true)
-            .maybeSingle()
-          if (activeRun?.id) {
-            await supabaseAdmin()
-              .from('challenge_participants')
-              .upsert(
-                {
-                  challenge_run_id: activeRun.id,
-                  email: email.toLowerCase(),
-                  first_name: firstName || null,
-                  last_name: lastName || null,
-                  phone: phone || null,
-                  signed_up_at: new Date().toISOString(),
-                },
-                { onConflict: 'challenge_run_id,email', ignoreDuplicates: true }
-              )
-          }
-        } catch (err) {
-          console.error('challenge-signup: challenge auto-add failed', err)
-        }
-      })()
-    )
-  }
-
-  // The popup's second step (create the account right now) needs a short-lived claim; see
-  // createChallengeClaim for why returning it is safe when returning the emailed link is not.
-  const claim = waitlist ? null : createChallengeClaim({ email, firstName, lastName });
-  return NextResponse.json({ ok: true, mode: waitlist ? "waitlist" : "joined", ...(claim ? { claim } : {}) });
 }

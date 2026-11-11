@@ -1,4 +1,4 @@
-import { CHALLENGE_START_DATE_LABEL } from '@/lib/challenge'
+import { CHALLENGE_PASS_END_LABEL, CHALLENGE_START_DATE_LABEL } from '@/lib/challenge'
 import { MIN_COUNTDOWN_DAY, chicagoToday, challengeDayFor, computeDaysUntilChallengeStart } from '@/lib/startCountdown'
 const KIT_API_BASE = 'https://api.kit.com/v4'
 
@@ -157,7 +157,11 @@ export async function addSevenDayChallengeContact({
   if (lastName) base.last_name = lastName
   if (phone) base.mobile_phone = phone
   // challenge_start_date is this cohort's kickoff day, so welcome emails can say when it starts.
-  const full: Record<string, string> = { ...base, challenge_start_date: CHALLENGE_START_DATE_LABEL }
+  const full: Record<string, string> = {
+    ...base,
+    challenge_start_date: CHALLENGE_START_DATE_LABEL,
+    challenge_pass_end: CHALLENGE_PASS_END_LABEL,
+  }
   if (challengeLink) full.challenge_link = challengeLink
   // Late joiners land on the right countdown day right away instead of waiting for the daily job.
   const days = computeDaysUntilChallengeStart(CHALLENGE_START_DATE_LABEL, chicagoToday())
@@ -171,9 +175,37 @@ export async function addSevenDayChallengeContact({
   } catch (err) {
     // If challenge_link or challenge_start_date hasn't been created in Kit yet, the signup must
     // still go through (and be tagged): retry without them and say so loudly in the logs.
-    console.error('kit: challenge signup failed; retrying without its custom fields (are challenge_link, challenge_start_date, days_until_challenge_start and challenge_day created in Kit?)', err)
+    console.error('kit: challenge signup failed; retrying without its custom fields (are challenge_link, challenge_start_date, challenge_pass_end, days_until_challenge_start and challenge_day created in Kit?)', err)
     await upsertContact({ email, firstName, tags: ['7-day-challenge'], fields: toFields(base) })
   }
+}
+
+/**
+ * Adds/updates a contact in Kit tagged "7-day-challenge-checkout-started": someone who filled in
+ * the form and was sent to pay the $7, but hasn't paid yet. They only get the real
+ * "7-day-challenge" tag (addSevenDayChallengeContact) once Stripe confirms the payment, so a Kit
+ * segment of "checkout-started and not 7-day-challenge" is the follow-up list.
+ */
+export async function addSevenDayChallengeCheckoutStartedContact({
+  email,
+  firstName,
+  lastName,
+  phone,
+}: {
+  email: string
+  firstName?: string
+  lastName?: string
+  phone?: string
+}): Promise<void> {
+  const fields: Record<string, string> = {}
+  if (lastName) fields.last_name = lastName
+  if (phone) fields.mobile_phone = phone
+  await upsertContact({
+    email,
+    firstName,
+    tags: ['7-day-challenge-checkout-started'],
+    fields: Object.keys(fields).length ? fields : undefined,
+  })
 }
 
 /**

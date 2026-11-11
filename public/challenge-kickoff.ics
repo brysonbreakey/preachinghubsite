@@ -4,10 +4,10 @@ PRODID:-//PreachingHub//7-Day Preaching Growth Challenge//EN
 CALSCALE:GREGORIAN
 METHOD:PUBLISH
 BEGIN:VEVENT
-UID:challenge-kickoff-20261110@preachinghub.com
-DTSTAMP:20261102T180000Z
-DTSTART:20261110T190000Z
-DTEND:20261110T194500Z
+UID:challenge-kickoff-20261117@preachinghub.com
+DTSTAMP:20261110T180000Z
+DTSTART:20261117T190000Z
+DTEND:20261117T194500Z
 SUMMARY:7-Day Preaching Growth Challenge Kickoff
 LOCATION:https://meet.google.com/duy-uura-vdt
 URL:https://meet.google.com/duy-uura-vdt

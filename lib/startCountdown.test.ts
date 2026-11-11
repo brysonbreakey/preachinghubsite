@@ -41,7 +41,7 @@ describe("computeDaysUntilChallengeStart", () => {
   });
 });
 
-import { computeChallengeDay as day } from "./startCountdown";
+import { computeChallengeDay as day, offWeekdaysFor } from "./startCountdown";
 
 describe("computeChallengeDay", () => {
   it("is null for a missing or invalid start date", () => {
@@ -56,19 +56,26 @@ describe("computeChallengeDay", () => {
     };
     for (const [today, v] of Object.entries(expected)) expect(day("2026-11-10", today), today).toBe(v);
   });
-  it("works for other cohorts", () => {
-    expect(day("2026-11-16", "2026-11-20")).toBe("4.5"); // Mon start: 16,17,18,19 = days 1-4, Fri 20 = 4.5
-    expect(day("2026-11-16", "2026-11-21")).toBe("5");
-    expect(day("2026-11-16", "2026-11-22")).toBe("5.5");
-    expect(day("2026-11-16", "2026-11-24")).toBe("7");
-    expect(day("2026-11-16", "2026-11-25")).toBe("done");
-    expect(day("2026-11-13", "2026-11-13")).toBe("0"); // starting on an off day: not yet day 1
-    expect(day("2026-11-13", "2026-11-14")).toBe("1");
-    expect(day("2026-11-02", "2026-11-10")).toBe("7"); // Mon 2 start: day 7 is Tue 10
-    expect(day("2026-11-02", "2026-11-11")).toBe("done");
+  it("runs the Nov 17 cohort: 7 days in a row, no half days", () => {
+    const expected: Record<string, string> = {
+      "2026-11-16": "0", "2026-11-17": "1", "2026-11-18": "2", "2026-11-19": "3", "2026-11-20": "4",
+      "2026-11-21": "5", "2026-11-22": "6", "2026-11-23": "7", "2026-11-24": "done", "2026-11-30": "done",
+    };
+    for (const [today, v] of Object.entries(expected)) expect(day("2026-11-17", today), today).toBe(v);
+  });
+  it("only the Nov 10 pilot has days off; any other cohort has none unless given", () => {
+    expect(offWeekdaysFor("2026-11-10")).toEqual([0, 5]);
+    expect(offWeekdaysFor("2026-11-17")).toEqual([]);
+    expect(offWeekdaysFor("")).toEqual([]);
+    const off = [0, 5];
+    expect(day("2026-11-16", "2026-11-20", off)).toBe("4.5"); // Mon start: 16-19 = days 1-4, Fri 20 = 4.5
+    expect(day("2026-11-16", "2026-11-24", off)).toBe("7");
+    expect(day("2026-11-16", "2026-11-25", off)).toBe("done");
+    expect(day("2026-11-13", "2026-11-13", off)).toBe("0"); // starting on an off day: not yet day 1
+    expect(day("2026-11-13", "2026-11-14", off)).toBe("1");
   });
   it("is not thrown off by daylight saving", () => {
-    expect(day("2026-10-30", "2026-11-03")).toBe("3");
+    expect(day("2026-10-30", "2026-11-03")).toBe("5"); // Oct 30 to Nov 3 crosses the clocks changing
   });
 });
 

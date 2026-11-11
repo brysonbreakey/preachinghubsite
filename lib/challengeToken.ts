@@ -31,7 +31,8 @@ export function createChallengeLink({ email, firstName, lastName }: { email: str
 export function createChallengeClaim({ email, firstName, lastName }: { email: string; firstName?: string; lastName?: string }): string | null {
   const secret = process.env.OFFER_SIGNING_SECRET;
   if (!secret) return null;
-  const payload = b64url(JSON.stringify({ e: email.trim().toLowerCase(), f: firstName ?? "", l: lastName ?? "", x: Date.now() + 60 * 60 * 1000 }));
+  // u: this cohort's pass end, so the app grants the right pass (x here is only the claim's own expiry).
+  const payload = b64url(JSON.stringify({ e: email.trim().toLowerCase(), f: firstName ?? "", l: lastName ?? "", x: Date.now() + 60 * 60 * 1000, u: CHALLENGE_PASS_UNTIL }));
   const sig = createHmac("sha256", secret).update(`challengeclaim:${payload}`).digest("hex");
   return `${payload}.${sig}`;
 }

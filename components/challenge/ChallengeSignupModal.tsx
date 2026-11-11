@@ -23,15 +23,16 @@ function formatPhone(value: string): string {
   return [digits.slice(0, 3), digits.slice(3, 6), digits.slice(6, 10)].filter(Boolean).join("-");
 }
 
-// The signup popup for the Free 7-Day Preaching Growth Challenge: name, email, phone, then a
-// confirmation right in the popup. The server (/api/challenge-signup) adds them to Kit: tagged
-// 7-day-challenge (with their personal access link, emailed by Kit) until enrollment closes, and
-// 7-day-challenge-waitlist after. The server decides which, so the confirmation follows its answer.
+// The signup popup for the 7-Day Preaching Growth Challenge ($7): name, email, phone. The server
+// (/api/challenge-signup) decides what happens: with payments on it answers with a Stripe Checkout
+// link and the browser goes there (the access link and the 7-day-challenge tag come from the Stripe
+// webhook after payment); otherwise it reserves a spot on the waitlist. The rest of this comment
+// describes the free cohort-1 flow, whose account step below is no longer reached for paid signups.
 // Joining before enrollment closes continues to a second step in the same popup: pick a password
 // and get a PreachingHub account on the spot, signed in and sent to the pre-challenge homework (the
 // app's /evaluate). An email that already has an account is sent to sign in instead; "later" falls
 // back to the emailed access link.
-export function ChallengeSignupModal({ phase, onClose }: { phase: ChallengePhase; onClose: () => void }) {
+export function ChallengeSignupModal({ phase, payments = false, onClose }: { phase: ChallengePhase; payments?: boolean; onClose: () => void }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -75,6 +76,11 @@ export function ChallengeSignupModal({ phase, onClose }: { phase: ChallengePhase
       });
       const data = await res.json().catch(() => null);
       if (!res.ok) throw new Error(data?.error || "submit_failed");
+      if (data?.mode === "checkout" && typeof data?.url === "string") {
+        posthog.capture("challenge_checkout_started", { phase });
+        window.location.href = data.url; // Stripe Checkout; the person returns to /challenge/joined
+        return;
+      }
       const mode: "joined" | "waitlist" = data?.mode === "waitlist" ? "waitlist" : "joined";
       setResult(mode);
       setClaim(typeof data?.claim === "string" ? data.claim : null);
@@ -187,11 +193,13 @@ export function ChallengeSignupModal({ phase, onClose }: { phase: ChallengePhase
           <div className="text-center py-4">
             <p className="text-5xl mb-4">🎉</p>
             <h2 id="challenge-signup-title" className="text-2xl font-extrabold text-slate-900 tracking-tight mb-2">
-              {waitlistView ? "You\u2019re on the waitlist" : "You\u2019re in!"}
+              {waitlistView ? (phase === "closed" ? "You\u2019re on the waitlist" : "Your spot is reserved") : "You\u2019re in!"}
             </h2>
             <p className="text-sm text-slate-500 leading-relaxed mb-6">
               {waitlistView
-                ? "We'll email you if a spot opens or when we run it again."
+                ? phase === "closed"
+                  ? "We'll email you if a spot opens or when we run it again."
+                  : "We'll email you the moment enrollment opens, with the link to join for $7. The challenge starts Tuesday, November 17."
                 : phase === "before"
                   ? "Watch your inbox (and your spam folder) for your PreachingHub access link, your pre-challenge homework (it's not a lot, don't worry) and what happens next. The challenge starts Tuesday, November 10."
                   : "Watch your inbox (and your spam folder) for your PreachingHub access link and what happens next."}
@@ -203,14 +211,14 @@ export function ChallengeSignupModal({ phase, onClose }: { phase: ChallengePhase
         ) : (
           <>
             <h2 id="challenge-signup-title" className="text-2xl font-extrabold text-slate-900 tracking-tight pr-8">
-              {waitlistView ? "Join the waitlist" : "Join the free challenge"}
+              {phase === "closed" ? "Join the waitlist" : payments ? "Join the Challenge for $7" : "Reserve your spot"}
             </h2>
             <p className="text-sm text-slate-500 mt-2 mb-6 leading-relaxed">
               {phase === "closed"
                 ? "Enrollment for this challenge has closed. Join the waitlist and we'll let you know if a spot opens or when we run it again."
-                : phase === "started"
-                  ? "The challenge has started, and you can still join until midnight CST tonight. All of it is free, and no card is required. Join if you're ready to show up for the week."
-                  : "Starts Tuesday, November 10. All of it is free, and no card is required. Sign up now to receive the pre-challenge homework. Join if you're ready to show up for the week."}
+                : payments
+                  ? "Seven days, 15 minutes a day, starting Tuesday, November 17. One-time $7 payment, no subscription. Enter your details and you'll go to secure checkout next."
+                  : "Starts Tuesday, November 17. Reserve your spot and we'll email you the moment enrollment opens. One-time $7 payment, no subscription."}
             </p>
             <form onSubmit={handleSubmit} noValidate className="space-y-3">
               {status === "error" && (
@@ -233,9 +241,9 @@ export function ChallengeSignupModal({ phase, onClose }: { phase: ChallengePhase
                 disabled={status === "loading"}
                 className="mt-2 w-full rounded-2xl bg-[#4F46E5] hover:bg-indigo-600 text-white font-black text-sm uppercase tracking-widest py-4 transition-colors disabled:opacity-60 [color:#fff]"
               >
-                {status === "loading" ? "Joining…" : phase === "closed" ? "Join the Waitlist" : "Join the Challenge"}
+                {status === "loading" ? (payments && phase !== "closed" ? "Taking you to checkout…" : "Joining…") : phase === "closed" ? "Join the Waitlist" : payments ? "Continue to Payment ($7)" : "Reserve My Spot"}
               </button>
-              <SmsConsentNotice buttonLabel={phase === "closed" ? "Join the Waitlist" : "Join the Challenge"} className="pt-1" />
+              <SmsConsentNotice buttonLabel={phase === "closed" ? "Join the Waitlist" : payments ? "Continue to Payment ($7)" : "Reserve My Spot"} className="pt-1" />
             </form>
           </>
         )}

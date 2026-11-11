@@ -61,12 +61,16 @@ export function computeDaysUntilChallengeStart(
   return start - now;
 }
 
-/** The challenge is 7 working days; Friday and Sunday are the off days (communication still goes
- *  out on them, as a half day). Change these and every cohort follows. */
+/** The challenge is 7 days long. Cohorts are told apart by their start date (each person carries
+ *  their own `challenge_start_date`), and only a cohort listed here has off days: the November 10
+ *  pilot had Friday and Sunday off (a half day, "3.5", on each). Every other cohort, starting with
+ *  November 17, runs 7 days in a row. A new cohort with days off needs an entry here. 0 = Sunday. */
 export const CHALLENGE_LENGTH_DAYS = 7;
-const OFF_WEEKDAYS = [0, 5]; // 0 = Sunday, 5 = Friday
+const COHORT_OFF_WEEKDAYS: Record<string, number[]> = { "2026-11-10": [0, 5] };
 
-const isOffDay = (dayN: number) => OFF_WEEKDAYS.includes(new Date(dayN * 86_400_000).getUTCDay());
+export function offWeekdaysFor(startDate: string | null | undefined): number[] {
+  return (startDate && COHORT_OFF_WEEKDAYS[startDate.trim()]) || [];
+}
 
 /**
  * Which day of the challenge it is, as the text saved in Kit's `challenge_day` field. Only the
@@ -82,7 +86,9 @@ const isOffDay = (dayN: number) => OFF_WEEKDAYS.includes(new Date(dayN * 86_400_
 export function computeChallengeDay(
   startDate: string | null | undefined,
   today: string | Date = new Date(),
+  offWeekdays: number[] = offWeekdaysFor(startDate),
 ): string | null {
+  const isOffDay = (dayN: number) => offWeekdays.includes(new Date(dayN * 86_400_000).getUTCDay());
   const start = dayNumber(startDate);
   const now = dayNumber(typeof today === "string" ? today : chicagoToday(today));
   if (start === null || now === null) return null;

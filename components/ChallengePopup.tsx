@@ -7,14 +7,15 @@ import { usePathname } from "next/navigation";
 import posthog from "posthog-js";
 import { challengePhase } from "@/lib/challenge";
 
-// Site-wide pop-up for the Free 7-Day Preaching Growth Challenge. Appears a few seconds after a
+// Site-wide pop-up for the 7-Day Preaching Growth Challenge. Appears a few seconds after a
 // visitor lands, once: dismissing it (or clicking through) keeps it away for 14 days. It never
 // shows on the challenge, checklist, accelerator or sign-up-flow pages, or once enrollment closes
 // (the waitlist state is meant to be handled by the page itself). Retire it with the challenge.
 
 const DELAY_MS = 8000;
 const SNOOZE_MS = 14 * 24 * 60 * 60 * 1000;
-const STORAGE_KEY = "ph_challenge_popup_until";
+// v2: the $7 cohort-2 pop-up. People who dismissed the old free one (14-day snooze) see this one.
+const STORAGE_KEY = "ph_challenge_popup_until_v2";
 const HIDDEN_PREFIXES = ["/challenge", "/checklist", "/accelerator", "/try", "/privacy", "/terms", "/sms"];
 
 function snoozed(): boolean {
@@ -74,7 +75,7 @@ export default function ChallengePopup() {
       <div
         role="dialog"
         aria-modal="true"
-        aria-label="Free 7-Day Preaching Growth Challenge"
+        aria-label="7-Day Preaching Growth Challenge"
         onClick={(e) => e.stopPropagation()}
         className="relative w-full max-w-md rounded-3xl bg-white px-6 pb-7 pt-10 text-center shadow-2xl"
       >
@@ -89,14 +90,15 @@ export default function ChallengePopup() {
           </svg>
         </button>
         <Image
-          src="/images/challenge-title.webp"
-          alt="Free 7-Day Preaching Growth Challenge"
-          width={2000}
-          height={770}
-          className="mx-auto mb-5 h-auto w-full max-w-[22rem] mix-blend-multiply"
+          src="/images/challenge-title-paid.webp"
+          alt="7-Day Preaching Growth Challenge"
+          width={1752}
+          height={897}
+          className="mx-auto mb-4 h-auto w-full max-w-[18rem] mix-blend-multiply"
         />
+        <p className="mb-4 text-[10px] font-black uppercase tracking-[0.2em] text-[#4F46E5]">7 days. 15 minutes a day. Just $7.</p>
         <p className="mb-6 text-base font-medium leading-relaxed text-slate-600">
-          A free week to take your preaching to the next level. Starts Tuesday, November 10. About 15 minutes a day, with free access to PreachingHub and a free 20-minute coaching call with Bryson when you finish.
+          Become a more confident, clear, and impactful preacher in one week. November 17&ndash;23, about 15 minutes a day, with complimentary PreachingHub access and a chance to earn a one-on-one coaching session.
         </p>
         <Link
           href="/challenge?utm_source=site_popup"
@@ -106,7 +108,7 @@ export default function ChallengePopup() {
           }}
           className="inline-flex w-full items-center justify-center rounded-full bg-[#4F46E5] px-8 py-4 text-sm font-black uppercase tracking-widest [color:#fff] hover:bg-[#4338CA] transition-colors"
         >
-          See the free challenge
+          See the challenge
         </Link>
         <button type="button" onClick={dismiss} className="mt-4 text-sm font-medium text-slate-400 hover:text-slate-600">
           No thanks

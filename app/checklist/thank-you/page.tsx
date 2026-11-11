@@ -9,7 +9,7 @@ const FB_PIXEL_ID = "1749227409631509";
 
 // A thank-you page shouldn't be searchable; the same offer lives at /challenge for search.
 export const metadata: Metadata = {
-  title: "Free 7-Day Preaching Growth Challenge — PreachingHub",
+  title: "7-Day Preaching Growth Challenge — PreachingHub",
   robots: { index: false, follow: false },
 };
 
