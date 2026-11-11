@@ -14,9 +14,9 @@ const NAV_LINKS = [
 ];
 
 // Sits apart from NAV_LINKS: it's the offer, so it gets its own emphasized treatment.
-const ACCELERATOR_LINK = { href: "/accelerator", label: "30-Day Growth Accelerator" };
+const CHALLENGE_LINK = { href: "/challenge", label: "7-Day Preaching Growth Challenge" };
 
-function AcceleratorDot() {
+function ChallengeDot() {
   return (
     <span className="relative flex h-2 w-2 shrink-0" aria-hidden="true">
       <span className="absolute inline-flex h-full w-full rounded-full bg-[#4F46E5] opacity-60 motion-safe:animate-ping group-hover:bg-white" />
@@ -32,28 +32,28 @@ export function Navbar() {
     <header className="fixed top-0 inset-x-0 z-50 bg-white/95 backdrop-blur border-b border-slate-200">
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
         <a href="/" onClick={() => setOpen(false)}><PHLogo height={28} /></a>
-        <nav className="hidden lg:flex items-center gap-8 text-sm text-slate-600">
+        <nav className="hidden xl:flex items-center gap-8 text-sm text-slate-600">
           {NAV_LINKS.map((link) => (
             <a key={link.href} href={link.href} className="hover:text-slate-900 transition-colors">{link.label}</a>
           ))}
           <a
-            href={ACCELERATOR_LINK.href}
-            onClick={() => posthog.capture("accelerator_nav_clicked", { location: "desktop_nav" })}
+            href={CHALLENGE_LINK.href}
+            onClick={() => posthog.capture("challenge_nav_clicked", { location: "desktop_nav" })}
             className="group inline-flex items-center gap-2 whitespace-nowrap rounded-full border border-indigo-200 bg-indigo-50 px-3.5 py-1.5 font-semibold text-[#4F46E5] transition-colors hover:border-[#4F46E5] hover:bg-[#4F46E5] hover:text-white"
           >
-            <AcceleratorDot />
-            {ACCELERATOR_LINK.label}
+            <ChallengeDot />
+            {CHALLENGE_LINK.label}
           </a>
         </nav>
         <div className="flex items-center gap-3">
-          <a href={`${APP_URL}/auth/login`} className="hidden lg:block text-sm text-slate-600 hover:text-slate-900 transition-colors">Sign in</a>
+          <a href={`${APP_URL}/auth/login`} className="hidden xl:block text-sm text-slate-600 hover:text-slate-900 transition-colors">Sign in</a>
           <a href={SIGNUP_URL} className="text-xs sm:text-sm bg-[#3760ad] hover:bg-blue-700 text-white font-medium px-3 py-2 sm:px-4 rounded-lg transition-colors whitespace-nowrap">
             Start Free
           </a>
           <button
             type="button"
             onClick={() => setOpen((v) => !v)}
-            className="lg:hidden inline-flex items-center justify-center w-9 h-9 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors shrink-0"
+            className="xl:hidden inline-flex items-center justify-center w-9 h-9 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors shrink-0"
             aria-label={open ? "Close menu" : "Open menu"}
             aria-expanded={open}
           >
@@ -63,18 +63,18 @@ export function Navbar() {
       </div>
 
       {open && (
-        <div className="lg:hidden border-t border-slate-200 bg-white px-6 py-4">
+        <div className="xl:hidden border-t border-slate-200 bg-white px-6 py-4">
           <nav className="flex flex-col gap-1">
             <a
-              href={ACCELERATOR_LINK.href}
+              href={CHALLENGE_LINK.href}
               onClick={() => {
-                posthog.capture("accelerator_nav_clicked", { location: "mobile_menu" });
+                posthog.capture("challenge_nav_clicked", { location: "mobile_menu" });
                 setOpen(false);
               }}
               className="group mb-1 flex items-center gap-2.5 rounded-lg border border-indigo-200 bg-indigo-50 px-2 py-3 font-semibold text-[#4F46E5] transition-colors hover:border-[#4F46E5] hover:bg-[#4F46E5] hover:text-white"
             >
-              <AcceleratorDot />
-              {ACCELERATOR_LINK.label}
+              <ChallengeDot />
+              {CHALLENGE_LINK.label}
             </a>
             {NAV_LINKS.map((link) => (
               <a
