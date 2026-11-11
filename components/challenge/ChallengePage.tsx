@@ -206,10 +206,6 @@ export function ChallengePage({ initialNow, variant = "landing" }: { initialNow:
         </div>
 
         <div className="flex flex-col items-center gap-6">
-          {/* "Free" front and center, right above the button. */}
-          <span className="inline-flex items-center rounded-full bg-emerald-500 px-7 py-2.5 text-sm sm:text-base font-black uppercase tracking-[0.18em] text-white shadow-lg shadow-emerald-200 [color:#fff]">
-            100% Free &bull; No Card Required
-          </span>
           <button
             type="button"
             onClick={() => openSignup("hero")}
@@ -217,6 +213,9 @@ export function ChallengePage({ initialNow, variant = "landing" }: { initialNow:
           >
             {ctaLabel}
           </button>
+          <p className="text-xs sm:text-sm font-black text-gray-500 uppercase tracking-widest">
+            Free &bull; No card required
+          </p>
           <p className="max-w-md text-xs sm:text-sm font-medium leading-relaxed text-[#64748B]">
             {phase === "before" && <span className="font-bold text-red-600">Sign up now to receive the pre-challenge homework.</span>}
             {phase === "started" && <span className="font-bold text-red-600">Enrollment closes tonight at 11:59 PM CST.</span>}
