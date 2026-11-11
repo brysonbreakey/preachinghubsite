@@ -9,16 +9,17 @@ import { BRENT_GARRARD } from "@/lib/testimonials";
 import { CHALLENGE_PASS_END_LABEL, challengePhase, formatCountdown } from "@/lib/challenge";
 import { ChallengeSignupModal } from "./ChallengeSignupModal";
 
-// The 7-Day Preaching Growth Challenge landing page (cohort 2: November 17-23, 2026, $7 one time).
+// The 7-Day Preaching Growth Challenge landing page (cohort 2: November 17-23, 2026, free, no card required).
 // Same look as the 30-Day Preaching Growth Accelerator page (components/accelerator/AcceleratorPage.tsx).
-// The signup is a popup: with payments configured it sends people to Stripe Checkout and the Stripe
-// webhook (app/api/stripe/webhook) lets them in; without, it reserves a spot on the waitlist. The
-// cohort-1 free version of this page is kept at the git tag `challenge-cohort1-page`. Dates are
+// The signup is a popup that adds people to Kit with the 7-day-challenge tag and offers an account
+// right away. The $7 paid version of this page (Stripe checkout) is kept at the git tag
+// `challenge-cohort2-page`; the original free cohort-1 page at `challenge-cohort1-page`. Dates are
 // written out below, so this page needs retiring or updating after the challenge.
 
 const H = "font-[family-name:var(--font-inter)] tracking-[-0.04em]";
 const SERIF = "font-[family-name:var(--font-lora)]";
 const SHADOW_PREMIUM = "shadow-[0_10px_40px_-10px_rgba(15,23,42,0.05),0_2px_10px_-2px_rgba(15,23,42,0.02)]";
+const FREE_PILL = "px-4 py-1.5 bg-emerald-500 text-white font-black uppercase tracking-widest text-[10px] rounded-full shadow-md shadow-emerald-100 [color:#fff]";
 const IMMEDIATE_PILL = "px-4 py-1.5 bg-emerald-500 text-white font-black uppercase tracking-widest text-[10px] rounded-full shadow-md shadow-emerald-100 [color:#fff]";
 const BONUS_PILL = "px-4 py-1.5 bg-[#4F46E5] text-white font-black uppercase tracking-widest text-[10px] rounded-full shadow-md shadow-indigo-100 [color:#fff]";
 
@@ -84,14 +85,14 @@ const SCHEDULE = [
 ];
 
 const FAQ = [
-  ["How much does the challenge cost?", "The entire 7-Day Preaching Growth Challenge costs just $7. That's a one-time payment, not a subscription. It doesn't nearly cover the cost to host the challenge, but we've found people see better results when they have some skin in the game."],
+  ["How much does the challenge cost?", "Nothing. The entire 7-Day Preaching Growth Challenge is free, and no card is required."],
   ["How much time will I need?", "Plan for approximately 15 minutes a day for the exercises and training, plus the live kickoff session. The kickoff replay will be available if you can't attend."],
   ["What if I can't attend the live kickoff?", "No problem! You'll have access to the replay so you can catch up and continue with the challenge."],
   ["Do I need to be an experienced preacher?", "This challenge is designed for people who are actively preaching and genuinely want to improve. Whether you're relatively new or have been preaching for years, you'll choose a growth area that fits your needs."],
   ["What are the three growth tracks?", "You'll choose Clarity, Content, or Creativity based on the area where you most want to improve. Your track determines several of the practical exercises you'll complete throughout the week."],
   ["Is PreachingHub included?", `Yes! Your registration includes complimentary access to PreachingHub during the challenge and through ${CHALLENGE_PASS_END_LABEL}, 2026. No additional subscription is required.`],
   ["How do I get the one-on-one coaching session?", "Complete the seven-day challenge and submit your personalized 30-day growth plan. You'll then receive instructions for scheduling your complimentary 20-minute 1:1 Preaching Growth Strategy Session, subject to availability."],
-  ["Will I be charged monthly after the challenge?", "No. The $7 challenge payment is a one-time purchase. You can choose to continue with a paid PreachingHub subscription or coaching program afterward, but nothing automatically renews as part of your challenge registration."],
+  ["Will I be charged after the challenge?", "No. The challenge is free and we never ask for a card. You can choose to continue with a paid PreachingHub subscription or coaching program afterward, but nothing is charged or renews automatically as part of your challenge registration."],
 ];
 
 // "landing": the page at /challenge. "thank-you": the same page served at /checklist/thank-you, with
@@ -99,7 +100,7 @@ const FAQ = [
 // challenge as the next step after the checklist.
 export type ChallengeVariant = "landing" | "thank-you";
 
-export function ChallengePage({ initialNow, variant = "landing", payments = false }: { initialNow: number; variant?: ChallengeVariant; payments?: boolean }) {
+export function ChallengePage({ initialNow, variant = "landing" }: { initialNow: number; variant?: ChallengeVariant }) {
   const [modalOpen, setModalOpen] = useState(false);
 
   // The page knows the time the server rendered it at (so a visitor never sees the wrong state
@@ -118,10 +119,8 @@ export function ChallengePage({ initialNow, variant = "landing", payments = fals
   }, [initialNow]);
   const phase = challengePhase(now);
   const waitlist = phase === "closed";
-  // With payments on, the buttons say the price. Until Stripe is configured on this deployment the
-  // signup reserves a spot on the waitlist instead (the signup route makes the same decision).
-  const ctaLabel = waitlist ? "Join the waitlist" : payments ? "Join the Challenge for $7" : "Reserve My Spot";
-  const ctaLabelLower = waitlist ? "Join the waitlist" : payments ? "Start Growing for Just $7" : "Reserve My Spot";
+  const ctaLabel = waitlist ? "Join the waitlist" : "Join the Free Challenge";
+  const ctaLabelLower = waitlist ? "Join the waitlist" : "Start Growing for Free";
 
   // One named event per visit, alongside PostHog's automatic $pageview.
   useEffect(() => {
@@ -137,7 +136,7 @@ export function ChallengePage({ initialNow, variant = "landing", payments = fals
   return (
     <main className="font-[family-name:var(--font-jakarta)] bg-white text-[#0F172A] overflow-x-hidden antialiased">
       <style>{`@keyframes acc-fade-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } } .acc-fade-in { animation: acc-fade-in 0.8s ease-out; }`}</style>
-      {modalOpen && <ChallengeSignupModal phase={phase} payments={payments} onClose={() => setModalOpen(false)} />}
+      {modalOpen && <ChallengeSignupModal phase={phase} onClose={() => setModalOpen(false)} />}
 
       {variant === "thank-you" && (
         // Top bar: same as the one the accelerator version of this page has.
@@ -181,16 +180,18 @@ export function ChallengePage({ initialNow, variant = "landing", payments = fals
             <span className={`text-[#4F46E5] italic ${SERIF}`}>you&apos;re ready for the&hellip;</span>
           </p>
         )}
-        {/* The challenge title artwork (no "Free" in it). The headline below is the page's h1. */}
-        <Image
-          src="/images/challenge-title-paid.webp"
-          alt="7-Day Preaching Growth Challenge"
-          width={1752}
-          height={897}
-          priority
-          sizes="(min-width: 640px) 560px, 80vw"
-          className="mx-auto mb-10 h-auto w-4/5 max-w-[34rem] mix-blend-multiply"
-        />
+        {/* The challenge title artwork ("FREE" version). The headline below is the page's h1. */}
+        <div className="mb-8">
+          <Image
+            src="/images/challenge-title.webp"
+            alt="Free 7-Day Preaching Growth Challenge"
+            width={2000}
+            height={770}
+            priority
+            sizes="(min-width: 640px) 768px, 150vw"
+            className="relative left-1/2 h-auto w-[150%] max-w-none -translate-x-1/2 mix-blend-multiply sm:left-auto sm:mx-auto sm:w-full sm:max-w-3xl sm:translate-x-0"
+          />
+        </div>
         <h1 className={`mx-auto mb-8 max-w-4xl text-balance text-3xl sm:text-4xl md:text-5xl font-black leading-[1.08] text-[#0F172A] ${H}`}>
           Become a More <span className={`text-[#4F46E5] italic ${SERIF}`}>Confident, Clear,</span> and Impactful Preacher in Just 7 Days.
         </h1>
@@ -212,12 +213,13 @@ export function ChallengePage({ initialNow, variant = "landing", payments = fals
           >
             {ctaLabel}
           </button>
+          <p className="text-xs sm:text-sm font-black text-gray-500 uppercase tracking-widest">
+            Free &bull; No card required
+          </p>
           <p className="max-w-md text-xs sm:text-sm font-medium leading-relaxed text-[#64748B]">
-            {phase === "closed"
-              ? "Enrollment for this challenge is closed. Join the waitlist and we'll let you know about the next one."
-              : payments
-                ? "One-time payment. No subscription required."
-                : "Reserve your spot now and we'll email you the moment enrollment opens. One-time $7 payment, no subscription."}
+            {phase === "before" && <span className="font-bold text-red-600">Sign up now to receive the pre-challenge homework.</span>}
+            {phase === "started" && <span className="font-bold text-red-600">Enrollment closes tonight at 11:59 PM CST.</span>}
+            {phase === "closed" && "Enrollment for this challenge is closed. Join the waitlist and we'll let you know about the next one."}
           </p>
         </div>
 
@@ -225,7 +227,7 @@ export function ChallengePage({ initialNow, variant = "landing", payments = fals
           {[
             ["15 min", "a day, for 7 days"],
             ["Nov 17 – 23", "100% online, Tuesday to Monday"],
-            ["$7", "One-time payment"],
+            ["$0", "No card required"],
           ].map(([big, small]) => (
             <div key={big} className={`rounded-2xl border border-gray-100 bg-white px-6 py-6 ${SHADOW_PREMIUM}`}>
               <p className={`text-3xl font-black text-[#4F46E5] ${H}`}>{big}</p>
@@ -300,6 +302,11 @@ export function ChallengePage({ initialNow, variant = "landing", payments = fals
             <p className="text-lg text-[#64748B] font-medium leading-relaxed">
               A practical, personalized growth experience designed to help you make meaningful progress without adding hours to your already busy schedule.
             </p>
+            <p className={`text-2xl md:text-3xl font-bold text-[#0F172A] leading-snug ${H}`}>
+              All of it is{" "}
+              <span className="ml-1 inline-block rounded-full bg-emerald-500 px-5 py-1.5 align-middle text-base font-black uppercase tracking-widest text-white shadow-lg shadow-emerald-200 md:text-lg [color:#fff]">FREE</span>
+            </p>
+            <p className="text-[#64748B] font-medium">No card required.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -309,7 +316,10 @@ export function ChallengePage({ initialNow, variant = "landing", payments = fals
                   <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-50 text-[#4F46E5]">
                     {item.icon ? <Icon d={item.icon} size={22} strokeWidth={2} /> : <PHMark size={22} color="#4F46E5" />}
                   </span>
-                  {item.pill && <span className={IMMEDIATE_PILL}>{item.pill}</span>}
+                  <span className="flex items-center gap-2">
+                    {item.pill && <span className={IMMEDIATE_PILL}>{item.pill}</span>}
+                    <span className={FREE_PILL}>Free</span>
+                  </span>
                 </div>
                 <h3 className={`text-2xl font-black text-[#0F172A] leading-tight ${H}`}>{item.title}</h3>
                 <p className="text-[#64748B] text-sm leading-relaxed font-medium">{item.body}</p>
@@ -380,7 +390,7 @@ export function ChallengePage({ initialNow, variant = "landing", payments = fals
           {/* Pricing summary */}
           <div className={`max-w-xl mx-auto bg-white rounded-[2.5rem] border-2 border-[#4F46E5] p-10 text-center space-y-4 ${SHADOW_PREMIUM}`}>
             <p className="text-[11px] font-black uppercase tracking-[0.25em] text-[#4F46E5]">7-Day Preaching Growth Challenge</p>
-            <p className={`text-5xl font-black text-[#0F172A] ${H}`}>$7 <span className="text-base font-bold text-[#64748B] tracking-normal">One-Time Payment</span></p>
+            <p className={`text-5xl font-black text-[#0F172A] ${H}`}>Free <span className="text-base font-bold text-[#64748B] tracking-normal">No Card Required</span></p>
             <p className="text-[#64748B] text-sm leading-relaxed font-medium">
               Seven days of personalized training, practical tools, and an opportunity to earn a one-on-one coaching session.
             </p>
@@ -397,7 +407,7 @@ export function ChallengePage({ initialNow, variant = "landing", payments = fals
             >
               {ctaLabelLower}
             </button>
-            <p className="text-xs font-bold text-[#94A3B8]">No subscription required. No recurring challenge fees.</p>
+            <p className="text-xs font-bold text-[#94A3B8]">No card required. Nothing to cancel.</p>
           </div>
         </div>
       </section>
@@ -477,7 +487,7 @@ export function ChallengePage({ initialNow, variant = "landing", payments = fals
             The Next Challenge Begins November 17.
           </h2>
           <p className="mx-auto max-w-2xl text-lg font-medium leading-relaxed text-white/70">
-            Join this cohort for just $7 and take the first step toward more confident, clear, and impactful preaching.
+            Join this cohort for free and take the first step toward more confident, clear, and impactful preaching.
           </p>
           <div className="flex flex-col items-center gap-6">
             <button
@@ -488,8 +498,8 @@ export function ChallengePage({ initialNow, variant = "landing", payments = fals
               {ctaLabelLower}
             </button>
             <p className="text-xs font-bold text-white/50">
-              {phase === "before" && "$7 one-time payment • Live kickoff Tuesday, November 17 at 1 PM CST • Enrollment closes 11:59 PM CST on November 17"}
-              {phase === "started" && "$7 one-time payment • Enrollment closes tonight at 11:59 PM CST"}
+              {phase === "before" && "Free • No card required • Live kickoff Tuesday, November 17 at 1 PM CST • Enrollment closes 11:59 PM CST on November 17"}
+              {phase === "started" && "Free • No card required • Enrollment closes tonight at 11:59 PM CST"}
               {phase === "closed" && "Enrollment is closed • Join the waitlist and we'll let you know about the next one"}
             </p>
           </div>

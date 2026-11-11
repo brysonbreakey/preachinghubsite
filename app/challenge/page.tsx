@@ -4,20 +4,20 @@ import { ChallengeRoute } from "@/components/challenge/ChallengeRoute";
 export const metadata: Metadata = {
   title: { absolute: "7-Day Preaching Growth Challenge | PreachingHub" },
   description:
-    "Become a more confident, clear, and impactful preacher in 7 days. Personalized training, practical exercises, AI coaching access, and a growth plan for just $7.",
+    "Become a more confident, clear, and impactful preacher in 7 days. Personalized training, practical exercises, AI coaching access, and a growth plan. Free, no card required.",
   alternates: { canonical: "/challenge" },
-  // The share image is /challenge-og-paid.png (the old challenge-og.png says "Free", so it isn't used).
+  // The share image is /challenge-og-free.png (evergreen: no dates).
   openGraph: {
     title: "7-Day Preaching Growth Challenge | PreachingHub",
-    description: "Become a more confident, clear, and impactful preacher in 7 days. November 17–23. 15 minutes a day, just $7.",
+    description: "Become a more confident, clear, and impactful preacher in 7 days. A free 7-day challenge, November 17–23. 15 minutes a day, no card required.",
     url: "/challenge",
-    images: [{ url: "/challenge-og-paid.png", width: 1200, height: 630, alt: "7-Day Preaching Growth Challenge: 15 minutes a day, just $7" }],
+    images: [{ url: "/challenge-og-free.png", width: 1200, height: 630, alt: "Free 7-Day Preaching Growth Challenge: 15 minutes a day, no card required" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "7-Day Preaching Growth Challenge | PreachingHub",
-    description: "Become a more confident, clear, and impactful preacher in 7 days. November 17–23. Just $7.",
-    images: ["/challenge-og-paid.png"],
+    description: "Become a more confident, clear, and impactful preacher in 7 days. A free 7-day challenge, November 17–23. No card required.",
+    images: ["/challenge-og-free.png"],
   },
 };
 

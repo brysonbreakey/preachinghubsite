@@ -14,7 +14,7 @@ import { challengePhase } from "@/lib/challenge";
 
 const DELAY_MS = 8000;
 const SNOOZE_MS = 14 * 24 * 60 * 60 * 1000;
-// v2: the $7 cohort-2 pop-up. People who dismissed the old free one (14-day snooze) see this one.
+// v2: the cohort-2 pop-up. People who dismissed the cohort-1 one (14-day snooze) see this one.
 const STORAGE_KEY = "ph_challenge_popup_until_v2";
 const HIDDEN_PREFIXES = ["/challenge", "/checklist", "/accelerator", "/try", "/privacy", "/terms", "/sms"];
 
@@ -90,15 +90,15 @@ export default function ChallengePopup() {
           </svg>
         </button>
         <Image
-          src="/images/challenge-title-paid.webp"
-          alt="7-Day Preaching Growth Challenge"
-          width={1752}
-          height={897}
+          src="/images/challenge-title.webp"
+          alt="Free 7-Day Preaching Growth Challenge"
+          width={2000}
+          height={770}
           className="mx-auto mb-4 h-auto w-full max-w-[18rem] mix-blend-multiply"
         />
-        <p className="mb-4 text-[10px] font-black uppercase tracking-[0.2em] text-[#4F46E5]">7 days. 15 minutes a day. Just $7.</p>
+        <p className="mb-4 text-[10px] font-black uppercase tracking-[0.2em] text-[#4F46E5]">7 days. 15 minutes a day. Free.</p>
         <p className="mb-6 text-base font-medium leading-relaxed text-slate-600">
-          Become a more confident, clear, and impactful preacher in one week. November 17&ndash;23, about 15 minutes a day, with complimentary PreachingHub access and a chance to earn a one-on-one coaching session.
+          Become a more confident, clear, and impactful preacher in one week. November 17&ndash;23, about 15 minutes a day, free, with complimentary PreachingHub access and a chance to earn a one-on-one coaching session. No card required.
         </p>
         <Link
           href="/challenge?utm_source=site_popup"
@@ -108,7 +108,7 @@ export default function ChallengePopup() {
           }}
           className="inline-flex w-full items-center justify-center rounded-full bg-[#4F46E5] px-8 py-4 text-sm font-black uppercase tracking-widest [color:#fff] hover:bg-[#4338CA] transition-colors"
         >
-          See the challenge
+          See the free challenge
         </Link>
         <button type="button" onClick={dismiss} className="mt-4 text-sm font-medium text-slate-400 hover:text-slate-600">
           No thanks

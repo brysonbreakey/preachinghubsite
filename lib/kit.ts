@@ -182,34 +182,6 @@ export async function addSevenDayChallengeContact({
 }
 
 /**
- * Adds/updates a contact in Kit tagged "7-day-challenge-checkout-started": someone who filled in
- * the form and was sent to pay the $7, but hasn't paid yet. They only get the real
- * "7-day-challenge" tag (addSevenDayChallengeContact) once Stripe confirms the payment, so a Kit
- * segment of "checkout-started and not 7-day-challenge" is the follow-up list.
- */
-export async function addSevenDayChallengeCheckoutStartedContact({
-  email,
-  firstName,
-  lastName,
-  phone,
-}: {
-  email: string
-  firstName?: string
-  lastName?: string
-  phone?: string
-}): Promise<void> {
-  const fields: Record<string, string> = {}
-  if (lastName) fields.last_name = lastName
-  if (phone) fields.mobile_phone = phone
-  await upsertContact({
-    email,
-    firstName,
-    tags: ['7-day-challenge-checkout-started'],
-    fields: Object.keys(fields).length ? fields : undefined,
-  })
-}
-
-/**
  * Adds/updates a contact in Kit tagged "7-day-challenge-waitlist", for people who sign up after
  * enrollment for the challenge has closed.
  */

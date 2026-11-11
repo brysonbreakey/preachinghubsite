@@ -1,7 +1,6 @@
 import { Plus_Jakarta_Sans, Lora } from "next/font/google";
 import { ChallengePage, type ChallengeVariant } from "@/components/challenge/ChallengePage";
 import { serverNow } from "@/lib/challenge";
-import { stripePaymentsConfigured } from "@/lib/stripe";
 
 const jakarta = Plus_Jakarta_Sans({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"], variable: "--font-jakarta" });
 const lora = Lora({ subsets: ["latin"], style: ["normal", "italic"], variable: "--font-lora" });
@@ -13,7 +12,7 @@ export async function ChallengeRoute({ variant, searchParams }: { variant: Chall
   const { now } = await searchParams; // ?now=<ISO time> fakes the clock when testing locally only
   return (
     <div className={`${jakarta.variable} ${lora.variable}`}>
-      <ChallengePage initialNow={serverNow(now)} variant={variant} payments={stripePaymentsConfigured()} />
+      <ChallengePage initialNow={serverNow(now)} variant={variant} />
     </div>
   );
 }

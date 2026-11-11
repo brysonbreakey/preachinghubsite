@@ -33,9 +33,6 @@ export const CHALLENGE_PASS_UNTIL = Date.parse("2026-11-30T06:00:00Z");
 /** The same day as words, saved to Kit's `challenge_pass_end` field and used in the page copy. */
 export const CHALLENGE_PASS_END_LABEL = "November 29";
 
-/** The one-time $7 price in Stripe (live mode). */
-export const CHALLENGE_PRICE_ID = "price_1UaSNuQ6oljt9nUgjCz4p3m8";
-
 /** The current time on the server. The page reads it here (it is rendered per request, by design)
  *  rather than calling Date.now() in a component. For local testing only, `override` (an ISO time
  *  from ?now= or the x-challenge-now header) fakes the clock; it is ignored in production. */
