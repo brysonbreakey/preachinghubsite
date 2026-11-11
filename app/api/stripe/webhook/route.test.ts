@@ -9,8 +9,16 @@ vi.mock("@/lib/challengeToken", () => ({
 }));
 const fetchMock = vi.fn(async () => new Response("{}"));
 vi.stubGlobal("fetch", fetchMock);
+const upsert = vi.fn(async () => ({ error: null }));
+let runRow: { id: string } | null = { id: "run-cohort-2" };
+const eqCalls: Array<[string, string]> = [];
 vi.mock("@/lib/supabase", () => ({
-  supabaseAdmin: () => ({ from: () => ({ select: () => ({ eq: () => ({ maybeSingle: async () => ({ data: null }) }) }) }) }),
+  supabaseAdmin: () => ({
+    from: (table: string) =>
+      table === "challenge_runs"
+        ? { select: () => ({ eq: (col: string, val: string) => { eqCalls.push([col, val]); return { maybeSingle: async () => ({ data: runRow }) }; } }) }
+        : { upsert },
+  }),
 }));
 
 import { POST } from "./route";
@@ -28,7 +36,7 @@ const paid = (over: object = {}) => ({
 });
 
 describe("stripe webhook", () => {
-  beforeEach(() => { addContact.mockReset(); fetchMock.mockClear(); process.env.STRIPE_WEBHOOK_SECRET = SECRET; });
+  beforeEach(() => { addContact.mockReset(); fetchMock.mockClear(); upsert.mockClear(); eqCalls.length = 0; runRow = { id: "run-cohort-2" }; process.env.STRIPE_WEBHOOK_SECRET = SECRET; });
 
   it("rejects a bad signature and does nothing", async () => {
     expect((await POST(req(paid(), { sign: false }))).status).toBe(400);
@@ -51,6 +59,24 @@ describe("stripe webhook", () => {
     spy.mockRestore();
     expect(res.status).toBe(200);
     expect(addContact).toHaveBeenCalledTimes(2);
+  });
+  it("adds them to the cohort's run on the admin roster, found by start date", async () => {
+    await POST(req(paid()));
+    expect(eqCalls).toEqual([["start_date", "2026-11-17"]]);
+    expect(upsert).toHaveBeenCalledWith(
+      expect.objectContaining({ challenge_run_id: "run-cohort-2", email: "a@b.co", first_name: "Ann", last_name: "Lee", phone: "555-123-4567" }),
+      { onConflict: "challenge_run_id,email", ignoreDuplicates: true },
+    );
+  });
+  it("still lets them in (and says so loudly) if no run has this start date", async () => {
+    runRow = null;
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const res = await POST(req(paid()));
+    expect(res.status).toBe(200);
+    expect(addContact).toHaveBeenCalledTimes(1);
+    expect(upsert).not.toHaveBeenCalled();
+    expect(spy.mock.calls.some((c) => String(c[0]).includes("no challenge_runs row"))).toBe(true);
+    spy.mockRestore();
   });
   it("ignores unpaid sessions, other cohorts, other events", async () => {
     await POST(req(paid({ payment_status: "unpaid" })));

@@ -17,6 +17,10 @@ export const CHALLENGE_START_DATE_LABEL = new Intl.DateTimeFormat("en-CA", {
   day: "2-digit",
 }).format(CHALLENGE_KICKOFF);
 
+/** The kickoff time as words, saved to Kit's `challenge_start_time` field for the emails. It is
+ *  1:00 PM Central, the same moment as CHALLENGE_KICKOFF; change both for a new cohort. */
+export const CHALLENGE_START_TIME_LABEL = "1PM";
+
 /** Enrollment closes at 11:59 PM CST on November 17 (the kickoff day): the instant below is the
  *  first moment of November 18. After this, signups are waitlist signups. */
 export const CHALLENGE_CLOSES = Date.parse("2026-11-18T06:00:00Z");

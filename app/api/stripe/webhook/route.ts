@@ -76,15 +76,18 @@ export async function POST(req: NextRequest) {
     console.error("challenge webhook: payment alert failed", err);
   }
 
-  // The challenge run roster in the app's database (best effort: the tag above is what matters).
+  // The challenge run roster on the admin console (the app's challenge_runs / challenge_participants
+  // tables): add them to this cohort's run. The run is found by its start date, not by which run is
+  // marked "active", so a payment can never land in the wrong cohort. Best effort: the Kit tag above
+  // is what lets them in; if no run has this start date it is logged, and they can be added by hand.
   try {
-    const { data: activeRun } = await supabaseAdmin().from("challenge_runs").select("id").eq("is_active", true).maybeSingle();
-    if (activeRun?.id) {
+    const { data: run } = await supabaseAdmin().from("challenge_runs").select("id").eq("start_date", CHALLENGE_START_DATE_LABEL).maybeSingle();
+    if (run?.id) {
       await supabaseAdmin()
         .from("challenge_participants")
         .upsert(
           {
-            challenge_run_id: activeRun.id,
+            challenge_run_id: run.id,
             email: email.toLowerCase(),
             first_name: firstName || null,
             last_name: lastName || null,
@@ -93,6 +96,8 @@ export async function POST(req: NextRequest) {
           },
           { onConflict: "challenge_run_id,email", ignoreDuplicates: true },
         );
+    } else {
+      console.error(`challenge webhook: no challenge_runs row with start_date ${CHALLENGE_START_DATE_LABEL}; ${email} was not added to the admin roster`);
     }
   } catch (err) {
     console.error("challenge webhook: roster add failed", err);
