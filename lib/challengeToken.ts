@@ -24,6 +24,17 @@ export function createChallengeLink({ email, firstName, lastName }: { email: str
   return `${APP_URL}/api/challenge/start?t=${payload}.${sig}`;
 }
 
+// Sent by the Stripe webhook to the app the moment a $7 payment goes through, so Bryson gets the
+// "New Challenge Member!" email before the person has made an account. Ten minutes, its own prefix,
+// so it can't be used as a link or a claim.
+export function createChallengePaymentAlert({ email, firstName, lastName }: { email: string; firstName?: string; lastName?: string }): string | null {
+  const secret = process.env.OFFER_SIGNING_SECRET;
+  if (!secret) return null;
+  const payload = b64url(JSON.stringify({ e: email.trim().toLowerCase(), f: firstName ?? "", l: lastName ?? "", x: Date.now() + 10 * 60 * 1000 }));
+  const sig = createHmac("sha256", secret).update(`challengepaid:${payload}`).digest("hex");
+  return `${payload}.${sig}`;
+}
+
 // A short-lived "claim" for the popup's second step (create the account with a chosen password). It
 // is returned to the browser, so unlike the emailed link it can never sign anyone in: the app only
 // accepts it to CREATE an account for an email that has none (/api/challenge/account), or from

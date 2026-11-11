@@ -3,7 +3,12 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const addContact = vi.fn();
 vi.mock("@/lib/kit", () => ({ addSevenDayChallengeContact: (...a: unknown[]) => addContact(...a) }));
-vi.mock("@/lib/challengeToken", () => ({ createChallengeLink: () => "https://app.preachinghub.com/api/challenge/start?t=x" }));
+vi.mock("@/lib/challengeToken", () => ({
+  createChallengeLink: () => "https://app.preachinghub.com/api/challenge/start?t=x",
+  createChallengePaymentAlert: () => "alert-token",
+}));
+const fetchMock = vi.fn(async () => new Response("{}"));
+vi.stubGlobal("fetch", fetchMock);
 vi.mock("@/lib/supabase", () => ({
   supabaseAdmin: () => ({ from: () => ({ select: () => ({ eq: () => ({ maybeSingle: async () => ({ data: null }) }) }) }) }),
 }));
@@ -23,7 +28,7 @@ const paid = (over: object = {}) => ({
 });
 
 describe("stripe webhook", () => {
-  beforeEach(() => { addContact.mockReset(); process.env.STRIPE_WEBHOOK_SECRET = SECRET; });
+  beforeEach(() => { addContact.mockReset(); fetchMock.mockClear(); process.env.STRIPE_WEBHOOK_SECRET = SECRET; });
 
   it("rejects a bad signature and does nothing", async () => {
     expect((await POST(req(paid(), { sign: false }))).status).toBe(400);
@@ -34,11 +39,25 @@ describe("stripe webhook", () => {
     expect(res.status).toBe(200);
     expect(addContact).toHaveBeenCalledWith({ email: "a@b.co", firstName: "Ann", lastName: "Lee", phone: "555-123-4567", challengeLink: expect.stringContaining("challenge/start") });
   });
+  it("alerts the app the moment a payment goes through, and a failed alert never blocks the member", async () => {
+    await POST(req(paid()));
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const [url, init] = fetchMock.mock.calls[0] as unknown as [string, { body: string }];
+    expect(url).toMatch(/\/api\/challenge\/payment-alert$/);
+    expect(JSON.parse(init.body)).toEqual({ token: "alert-token" });
+    fetchMock.mockRejectedValueOnce(new Error("app down"));
+    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const res = await POST(req(paid()));
+    spy.mockRestore();
+    expect(res.status).toBe(200);
+    expect(addContact).toHaveBeenCalledTimes(2);
+  });
   it("ignores unpaid sessions, other cohorts, other events", async () => {
     await POST(req(paid({ payment_status: "unpaid" })));
     await POST(req(paid({ metadata: { challenge_start: "2026-11-10" } })));
     await POST(req({ type: "charge.succeeded", data: { object: {} } }));
     expect(addContact).not.toHaveBeenCalled();
+    expect(fetchMock).not.toHaveBeenCalled(); // no alert for anything that isn't a paid cohort-2 payment
   });
   it("answers 500 when Kit fails so Stripe retries", async () => {
     addContact.mockRejectedValueOnce(new Error("kit down"));

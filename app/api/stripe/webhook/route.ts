@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { CHALLENGE_START_DATE_LABEL } from "@/lib/challenge";
-import { createChallengeLink } from "@/lib/challengeToken";
+import { createChallengeLink, createChallengePaymentAlert } from "@/lib/challengeToken";
+import { APP_URL } from "@/lib/urls";
 import { addSevenDayChallengeContact } from "@/lib/kit";
 import { verifyStripeSignature } from "@/lib/stripe";
 import { supabaseAdmin } from "@/lib/supabase";
@@ -57,6 +58,22 @@ export async function POST(req: NextRequest) {
   } catch (err) {
     console.error("challenge webhook: kit failed", err);
     return NextResponse.json({ error: "kit failed" }, { status: 500 }); // Stripe will retry
+  }
+
+  // Tell Bryson right away ("New Challenge Member!"). The app is what sends email, so ask it to.
+  // Best effort: a failure here must never undo or block letting the person in.
+  try {
+    const token = createChallengePaymentAlert({ email, firstName, lastName });
+    if (token) {
+      await fetch(`${APP_URL}/api/challenge/payment-alert`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token }),
+        signal: AbortSignal.timeout(5000),
+      });
+    }
+  } catch (err) {
+    console.error("challenge webhook: payment alert failed", err);
   }
 
   // The challenge run roster in the app's database (best effort: the tag above is what matters).
