@@ -145,3 +145,16 @@ export function challengeDayFor(startDate: string | null | undefined, now: Date 
   if (value === "1" && date === chicagoToday(now) && chicagoMinuteOfDay(now) < CHALLENGE_DAY_ONE_MINUTE) return "0";
   return value;
 }
+
+/** When `days_until_challenge_start` counts down, in Chicago time: every day at 11:00 AM (it triggers
+ *  emails, so it is set to a sensible hour). Before then the number is still yesterday's. */
+export const CHALLENGE_COUNTDOWN_MINUTE = 11 * 60;
+
+/**
+ * The date `days_until_challenge_start` should be worked out for right now: today once it is past
+ * 11:00 AM, otherwise yesterday (the number everyone already has). The daily job and the signup
+ * both use it, so someone who signs up at 8 AM gets the same number as everyone else, not tomorrow's.
+ */
+export function countdownDate(now: Date = new Date()): string {
+  return chicagoToday(chicagoMinuteOfDay(now) >= CHALLENGE_COUNTDOWN_MINUTE ? now : new Date(now.getTime() - 86_400_000));
+}

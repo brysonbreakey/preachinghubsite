@@ -19,7 +19,7 @@ import {
 import {
   MIN_COUNTDOWN_DAY,
   challengeDayFor,
-  chicagoToday,
+  countdownDate,
   computeChallengeDay,
   computeDaysUntilChallengeStart,
 } from '@/lib/startCountdown'
@@ -63,7 +63,7 @@ export async function syncChallengeCountdown(
   const api = opts.api ?? realApi
   const log = opts.log ?? ((m: string) => console.log(m))
   const dryRun = opts.dryRun ?? process.env.DRY_RUN === 'true'
-  const today = opts.today ?? chicagoToday()
+  const today = opts.today ?? countdownDate()
   // challenge_day follows the send times (9 AM daily, Day 1 at 2:15 PM; see challengeDayFor). Tests
   // can pin a plain date with dayToday/today instead.
   const dayDate = opts.dayToday ?? opts.today

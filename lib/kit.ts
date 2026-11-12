@@ -1,5 +1,5 @@
 import { CHALLENGE_PASS_END_LABEL, CHALLENGE_START_DATE_LABEL, CHALLENGE_START_TIME_LABEL } from '@/lib/challenge'
-import { MIN_COUNTDOWN_DAY, chicagoToday, challengeDayFor, computeDaysUntilChallengeStart } from '@/lib/startCountdown'
+import { MIN_COUNTDOWN_DAY, countdownDate, challengeDayFor, computeDaysUntilChallengeStart } from '@/lib/startCountdown'
 const KIT_API_BASE = 'https://api.kit.com/v4'
 
 function kitHeaders(): Record<string, string> {
@@ -165,7 +165,7 @@ export async function addSevenDayChallengeContact({
   }
   if (challengeLink) full.challenge_link = challengeLink
   // Late joiners land on the right countdown day right away instead of waiting for the daily job.
-  const days = computeDaysUntilChallengeStart(CHALLENGE_START_DATE_LABEL, chicagoToday())
+  const days = computeDaysUntilChallengeStart(CHALLENGE_START_DATE_LABEL, countdownDate())
   if (days !== null && days >= MIN_COUNTDOWN_DAY) full.days_until_challenge_start = String(days)
   // Same for challenge_day, so someone from an earlier cohort who signs up again isn't left on "done".
   const day = challengeDayFor(CHALLENGE_START_DATE_LABEL)

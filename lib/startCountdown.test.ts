@@ -102,3 +102,21 @@ describe("send times: 9 AM daily, Day 1 at 2:15 PM (Central)", () => {
     expect(f("2026-11-19T15:00:00Z")).toBe("done"); // Thu after day 7
   });
 });
+
+import { countdownDate } from "./startCountdown";
+
+describe("countdownDate (the countdown flips at 11:00 AM Central)", () => {
+  // Nov 2026 is CST (UTC-6): 11:00 AM = 17:00Z
+  it("is yesterday before 11:00 AM and today from 11:00 AM", () => {
+    expect(countdownDate(new Date("2026-11-12T16:59:00Z"))).toBe("2026-11-11"); // 10:59 AM
+    expect(countdownDate(new Date("2026-11-12T17:00:00Z"))).toBe("2026-11-12"); // 11:00 AM
+    expect(countdownDate(new Date("2026-11-13T03:00:00Z"))).toBe("2026-11-12"); // 9:00 PM
+    expect(countdownDate(new Date("2026-11-12T11:00:00Z"))).toBe("2026-11-11"); // 5:00 AM: no longer the flip
+  });
+  it("gives the right countdown number: 7 on Nov 10, until 11 AM on Nov 11", () => {
+    expect(days("2026-11-17", countdownDate(new Date("2026-11-10T17:00:00Z")))).toBe(7);
+    expect(days("2026-11-17", countdownDate(new Date("2026-11-11T16:00:00Z")))).toBe(7); // 10 AM: still 7
+    expect(days("2026-11-17", countdownDate(new Date("2026-11-11T17:00:00Z")))).toBe(6);
+    expect(days("2026-11-17", countdownDate(new Date("2026-11-17T17:00:00Z")))).toBe(0);
+  });
+});
