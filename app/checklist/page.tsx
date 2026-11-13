@@ -212,13 +212,13 @@ export default function ChecklistPage() {
                     {status === "loading" ? "Sending..." : "Get the Checklist"}
                   </button>
                 </form>
-                <p className="text-xs text-slate-400 text-center mt-4">
-                  We&apos;ll only email you about preaching.
-                  <br />
-                  Unsubscribe any time.
-                </p>
+                {/* One combined fine print under the button: the email promise, then the (required) text-message consent. */}
+                <SmsConsentNotice
+                  buttonLabel="Get the Checklist"
+                  lead="We'll only email you about preaching. Unsubscribe any time."
+                  className="mt-4 text-center"
+                />
               </div>
-              <SmsConsentNotice buttonLabel="Get the Checklist" className="mt-4 px-2" />
               </div>
           </div>
         </div>
