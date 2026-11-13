@@ -110,7 +110,7 @@ export default function ChecklistPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-50 flex flex-col">
+    <main className="min-h-screen bg-slate-50 flex flex-col font-[family-name:var(--font-inter)]">
       <div className="flex-1 flex items-center justify-center px-6 py-10 sm:py-16">
         <div className="w-full max-w-md lg:max-w-4xl">
           <div className="flex justify-center mb-6 lg:hidden">
@@ -212,21 +212,17 @@ export default function ChecklistPage() {
                     {status === "loading" ? "Sending..." : "Get the Checklist"}
                   </button>
                 </form>
-                {/* One combined fine print under the button: the email promise, then the (required) text-message consent. */}
-                <SmsConsentNotice
-                  buttonLabel="Get the Checklist"
-                  lead="We'll only email you about preaching. Unsubscribe any time."
-                  className="mt-4 text-center"
-                />
               </div>
+              {/* One combined fine print below the card: the email promise, then the (required) text-message consent. */}
+              <SmsConsentNotice
+                buttonLabel="Get the Checklist"
+                lead="We'll only email you about preaching. Unsubscribe any time."
+                className="mt-4 px-2 text-center"
+              />
               </div>
           </div>
         </div>
       </div>
-
-      <p className="text-center text-sm italic text-slate-400 pb-8 px-6">
-        We don&apos;t write sermons. We build preachers.
-      </p>
     </main>
   );
 }
