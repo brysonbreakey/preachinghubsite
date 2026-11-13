@@ -173,7 +173,8 @@ export default function ChecklistPage() {
                     inputMode="numeric"
                     value={phone}
                     onChange={(e) => setPhone(formatPhone(e.target.value))}
-                    placeholder="Mobile (we'll text you a copy)"
+                    placeholder="We'll text you the mobile version"
+                    aria-label="Mobile phone number"
                     className={`w-full rounded-lg border px-3.5 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#4F46E5] ${
                       status === "error" ? "border-red-300" : "border-slate-300 focus:border-[#4F46E5]"
                     }`}
