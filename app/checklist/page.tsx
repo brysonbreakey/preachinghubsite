@@ -179,41 +179,27 @@ export default function ChecklistPage() {
                     }`}
                   />
                   <p className="text-xs text-slate-600 -mt-1.5">We&apos;ll send the interactive mobile version to your phone 📲</p>
-                  {/* "How often do you preach?" Required. A dropdown so it reads as one more field, not a quiz. */}
-                  <div className="relative">
-                    <select
-                      name="preach_frequency"
-                      aria-label="How often do you preach?"
-                      value={frequency}
-                      onChange={(e) => setFrequency(e.target.value as PreachFrequency | "")}
-                      className={`w-full appearance-none rounded-lg border bg-white px-3.5 py-3 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-[#4F46E5] ${
-                        frequency ? "text-slate-900" : "text-slate-400"
-                      } ${status === "error" && !frequency ? "border-red-300" : "border-slate-300 focus:border-[#4F46E5]"}`}
-                    >
-                      <option value="" disabled>
-                        How often do you preach?
-                      </option>
+                  {/* "How often do you preach?" Required. Plain radio buttons, no boxes, kept tight. */}
+                  <fieldset className="pt-1">
+                    <legend className={`mb-1.5 text-sm font-semibold ${status === "error" && !frequency ? "text-red-600" : "text-slate-800"}`}>
+                      How often do you preach?
+                    </legend>
+                    <div className="space-y-0.5">
                       {PREACH_FREQUENCIES.map((f) => (
-                        <option key={f.value} value={f.value} className="text-slate-900">
+                        <label key={f.value} className="flex cursor-pointer items-center gap-2.5 py-1 text-sm text-slate-800">
+                          <input
+                            type="radio"
+                            name="preach_frequency"
+                            value={f.value}
+                            checked={frequency === f.value}
+                            onChange={() => setFrequency(f.value)}
+                            className="h-4 w-4 accent-[#4F46E5]"
+                          />
                           {f.label}
-                        </option>
+                        </label>
                       ))}
-                    </select>
-                    <svg
-                      className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400"
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2.2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      aria-hidden="true"
-                    >
-                      <path d="m6 9 6 6 6-6" />
-                    </svg>
-                  </div>
+                    </div>
+                  </fieldset>
                   {status === "error" && (
                     <p className="text-xs text-red-600">{errorMessage}</p>
                   )}
