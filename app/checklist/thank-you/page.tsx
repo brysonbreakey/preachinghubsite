@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 // (confirmed via a real PostHog recording), so never serve a cached copy.
 export const dynamic = "force-dynamic";
 
-export default function Page({ searchParams }: { searchParams: Promise<{ now?: string }> }) {
+export default function Page({ searchParams }: { searchParams: Promise<{ now?: string; from?: string }> }) {
   return (
     <>
       <MetaPixel pixelId={FB_PIXEL_ID} />

@@ -107,12 +107,15 @@ export async function addChecklistContact({
   lastName,
   offerLink,
   phone,
+  regularPreacher,
 }: {
   email: string
   firstName?: string
   lastName?: string
   offerLink?: string
   phone?: string
+  /** They said they preach most weeks: also tagged "regular-preacher". */
+  regularPreacher?: boolean
 }): Promise<void> {
   // offer_link is a Kit custom field, referenced in a follow-up email as
   // {{ subscriber.offer_link }} so the button always points at the exact same
@@ -128,9 +131,14 @@ export async function addChecklistContact({
   await upsertContact({
     email,
     firstName,
-    tags: ['checklist'],
+    tags: regularPreacher ? ['checklist', 'regular-preacher'] : ['checklist'],
     fields: Object.keys(fields).length ? fields : undefined,
   })
+}
+
+/** Tags an existing/new Kit contact "regular-preacher" (they preach most weeks). */
+export async function tagRegularPreacher({ email, firstName }: { email: string; firstName?: string }): Promise<void> {
+  await upsertContact({ email, firstName, tags: ['regular-preacher'] })
 }
 
 /**

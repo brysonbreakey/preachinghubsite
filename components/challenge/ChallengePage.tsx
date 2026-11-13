@@ -100,7 +100,7 @@ const FAQ = [
 // challenge as the next step after the checklist.
 export type ChallengeVariant = "landing" | "thank-you";
 
-export function ChallengePage({ initialNow, variant = "landing" }: { initialNow: number; variant?: ChallengeVariant }) {
+export function ChallengePage({ initialNow, variant = "landing", fromChecklist = false }: { initialNow: number; variant?: ChallengeVariant; fromChecklist?: boolean }) {
   const [modalOpen, setModalOpen] = useState(false);
 
   // The page knows the time the server rendered it at (so a visitor never sees the wrong state
@@ -124,7 +124,7 @@ export function ChallengePage({ initialNow, variant = "landing" }: { initialNow:
 
   // One named event per visit, alongside PostHog's automatic $pageview.
   useEffect(() => {
-    posthog.capture("challenge_page_viewed", { phase: challengePhase(initialNow), page: variant === "thank-you" ? "checklist_thank_you" : "challenge" });
+    posthog.capture("challenge_page_viewed", { phase: challengePhase(initialNow), page: variant === "thank-you" ? "checklist_thank_you" : fromChecklist ? "challenge_from_checklist" : "challenge" });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialNow]);
 
@@ -138,8 +138,9 @@ export function ChallengePage({ initialNow, variant = "landing" }: { initialNow:
       <style>{`@keyframes acc-fade-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } } .acc-fade-in { animation: acc-fade-in 0.8s ease-out; }`}</style>
       {modalOpen && <ChallengeSignupModal phase={phase} onClose={() => setModalOpen(false)} />}
 
-      {variant === "thank-you" && (
-        // Top bar: same as the one the accelerator version of this page has.
+      {(variant === "thank-you" || fromChecklist) && (
+        // Top bar: same as the one the accelerator version of this page has. Also shown on /challenge
+        // for people /checklist sends here (they don't preach most weeks), so they know it's coming.
         <div className="bg-blue-50 border-b border-blue-100 py-3 px-6 text-center">
           <p className="text-sm sm:text-base text-blue-900">
             🎉 Your checklist is on its way — check your inbox (and spam folder) in a few minutes.
@@ -149,7 +150,7 @@ export function ChallengePage({ initialNow, variant = "landing" }: { initialNow:
             href="/downloads/pre-preaching-checklist.pdf"
             target="_blank"
             rel="noopener noreferrer"
-            onClick={() => posthog.capture("checklist_pdf_opened", { page: "checklist_thank_you", variant: "challenge" })}
+            onClick={() => posthog.capture("checklist_pdf_opened", { page: variant === "thank-you" ? "checklist_thank_you" : "challenge_from_checklist", variant: "challenge" })}
             className="mt-2.5 inline-flex items-center gap-1.5 rounded-lg border-2 border-[#3760ad] bg-white px-4 py-1.5 text-sm font-semibold text-[#3760ad] shadow-sm hover:bg-blue-100 transition-colors"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">

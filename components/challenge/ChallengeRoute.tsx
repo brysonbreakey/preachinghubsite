@@ -8,11 +8,11 @@ const lora = Lora({ subsets: ["latin"], style: ["normal", "italic"], variable: "
 // Server-side body shared by every route that serves the 7-Day Preaching Growth Challenge
 // page (/challenge and /checklist/thank-you), so the two can't drift apart. Each route supplies its
 // own metadata and `dynamic = "force-dynamic"` (enrollment closes at a set time, so never cache).
-export async function ChallengeRoute({ variant, searchParams }: { variant: ChallengeVariant; searchParams: Promise<{ now?: string }> }) {
-  const { now } = await searchParams; // ?now=<ISO time> fakes the clock when testing locally only
+export async function ChallengeRoute({ variant, searchParams }: { variant: ChallengeVariant; searchParams: Promise<{ now?: string; from?: string }> }) {
+  const { now, from } = await searchParams; // ?now=<ISO time> fakes the clock when testing locally only
   return (
     <div className={`${jakarta.variable} ${lora.variable}`}>
-      <ChallengePage initialNow={serverNow(now)} variant={variant} />
+      <ChallengePage initialNow={serverNow(now)} variant={variant} fromChecklist={from === "checklist"} />
     </div>
   );
 }

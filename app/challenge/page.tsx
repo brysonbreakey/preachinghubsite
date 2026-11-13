@@ -25,6 +25,6 @@ export const metadata: Metadata = {
 // copy: the page is rendered per request with the server's clock (see lib/challenge.ts).
 export const dynamic = "force-dynamic";
 
-export default function Page({ searchParams }: { searchParams: Promise<{ now?: string }> }) {
+export default function Page({ searchParams }: { searchParams: Promise<{ now?: string; from?: string }> }) {
   return <ChallengeRoute variant="landing" searchParams={searchParams} />;
 }

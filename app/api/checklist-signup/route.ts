@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { resolveMx } from "dns/promises";
 import { randomBytes } from "crypto";
 import { waitUntil } from "@vercel/functions";
-import { addChecklistContact } from "@/lib/kit";
+import { addChecklistContact, tagRegularPreacher } from "@/lib/kit";
+import { nextPageFor, parsePreachFrequency } from "@/lib/preachFrequency";
 import { upsertChecklistContact } from "@/lib/slicktext";
 import { supabaseAdmin } from "@/lib/supabase";
 
@@ -26,6 +27,11 @@ export async function POST(req: NextRequest) {
   const lastName = typeof body?.last_name === "string" ? body.last_name.trim() : "";
   const email = typeof body?.email === "string" ? body.email.trim() : "";
   const phone = typeof body?.phone === "string" ? body.phone.trim() : "";
+  // "How often do you preach?" Decides which page they go to next (and the Kit "regular-preacher"
+  // tag, which also keeps the Meta Pixel on the thank-you page for people who preach most weeks).
+  // A form that doesn't send the answer (an old cached page) is treated as the old behavior.
+  const frequency = parsePreachFrequency(body?.preach_frequency);
+  const next = nextPageFor(frequency);
 
   if (!firstName) {
     return NextResponse.json({ error: "Enter your name." }, { status: 400 });
@@ -54,7 +60,16 @@ export async function POST(req: NextRequest) {
     .maybeSingle();
 
   if (recentLead) {
-    return NextResponse.json({ ok: true });
+    // Already signed up in the last day: no second row or text. But if they now say they preach
+    // most weeks, still tag them (idempotent), and always send them where their answer says.
+    if (frequency === "most_weeks") {
+      try {
+        await tagRegularPreacher({ email, firstName });
+      } catch (err) {
+        console.error("checklist-signup: regular-preacher tag failed", err);
+      }
+    }
+    return NextResponse.json({ ok: true, next });
   }
 
   // Generate the public lead token separately from any database id, and
@@ -95,7 +110,7 @@ export async function POST(req: NextRequest) {
   const offerLink = `${SITE_URL}/checklist/thank-you`;
 
   try {
-    await addChecklistContact({ email, firstName, lastName, offerLink, phone });
+    await addChecklistContact({ email, firstName, lastName, offerLink, phone, regularPreacher: frequency === "most_weeks" });
   } catch (err) {
     console.error("checklist-signup: kit failed", err);
     return NextResponse.json(
@@ -111,6 +126,5 @@ export async function POST(req: NextRequest) {
     upsertChecklistContact({ phone, firstName, lastName, email, checklistLink })
   );
 
-
-return NextResponse.json({ ok: true });
+  return NextResponse.json({ ok: true, next });
 }

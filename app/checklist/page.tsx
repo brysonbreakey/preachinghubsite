@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import posthog from "posthog-js";
 import { PHMark } from "@/components/Logo";
 import { SmsConsentNotice } from "@/components/SmsConsentNotice";
+import { PREACH_FREQUENCIES, type PreachFrequency } from "@/lib/preachFrequency";
 
 const INDIGO = "#4F46E5";
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -25,6 +26,7 @@ export default function ChecklistPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [frequency, setFrequency] = useState<PreachFrequency | "">("");
   const [src, setSrc] = useState<string | undefined>(undefined);
   const [status, setStatus] = useState<"form" | "loading" | "error">("form");
   const [errorMessage, setErrorMessage] = useState("");
@@ -54,6 +56,12 @@ export default function ChecklistPage() {
       return;
     }
 
+    if (!frequency) {
+      setStatus("error");
+      setErrorMessage("Choose how often you preach.");
+      return;
+    }
+
     setStatus("loading");
     const { firstName, lastName } = splitName(name);
     try {
@@ -65,6 +73,7 @@ export default function ChecklistPage() {
           last_name: lastName,
           email: email.trim(),
           phone: phone.trim(),
+          preach_frequency: frequency,
           src,
         }),
       });
@@ -72,7 +81,7 @@ export default function ChecklistPage() {
       if (!res.ok) {
         throw new Error(data?.error || "submit_failed");
       }
-      posthog.capture("checklist_signup_submitted");
+      posthog.capture("checklist_signup_submitted", { preach_frequency: frequency });
 
       // The checklist is emailed (via Kit) and texted (via SlickText) —
       // this page's job is done, so hand off to the VSL thank-you page.
@@ -87,7 +96,9 @@ export default function ChecklistPage() {
       } catch {
         // Best-effort only — worst case the form just isn't prefilled.
       }
-      window.location.href = "/checklist/thank-you";
+      // Most weeks go to the thank-you page (Meta Pixel + the challenge); everyone else goes to the
+      // challenge page with a "your checklist is on its way" bar. The server decides which.
+      window.location.href = typeof data?.next === "string" && data.next.startsWith("/") ? data.next : "/checklist/thank-you";
     } catch (err) {
       setStatus("error");
       setErrorMessage(
@@ -168,6 +179,29 @@ export default function ChecklistPage() {
                     }`}
                   />
                   <p className="text-xs text-slate-600 -mt-1.5">We&apos;ll send the interactive mobile version to your phone 📲</p>
+                  <fieldset className="pt-1">
+                    <legend className="mb-2 text-sm font-semibold text-slate-800">How often do you preach?</legend>
+                    <div className="space-y-2">
+                      {PREACH_FREQUENCIES.map((f) => (
+                        <label
+                          key={f.value}
+                          className={`flex cursor-pointer items-center gap-3 rounded-lg border px-3.5 py-3 text-sm text-slate-900 transition-colors ${
+                            frequency === f.value ? "border-[#4F46E5] bg-indigo-50" : status === "error" && !frequency ? "border-red-300" : "border-slate-300 hover:border-slate-400"
+                          }`}
+                        >
+                          <input
+                            type="radio"
+                            name="preach_frequency"
+                            value={f.value}
+                            checked={frequency === f.value}
+                            onChange={() => setFrequency(f.value)}
+                            className="h-4 w-4 accent-[#4F46E5]"
+                          />
+                          {f.label}
+                        </label>
+                      ))}
+                    </div>
+                  </fieldset>
                   {status === "error" && (
                     <p className="text-xs text-red-600">{errorMessage}</p>
                   )}
