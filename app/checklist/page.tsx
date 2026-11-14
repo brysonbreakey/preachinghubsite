@@ -5,6 +5,7 @@ import posthog from "posthog-js";
 import { PHMark } from "@/components/Logo";
 import { SmsConsentNotice } from "@/components/SmsConsentNotice";
 import { PREACH_FREQUENCIES, type PreachFrequency } from "@/lib/preachFrequency";
+import { markQualifiedLead } from "@/lib/metaLead";
 
 const INDIGO = "#4F46E5";
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -96,6 +97,8 @@ export default function ChecklistPage() {
       } catch {
         // Best-effort only — worst case the form just isn't prefilled.
       }
+      // A new lead who preaches most weeks: have the thank-you page fire Meta's Lead event.
+      if (data?.qualified === true) markQualifiedLead(window.sessionStorage);
       // Most weeks go to the thank-you page (Meta Pixel + the challenge); everyone else goes to the
       // challenge page with a "your checklist is on its way" bar. The server decides which.
       window.location.href = typeof data?.next === "string" && data.next.startsWith("/") ? data.next : "/checklist/thank-you";

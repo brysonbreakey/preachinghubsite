@@ -69,7 +69,8 @@ export async function POST(req: NextRequest) {
         console.error("checklist-signup: regular-preacher tag failed", err);
       }
     }
-    return NextResponse.json({ ok: true, next });
+    // Not a new lead, so not a new conversion to report to Meta.
+    return NextResponse.json({ ok: true, next, qualified: false });
   }
 
   // Generate the public lead token separately from any database id, and
@@ -126,5 +127,6 @@ export async function POST(req: NextRequest) {
     upsertChecklistContact({ phone, firstName, lastName, email, checklistLink })
   );
 
-  return NextResponse.json({ ok: true, next });
+  // qualified: a NEW lead who preaches most weeks. The thank-you page uses it to fire Meta's Lead event.
+  return NextResponse.json({ ok: true, next, qualified: frequency === "most_weeks" });
 }

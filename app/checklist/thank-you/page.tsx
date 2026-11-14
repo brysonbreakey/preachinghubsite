@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { MetaPixel } from "@/components/MetaPixel";
+import { MetaLeadEvent } from "@/components/MetaLeadEvent";
 import { ChallengeRoute } from "@/components/challenge/ChallengeRoute";
 
 // Same pixel ID as every earlier version of this page: the ID and the URL (/checklist/thank-you)
@@ -22,6 +23,7 @@ export default function Page({ searchParams }: { searchParams: Promise<{ now?: s
   return (
     <>
       <MetaPixel pixelId={FB_PIXEL_ID} />
+      <MetaLeadEvent />
       <ChallengeRoute variant="thank-you" searchParams={searchParams} />
     </>
   );

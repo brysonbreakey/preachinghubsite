@@ -42,29 +42,29 @@ describe("/api/checklist-signup: How often do you preach?", () => {
 
   it("most weeks: tagged regular-preacher, sent to the thank-you page", async () => {
     const r = await post({ preach_frequency: "most_weeks" });
-    expect(r.body).toEqual({ ok: true, next: "/checklist/thank-you" });
+    expect(r.body).toEqual({ ok: true, next: "/checklist/thank-you", qualified: true });
     expect(addChecklistContact).toHaveBeenCalledWith(expect.objectContaining({ email: "ann@church.org", regularPreacher: true }));
   });
   it("monthly and occasionally: not tagged, sent to /challenge with the checklist bar", async () => {
     for (const f of ["monthly", "occasionally"]) {
       addChecklistContact.mockClear();
       const r = await post({ preach_frequency: f });
-      expect(r.body).toEqual({ ok: true, next: "/challenge?from=checklist" });
+      expect(r.body).toEqual({ ok: true, next: "/challenge?from=checklist", qualified: false });
       expect(addChecklistContact).toHaveBeenCalledWith(expect.objectContaining({ regularPreacher: false }));
     }
   });
   it("no answer (old cached form): the old behavior, no regular-preacher tag", async () => {
     const r = await post();
-    expect(r.body).toEqual({ ok: true, next: "/checklist/thank-you" });
+    expect(r.body).toEqual({ ok: true, next: "/checklist/thank-you", qualified: false });
     expect(addChecklistContact).toHaveBeenCalledWith(expect.objectContaining({ regularPreacher: false }));
   });
   it("a repeat signup within 24 hours: no second row or Kit signup, but still routed, and tagged if most weeks", async () => {
     recentLead = { id: "x" };
     const a = await post({ preach_frequency: "most_weeks" });
-    expect(a.body).toEqual({ ok: true, next: "/checklist/thank-you" });
+    expect(a.body).toEqual({ ok: true, next: "/checklist/thank-you", qualified: false }); // not a new lead: no second Meta conversion
     expect(tagRegularPreacher).toHaveBeenCalledTimes(1);
     const b = await post({ preach_frequency: "monthly" });
-    expect(b.body).toEqual({ ok: true, next: "/challenge?from=checklist" });
+    expect(b.body).toEqual({ ok: true, next: "/challenge?from=checklist", qualified: false });
     expect(tagRegularPreacher).toHaveBeenCalledTimes(1);
     expect(addChecklistContact).not.toHaveBeenCalled();
     expect(insert).not.toHaveBeenCalled();
