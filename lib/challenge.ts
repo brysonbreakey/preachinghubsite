@@ -21,6 +21,13 @@ export const CHALLENGE_START_DATE_LABEL = new Intl.DateTimeFormat("en-CA", {
  *  1:00 PM Central, the same moment as CHALLENGE_KICKOFF; change both for a new cohort. */
 export const CHALLENGE_START_TIME_LABEL = "1PM";
 
+/** What the kickoff call is, for the calendar event and the kickoff page. These stay the same from
+ *  cohort to cohort (the day and time are CHALLENGE_KICKOFF above). The call link can be changed
+ *  per run in the admin Challenge Tracker; this is the default when none is set. */
+export const CHALLENGE_KICKOFF_TITLE = "7-Day Preaching Growth Challenge Kickoff";
+export const CHALLENGE_KICKOFF_MINUTES = 45;
+export const CHALLENGE_MEET_URL_DEFAULT = "https://meet.google.com/duy-uura-vdt";
+
 /** Enrollment closes at 11:59 PM CST on November 17 (the kickoff day): the instant below is the
  *  first moment of November 18. After this, signups are waitlist signups. */
 export const CHALLENGE_CLOSES = Date.parse("2026-11-18T06:00:00Z");

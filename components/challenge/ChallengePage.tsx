@@ -8,6 +8,7 @@ import { PHMark } from "@/components/Logo";
 import { BRENT_GARRARD } from "@/lib/testimonials";
 import { CHALLENGE_PASS_END_LABEL, challengePhase, formatCountdown } from "@/lib/challenge";
 import { ChallengeSignupModal } from "./ChallengeSignupModal";
+import type { KickoffCalendar } from "@/lib/challengeRun";
 
 // The 7-Day Preaching Growth Challenge landing page (cohort 2: November 17-23, 2026, free, no card required).
 // Same look as the 30-Day Preaching Growth Accelerator page (components/accelerator/AcceleratorPage.tsx).
@@ -100,7 +101,7 @@ const FAQ = [
 // challenge as the next step after the checklist.
 export type ChallengeVariant = "landing" | "thank-you";
 
-export function ChallengePage({ initialNow, variant = "landing", fromChecklist = false }: { initialNow: number; variant?: ChallengeVariant; fromChecklist?: boolean }) {
+export function ChallengePage({ initialNow, variant = "landing", fromChecklist = false, calendar }: { initialNow: number; variant?: ChallengeVariant; fromChecklist?: boolean; calendar?: KickoffCalendar }) {
   const [modalOpen, setModalOpen] = useState(false);
 
   // The page knows the time the server rendered it at (so a visitor never sees the wrong state
@@ -136,7 +137,7 @@ export function ChallengePage({ initialNow, variant = "landing", fromChecklist =
   return (
     <main className="font-[family-name:var(--font-jakarta)] bg-white text-[#0F172A] overflow-x-hidden antialiased">
       <style>{`@keyframes acc-fade-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } } .acc-fade-in { animation: acc-fade-in 0.8s ease-out; }`}</style>
-      {modalOpen && <ChallengeSignupModal phase={phase} onClose={() => setModalOpen(false)} />}
+      {modalOpen && <ChallengeSignupModal phase={phase} calendar={calendar} onClose={() => setModalOpen(false)} />}
 
       {(variant === "thank-you" || fromChecklist) && (
         // Top bar: same as the one the accelerator version of this page has. Also shown on /challenge

@@ -3,6 +3,10 @@
 import { useEffect, useRef, useState } from "react";
 import posthog from "posthog-js";
 import { SmsConsentNotice } from "@/components/SmsConsentNotice";
+import { Icon } from "@/components/Icon";
+import { KickoffCalendarButtons } from "@/components/challenge/KickoffCalendarButtons";
+import { CHALLENGE_TRACKS, type ChallengeTrack } from "@/lib/challengeTracks";
+import type { KickoffCalendar } from "@/lib/challengeRun";
 import type { ChallengePhase } from "@/lib/challenge";
 import { APP_URL } from "@/lib/urls";
 
@@ -27,11 +31,12 @@ function formatPhone(value: string): string {
 // confirmation right in the popup. The server (/api/challenge-signup) adds them to Kit: tagged
 // 7-day-challenge (with their personal access link, emailed by Kit) until enrollment closes, and
 // 7-day-challenge-waitlist after. The server decides which, so the confirmation follows its answer.
-// Joining before enrollment closes continues to a second step in the same popup: pick a password
+// Joining before enrollment closes continues in the same popup: 1) choose a growth track (saved to
+// Kit as a tag), 2) add the kickoff call to a calendar, 3) pick a password
 // and get a PreachingHub account on the spot, signed in and sent to the pre-challenge homework (the
 // app's /evaluate). An email that already has an account is sent to sign in instead; "later" falls
 // back to the emailed access link.
-export function ChallengeSignupModal({ phase, onClose }: { phase: ChallengePhase; onClose: () => void }) {
+export function ChallengeSignupModal({ phase, calendar, onClose }: { phase: ChallengePhase; calendar?: KickoffCalendar; onClose: () => void }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -42,6 +47,7 @@ export function ChallengeSignupModal({ phase, onClose }: { phase: ChallengePhase
   const [account, setAccount] = useState<"create" | "creating" | "existing" | "later">("create");
   const [password, setPassword] = useState("");
   const [accountError, setAccountError] = useState("");
+  const [joinStep, setJoinStep] = useState<"track" | "calendar" | "account">("track");
   const waitlistView = result ? result === "waitlist" : phase === "closed";
   const nameRef = useRef<HTMLInputElement>(null);
 
@@ -91,6 +97,18 @@ export function ChallengeSignupModal({ phase, onClose }: { phase: ChallengePhase
     }
   }
 
+  // Step 1 after joining. Saved in the background (it never holds up the next step).
+  function chooseTrack(track: ChallengeTrack) {
+    posthog.capture("challenge_track_chosen", { track });
+    fetch("/api/challenge-track", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ claim, track }),
+      keepalive: true,
+    }).catch(() => {});
+    setJoinStep(calendar ? "calendar" : "account");
+  }
+
   async function handleCreateAccount(e: React.FormEvent) {
     e.preventDefault();
     if (!claim) return;
@@ -123,8 +141,11 @@ export function ChallengeSignupModal({ phase, onClose }: { phase: ChallengePhase
     }
   }
 
-  // After joining, before enrollment closes: step 2 of the popup.
-  const accountStep = status === "done" && result === "joined" && !!claim && account !== "later";
+  // After joining, before enrollment closes: track, then calendar, then the account.
+  const joinedFlow = status === "done" && result === "joined" && !!claim;
+  const trackStep = joinedFlow && joinStep === "track";
+  const calendarStep = joinedFlow && joinStep === "calendar" && !!calendar;
+  const accountStep = joinedFlow && (joinStep === "account" || (joinStep === "calendar" && !calendar)) && account !== "later";
 
   return (
     <div
@@ -136,7 +157,52 @@ export function ChallengeSignupModal({ phase, onClose }: { phase: ChallengePhase
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M18 6 6 18M6 6l12 12" /></svg>
         </button>
 
-        {accountStep ? (
+        {trackStep ? (
+          <div className="py-1 text-center">
+            <p className="mb-2 text-[11px] font-black uppercase tracking-widest text-emerald-600">You&apos;re in! Two quick steps</p>
+            <h2 id="challenge-signup-title" className="mb-2 px-3 text-2xl font-extrabold leading-tight tracking-tight text-slate-900">
+              Where do you most want to grow in your preaching?
+            </h2>
+            <p className="mb-5 text-sm leading-relaxed text-slate-500">Pick one. It shapes the exercises you&apos;ll do this week.</p>
+            <div className="space-y-2.5 text-left">
+              {CHALLENGE_TRACKS.map((t) => (
+                <button
+                  key={t.value}
+                  type="button"
+                  onClick={() => chooseTrack(t.value)}
+                  className="flex w-full items-start gap-3.5 rounded-2xl border border-slate-200 bg-white px-4 py-3.5 text-left transition-colors hover:border-[#4F46E5] hover:bg-indigo-50"
+                >
+                  <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-[#4F46E5]">
+                    <Icon d={typeof t.icon === "string" ? t.icon : [...t.icon]} size={20} strokeWidth={2} />
+                  </span>
+                  <span>
+                    <span className="block text-sm font-black uppercase tracking-widest text-[#4F46E5]">{t.label}</span>
+                    <span className="mt-0.5 block text-sm font-medium leading-snug text-slate-600">{t.blurb}</span>
+                  </span>
+                </button>
+              ))}
+            </div>
+            <button type="button" onClick={() => chooseTrack("not_sure")} className="mt-4 text-sm font-medium text-slate-400 hover:text-slate-600">
+              I&apos;m not sure yet
+            </button>
+          </div>
+        ) : calendarStep && calendar ? (
+          <div className="py-1 text-center">
+            <h2 id="challenge-signup-title" className="mb-2 px-5 text-2xl font-extrabold leading-tight tracking-tight text-slate-900">
+              Add the kickoff call to your calendar
+            </h2>
+            <p className="text-base font-bold text-slate-900">{calendar.whenLabel}</p>
+            <p className="mb-5 mt-1 text-sm text-slate-500">Online, on Google Meet. Your calendar shows it in your own time zone.</p>
+            <KickoffCalendarButtons calendar={calendar} source="signup_popup" />
+            <button
+              type="button"
+              onClick={() => { posthog.capture("challenge_calendar_continue"); setJoinStep("account"); }}
+              className="mt-5 w-full rounded-2xl bg-[#4F46E5] py-4 text-sm font-black uppercase tracking-widest transition-colors hover:bg-indigo-600 [color:#fff]"
+            >
+              Continue to my homework
+            </button>
+          </div>
+        ) : accountStep ? (
           <div className="text-center py-2">
             <p className="text-5xl mb-4">🎉</p>
             {account === "existing" ? (

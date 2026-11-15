@@ -28,7 +28,7 @@ async function kitFetch(path: string, init: RequestInit, retries429 = 0): Promis
       ...init,
       headers: { ...kitHeaders(), ...(init.headers as Record<string, string> | undefined) },
     })
-    if (res.ok) return res.json()
+    if (res.ok) return res.status === 204 ? null : res.json()
     if (res.status === 429 && attempt < retries429) {
       const retryAfter = Number(res.headers.get('retry-after'))
       await sleep(Math.min(Number.isFinite(retryAfter) && retryAfter > 0 ? retryAfter * 1000 : 2000 * 2 ** attempt, 60_000))
@@ -134,6 +134,42 @@ export async function addChecklistContact({
     tags: regularPreacher ? ['checklist', 'regular-preacher'] : ['checklist'],
     fields: Object.keys(fields).length ? fields : undefined,
   })
+}
+
+const TRACK_TAGS: Record<'clarity' | 'content' | 'creativity', { name: string; id: number }> = {
+  clarity: { name: 'challenge-clarity', id: 25492707 },
+  content: { name: 'challenge-content', id: 25492706 },
+  creativity: { name: 'challenge-creativity', id: 25492708 },
+}
+const TRACK_FIELD_LABEL = { clarity: 'Clarity', content: 'Content', creativity: 'Creativity', not_sure: 'Not sure yet' } as const
+
+/**
+ * Saves the track someone chose for the challenge: the Kit tag challenge-clarity / -content /
+ * -creativity (and removes the other two, so a person has exactly one) and the `challenge_track`
+ * custom field ("Clarity", "Content", "Creativity" or "Not sure yet") for email merge tags.
+ * "Not sure yet" adds no tag.
+ */
+export async function setChallengeTrack({
+  email,
+  firstName,
+  track,
+}: {
+  email: string
+  firstName?: string
+  track: 'clarity' | 'content' | 'creativity' | 'not_sure'
+}): Promise<void> {
+  const subscriberId = await upsertSubscriber({ email, firstName, fields: { challenge_track: TRACK_FIELD_LABEL[track] } })
+  for (const [key, tag] of Object.entries(TRACK_TAGS)) {
+    if (key === track) continue
+    try {
+      await kitFetch(`/tags/${tag.id}/subscribers/${subscriberId}`, { method: 'DELETE' })
+    } catch (err) {
+      if (!(err instanceof KitHttpError && err.status === 404)) throw err // 404: they didn't have that tag
+    }
+  }
+  if (track !== 'not_sure') {
+    await applyTag(await findOrCreateTag(TRACK_TAGS[track].name), subscriberId)
+  }
 }
 
 /** Tags an existing/new Kit contact "regular-preacher" (they preach most weeks). */

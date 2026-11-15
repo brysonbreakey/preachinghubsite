@@ -1,6 +1,7 @@
 import { Plus_Jakarta_Sans, Lora } from "next/font/google";
 import { ChallengePage, type ChallengeVariant } from "@/components/challenge/ChallengePage";
 import { serverNow } from "@/lib/challenge";
+import { getKickoffCalendar } from "@/lib/challengeRun";
 
 const jakarta = Plus_Jakarta_Sans({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"], variable: "--font-jakarta" });
 const lora = Lora({ subsets: ["latin"], style: ["normal", "italic"], variable: "--font-lora" });
@@ -10,9 +11,10 @@ const lora = Lora({ subsets: ["latin"], style: ["normal", "italic"], variable: "
 // own metadata and `dynamic = "force-dynamic"` (enrollment closes at a set time, so never cache).
 export async function ChallengeRoute({ variant, searchParams }: { variant: ChallengeVariant; searchParams: Promise<{ now?: string; from?: string }> }) {
   const { now, from } = await searchParams; // ?now=<ISO time> fakes the clock when testing locally only
+  const calendar = await getKickoffCalendar(); // the kickoff call's calendar links (call link from the admin, or the default)
   return (
     <div className={`${jakarta.variable} ${lora.variable}`}>
-      <ChallengePage initialNow={serverNow(now)} variant={variant} fromChecklist={from === "checklist"} />
+      <ChallengePage initialNow={serverNow(now)} variant={variant} fromChecklist={from === "checklist"} calendar={calendar} />
     </div>
   );
 }
