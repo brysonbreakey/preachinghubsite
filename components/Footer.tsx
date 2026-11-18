@@ -9,7 +9,7 @@ export function Footer() {
           <PHLogoGray height={22} />
           <div className="flex flex-wrap items-center gap-6 text-sm font-medium" style={{ color: "#9CA3AF" }}>
             <a href={`${APP_URL}/auth/login`} className="hover:text-white transition-colors">Sign in</a>
-            <a href={SIGNUP_URL} className="hover:text-white transition-colors">Start Free Trial</a>
+            <a href={SIGNUP_URL} className="hover:text-white transition-colors">Try Free for 14 Days</a>
             <a href="/pricing" className="hover:text-white transition-colors">Pricing</a>
             <a href="/teams" className="hover:text-white transition-colors">Teams</a>
             <a href="mailto:support@preachinghub.com" className="hover:text-white transition-colors">Support</a>

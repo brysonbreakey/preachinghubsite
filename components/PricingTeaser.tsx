@@ -7,6 +7,7 @@ import { FeatureList } from "@/components/FeatureList";
 import { PLAN_FEATURES } from "@/lib/planFeatures";
 import { BillingToggle } from "@/components/BillingToggle";
 import { PLAN_PRICING, type Billing } from "@/lib/pricing";
+import { TrialDisclosure, TRIAL_CTA_LABEL } from "@/components/TrialDisclosure";
 
 const NAVY = "#3760ad";
 
@@ -32,14 +33,14 @@ export function PricingTeaser() {
         <FeatureList features={HIGHLIGHTS} columns={2} className="mb-10 max-w-md mx-auto" />
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
           <a href={SIGNUP_URL} className="cta-btn w-full sm:w-auto inline-flex items-center justify-center gap-2 text-white font-semibold px-7 py-4 rounded-full text-base shadow-lg" style={{ backgroundColor: NAVY }}>
-            Start Your Free Trial
+            {TRIAL_CTA_LABEL}
             <Icon d="M5 12h14M12 5l7 7-7 7" size={16} color="white" strokeWidth={2.5} />
           </a>
           <a href="/pricing" className="w-full sm:w-auto inline-flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900 border border-slate-300 hover:border-slate-400 font-semibold px-7 py-4 rounded-full text-base transition-colors">
             See full plan details
           </a>
         </div>
-        <p className="text-xs text-slate-400 mt-5">7-day free trial. Start free, cancel anytime.</p>
+        <TrialDisclosure className="text-xs text-slate-500 mt-5" />
       </div>
     </section>
   );

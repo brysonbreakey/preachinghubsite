@@ -7,6 +7,7 @@ import { PLAN_FEATURES } from "@/lib/planFeatures";
 import { FeatureList } from "@/components/FeatureList";
 import { BillingToggle } from "@/components/BillingToggle";
 import { PLAN_PRICING, type Billing } from "@/lib/pricing";
+import { TrialDisclosure, TRIAL_CTA_LABEL } from "@/components/TrialDisclosure";
 
 const NAVY = "#3760ad";
 
@@ -21,9 +22,9 @@ export function PricingCard() {
         className="w-full inline-flex items-center justify-center gap-2 text-white font-semibold px-6 py-3.5 rounded-xl text-sm transition-colors"
         style={{ backgroundColor: NAVY }}
       >
-        Start Your Free Trial
+        {TRIAL_CTA_LABEL}
       </a>
-      <p className="text-xs text-slate-400 text-center mt-3">7-day free trial. Start free, cancel anytime.</p>
+      <TrialDisclosure className="text-xs text-slate-500 text-center mt-3" />
     </>
   );
 

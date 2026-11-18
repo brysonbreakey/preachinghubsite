@@ -7,6 +7,7 @@ import { PricingTeaser } from "@/components/PricingTeaser";
 import { SampleReportShowcase } from "@/components/SampleReportShowcase";
 import { FeedbackReportMockup } from "@/components/FeedbackReportMockup";
 import { SIGNUP_URL } from "@/lib/urls";
+import { TrialDisclosure, TRIAL_CTA_LABEL } from "@/components/TrialDisclosure";
 
 // ─── Cartoon mockups ──────────────────────────────────────────────────────────
 
@@ -190,21 +191,30 @@ function Hero() {
         <div className="text-center lg:text-left min-w-0">
           <div className="hero-badge inline-flex items-center gap-2 bg-white/10 border border-white/20 backdrop-blur text-white text-xs font-semibold px-3 py-1.5 rounded-full mb-8 uppercase tracking-wide">
             <span className="w-1.5 h-1.5 rounded-full bg-[#FBBF24] inline-block"></span>
-            Start Free. Cancel Anytime.
+            14-Day Free Trial. Cancel Anytime.
           </div>
-          <h1 className="hero-h1 text-5xl sm:text-6xl font-black text-white leading-[1.05] tracking-tight mb-6">
-            What if every sermon was better than your last?
+          <h1 className="hero-h1 font-black text-white uppercase tracking-tight leading-[1.04] mb-6">
+            <span className="block text-2xl sm:text-3xl mb-2">Preach with more</span>
+            <span className="block text-[clamp(2.5rem,11vw,4.25rem)]">clarity,</span>
+            <span className="block text-[clamp(2.5rem,11vw,4.25rem)]">confidence,</span>
+            <span className="block text-[clamp(2.5rem,11vw,4.25rem)] text-[#a99dff]">and impact.</span>
+            <span className="mt-5 inline-block text-base sm:text-lg font-extrabold tracking-[0.35em]">
+              Every week.
+              <svg viewBox="0 0 200 10" preserveAspectRatio="none" className="mt-1.5 block h-2 w-full" aria-hidden="true">
+                <path d="M3 6 Q 60 2 100 5 T 197 4" fill="none" stroke="#a99dff" strokeWidth="3.5" strokeLinecap="round" />
+              </svg>
+            </span>
           </h1>
           <p className="hero-sub text-xl text-blue-100/80 max-w-xl mx-auto lg:mx-0 mb-10 leading-relaxed">
-            PreachingHub gives every preacher what most can only get from an expensive coach &mdash; structured prep from text to pulpit, plus detailed feedback on your content, voice, and delivery for every sermon in minutes.
+            Prepare your sermons, preach with confidence, and get personalized feedback to keep improving every week. All in one place.
           </p>
           <div className="hero-cta flex flex-col items-center lg:items-start">
             <div className="flex flex-col items-center gap-2 w-full sm:w-fit">
               <a href={SIGNUP_URL} className="cta-btn w-full sm:w-auto inline-flex items-center justify-center gap-2 text-[#0b1230] font-bold px-7 py-4 rounded-full text-base shadow-lg bg-white hover:bg-blue-50">
-                Start Your Next Sermon
+                {TRIAL_CTA_LABEL}
                 <Icon d="M5 12h14M12 5l7 7-7 7" size={16} color="#0b1230" strokeWidth={2.5} />
               </a>
-              <p className="text-xs text-blue-100/60">Start Free. Cancel anytime.</p>
+              <TrialDisclosure className="text-xs sm:text-[13px] text-blue-100/75 text-center" />
             </div>
           </div>
         </div>
@@ -563,10 +573,10 @@ function AboutCompany() {
             It won&apos;t generate an outline, write your sermon, or hand you application points. It will coach you into the best preacher you can be. Feedback tool, sermon builder, templates, resource library, idea bank, series builder, sermon organizer, customizable prep process &mdash; everything here is built to take your preaching to a new level.
           </p>
           <a href={SIGNUP_URL} className="inline-flex items-center justify-center gap-2 text-white font-semibold px-6 py-4 rounded-xl text-base transition-colors" style={{ backgroundColor: "#3760ad" }}>
-            Start Your Free Trial
+            {TRIAL_CTA_LABEL}
             <Icon d="M5 12h14M12 5l7 7-7 7" size={16} color="white" strokeWidth={2.5} />
           </a>
-          <p className="text-slate-400 text-xs mt-3">Start free, cancel anytime.</p>
+          <TrialDisclosure className="text-slate-500 text-xs mt-3" />
         </div>
       </div>
     </section>
@@ -588,7 +598,7 @@ function FinalCTA() {
       <div className="relative max-w-2xl mx-auto" data-animate="fade-up">
         <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 backdrop-blur text-white text-xs font-semibold px-3 py-1.5 rounded-full mb-8 uppercase tracking-wide">
           <span className="w-1.5 h-1.5 rounded-full bg-[#FBBF24] inline-block"></span>
-          7-Day Free Trial &middot; Start Free, Cancel Anytime
+          14-Day Free Trial &middot; Cancel Anytime
         </div>
         <h2 className="text-4xl sm:text-5xl font-black text-white leading-[1.05] tracking-tight mb-6">
           Ready to make your next sermon your best one yet?
@@ -597,10 +607,10 @@ function FinalCTA() {
           Join preachers who use PreachingHub to prepare with more clarity, preach with more confidence, and grow every single week.
         </p>
         <a href={SIGNUP_URL} className="cta-btn inline-flex items-center justify-center gap-2 text-[#0b1230] font-bold px-8 py-4 rounded-full text-base shadow-lg bg-white hover:bg-blue-50">
-          Start Your Free Trial
+          {TRIAL_CTA_LABEL}
           <Icon d="M5 12h14M12 5l7 7-7 7" size={16} color="#0b1230" strokeWidth={2.5} />
         </a>
-        <p className="text-blue-100/60 text-xs mt-5">Start free, cancel anytime. $49/month after your 7-day trial.</p>
+        <TrialDisclosure className="text-blue-100/75 text-xs mt-5" />
       </div>
     </section>
   );

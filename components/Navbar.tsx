@@ -48,7 +48,8 @@ export function Navbar() {
         <div className="flex items-center gap-3">
           <a href={`${APP_URL}/auth/login`} className="hidden xl:block text-sm text-slate-600 hover:text-slate-900 transition-colors">Sign in</a>
           <a href={SIGNUP_URL} className="text-xs sm:text-sm bg-[#3760ad] hover:bg-blue-700 text-white font-medium px-3 py-2 sm:px-4 rounded-lg transition-colors whitespace-nowrap">
-            Start Free
+            <span className="sm:hidden">Try Free</span>
+            <span className="hidden sm:inline">Try Free for 14 Days</span>
           </a>
           <button
             type="button"

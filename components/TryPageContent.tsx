@@ -12,6 +12,7 @@ import { Testimonial } from "@/components/Testimonial";
 import { BRENT_GARRARD } from "@/lib/testimonials";
 import { SampleReportModal, type CloseMethod } from "@/components/SampleReportModal";
 import { APP_URL, SIGNUP_URL } from "@/lib/urls";
+import { TrialDisclosure, TRIAL_CTA_LABEL } from "@/components/TrialDisclosure";
 
 type InputType = "video" | "text" | "audio";
 type View = "form" | "processing" | "ineligible";
@@ -542,9 +543,9 @@ export function TryPageContent({
               className="cta-btn w-full inline-flex items-center justify-center gap-2 font-semibold px-6 py-4 rounded-xl text-base text-white mb-4"
               style={{ backgroundColor: "#3760ad" }}
             >
-              Start Your Free Trial →
+              {TRIAL_CTA_LABEL} →
             </a>
-            <p className="text-xs text-slate-400">Start free, cancel anytime. $49/month after your trial.</p>
+            <TrialDisclosure className="text-xs text-slate-500" />
           </div>
         </section>
         <Footer />

@@ -5,7 +5,7 @@ import { PricingCard } from "@/components/PricingCard";
 
 export const metadata: Metadata = {
   title: "Pricing — PreachingHub",
-  description: "One plan for sermon prep, expert feedback, and delivery coaching. Start free for 7 days, cancel anytime.",
+  description: "One plan for sermon prep, expert feedback, and delivery coaching. Try it free for 14 days. Credit card required, cancel anytime.",
 };
 
 function Hero() {
