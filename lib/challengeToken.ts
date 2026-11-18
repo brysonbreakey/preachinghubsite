@@ -1,4 +1,4 @@
-import { createHmac } from "crypto";
+import { createHmac, timingSafeEqual } from "crypto";
 import { CHALLENGE_PASS_UNTIL } from "@/lib/challenge";
 
 // The signed "Open PreachingHub" link for challenge signups. The app (lib/challengeToken.ts there)
@@ -31,7 +31,32 @@ export function createChallengeLink({ email, firstName, lastName }: { email: str
 export function createChallengeClaim({ email, firstName, lastName }: { email: string; firstName?: string; lastName?: string }): string | null {
   const secret = process.env.OFFER_SIGNING_SECRET;
   if (!secret) return null;
-  const payload = b64url(JSON.stringify({ e: email.trim().toLowerCase(), f: firstName ?? "", l: lastName ?? "", x: Date.now() + 60 * 60 * 1000 }));
+  // u: this cohort's pass end, so the app grants the right pass (x here is only the claim's own expiry).
+  const payload = b64url(JSON.stringify({ e: email.trim().toLowerCase(), f: firstName ?? "", l: lastName ?? "", x: Date.now() + 60 * 60 * 1000, u: CHALLENGE_PASS_UNTIL }));
   const sig = createHmac("sha256", secret).update(`challengeclaim:${payload}`).digest("hex");
   return `${payload}.${sig}`;
+}
+
+/**
+ * Checks a "claim" this site handed the browser after a challenge signup (see createChallengeClaim).
+ * It proves the browser that signed up is the one asking, so a later step (choosing a track) can act
+ * on that email without letting anyone tag someone else's address. Null if it isn't one of ours or
+ * has expired (one hour).
+ */
+export function verifyChallengeClaim(token: unknown): { email: string; firstName: string; lastName: string } | null {
+  const secret = process.env.OFFER_SIGNING_SECRET;
+  if (!secret || typeof token !== "string") return null;
+  const [payload, sig] = token.split(".");
+  if (!payload || !sig) return null;
+  const expected = createHmac("sha256", secret).update(`challengeclaim:${payload}`).digest("hex");
+  const a = Buffer.from(sig, "hex");
+  const b = Buffer.from(expected, "hex");
+  if (a.length !== b.length || !timingSafeEqual(a, b)) return null;
+  try {
+    const { e, f, l, x } = JSON.parse(Buffer.from(payload, "base64url").toString("utf8"));
+    if (typeof e !== "string" || !e.includes("@") || typeof x !== "number" || Date.now() > x) return null;
+    return { email: e, firstName: typeof f === "string" ? f : "", lastName: typeof l === "string" ? l : "" };
+  } catch {
+    return null;
+  }
 }

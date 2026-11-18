@@ -32,7 +32,7 @@ export function chicagoHourNow(now: Date = new Date()): number {
 }
 
 /** Days since the epoch for a strict "yyyy-mm-dd" string, or null if it isn't a real date. */
-function dayNumber(value: string | null | undefined): number | null {
+export function dayNumber(value: string | null | undefined): number | null {
   if (typeof value !== "string") return null;
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value.trim());
   if (!m) return null;
@@ -59,4 +59,102 @@ export function computeDaysUntilChallengeStart(
   const now = dayNumber(typeof today === "string" ? today : chicagoToday(today));
   if (start === null || now === null) return null;
   return start - now;
+}
+
+/** The challenge is 7 days long. Cohorts are told apart by their start date (each person carries
+ *  their own `challenge_start_date`), and only a cohort listed here has off days: the November 10
+ *  pilot had Friday and Sunday off (a half day, "3.5", on each). Every other cohort, starting with
+ *  November 17, runs 7 days in a row. A new cohort with days off needs an entry here. 0 = Sunday. */
+export const CHALLENGE_LENGTH_DAYS = 7;
+const COHORT_OFF_WEEKDAYS: Record<string, number[]> = { "2026-11-10": [0, 5] };
+
+export function offWeekdaysFor(startDate: string | null | undefined): number[] {
+  return (startDate && COHORT_OFF_WEEKDAYS[startDate.trim()]) || [];
+}
+
+/**
+ * Which day of the challenge it is, as the text saved in Kit's `challenge_day` field. Only the
+ * person's own start date is read, so every cohort works without any per-cohort setup.
+ *   "0"        before day 1 (including a start date that is still ahead)
+ *   "1".."7"   a working day of the challenge. Day 1 is the start date itself (the kickoff day)
+ *              and each following working day adds one.
+ *   an off day the last working day's number plus .5 ("3.5" on the Friday after day 3), so the
+ *              field changes every day and an automation can send on it
+ *   "done"     every day after the last working day
+ * Returns null when the start date is missing or invalid.
+ */
+export function computeChallengeDay(
+  startDate: string | null | undefined,
+  today: string | Date = new Date(),
+  offWeekdays: number[] = offWeekdaysFor(startDate),
+): string | null {
+  const isOffDay = (dayN: number) => offWeekdays.includes(new Date(dayN * 86_400_000).getUTCDay());
+  const start = dayNumber(startDate);
+  const now = dayNumber(typeof today === "string" ? today : chicagoToday(today));
+  if (start === null || now === null) return null;
+  if (now < start) return "0";
+  let worked = 0;
+  for (let d = start; d <= now; d++) {
+    if (isOffDay(d)) continue;
+    if (worked === CHALLENGE_LENGTH_DAYS) return "done"; // a working day after the last one
+    worked++;
+  }
+  // Only off days remain after the last working day: the challenge is over, not "held".
+  if (worked === CHALLENGE_LENGTH_DAYS) {
+    // an off day after day 7 is done; day 7 itself is "7"
+    return isOffDay(now) ? "done" : String(worked);
+  }
+  if (isOffDay(now)) return worked === 0 ? "0" : `${worked}.5`;
+  return String(worked);
+}
+
+/** When the day number flips, in Chicago time, and an automation sends the moment it changes:
+ *  every day at 9:00 AM, except Day 1 (the kickoff day), which opens at 2:15 PM, after the call. */
+export const CHALLENGE_DAILY_MINUTE = 9 * 60;
+export const CHALLENGE_DAY_ONE_MINUTE = 14 * 60 + 15;
+
+const chicagoMinute = new Intl.DateTimeFormat("en-US", {
+  timeZone: CHICAGO,
+  hour: "numeric",
+  minute: "numeric",
+  hourCycle: "h23",
+});
+
+function chicagoMinuteOfDay(now: Date): number {
+  const parts = chicagoMinute.formatToParts(now);
+  return Number(parts.find((p) => p.type === "hour")!.value) * 60 + Number(parts.find((p) => p.type === "minute")!.value);
+}
+
+/** The date the daily number should be worked out for right now: today once it is past 9:00 AM,
+ *  otherwise yesterday (the number everyone already has). */
+export function challengeDayDate(now: Date = new Date()): string {
+  return chicagoToday(chicagoMinuteOfDay(now) >= CHALLENGE_DAILY_MINUTE ? now : new Date(now.getTime() - 86_400_000));
+}
+
+/**
+ * `challenge_day` for this person at this moment. It is computeChallengeDay for challengeDayDate(),
+ * except that Day 1 stays "0" until 2:15 PM, so nobody gets the Day 1 email before the kickoff
+ * call is over. Anyone who signs up after that moment lands on today's number, and its email,
+ * immediately; a morning signup waits and flips with everyone else.
+ */
+export function challengeDayFor(startDate: string | null | undefined, now: Date = new Date()): string | null {
+  const date = challengeDayDate(now);
+  const value = computeChallengeDay(startDate, date);
+  // Day 1 opens at 2:15 PM on its own date. Before 9 AM the next day date is still Day 1's, and by
+  // then the 2:15 PM moment has long passed, so it only applies while "today" is Day 1.
+  if (value === "1" && date === chicagoToday(now) && chicagoMinuteOfDay(now) < CHALLENGE_DAY_ONE_MINUTE) return "0";
+  return value;
+}
+
+/** When `days_until_challenge_start` counts down, in Chicago time: every day at 11:00 AM (it triggers
+ *  emails, so it is set to a sensible hour). Before then the number is still yesterday's. */
+export const CHALLENGE_COUNTDOWN_MINUTE = 11 * 60;
+
+/**
+ * The date `days_until_challenge_start` should be worked out for right now: today once it is past
+ * 11:00 AM, otherwise yesterday (the number everyone already has). The daily job and the signup
+ * both use it, so someone who signs up at 8 AM gets the same number as everyone else, not tomorrow's.
+ */
+export function countdownDate(now: Date = new Date()): string {
+  return chicagoToday(chicagoMinuteOfDay(now) >= CHALLENGE_COUNTDOWN_MINUTE ? now : new Date(now.getTime() - 86_400_000));
 }

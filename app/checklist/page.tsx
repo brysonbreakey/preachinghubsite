@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import posthog from "posthog-js";
 import { PHMark } from "@/components/Logo";
 import { SmsConsentNotice } from "@/components/SmsConsentNotice";
+import { PREACH_FREQUENCIES, type PreachFrequency } from "@/lib/preachFrequency";
+import { markQualifiedLead } from "@/lib/metaLead";
 
 const INDIGO = "#4F46E5";
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -25,6 +27,7 @@ export default function ChecklistPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [frequency, setFrequency] = useState<PreachFrequency | "">("");
   const [src, setSrc] = useState<string | undefined>(undefined);
   const [status, setStatus] = useState<"form" | "loading" | "error">("form");
   const [errorMessage, setErrorMessage] = useState("");
@@ -54,6 +57,12 @@ export default function ChecklistPage() {
       return;
     }
 
+    if (!frequency) {
+      setStatus("error");
+      setErrorMessage("Choose how often you preach.");
+      return;
+    }
+
     setStatus("loading");
     const { firstName, lastName } = splitName(name);
     try {
@@ -65,6 +74,7 @@ export default function ChecklistPage() {
           last_name: lastName,
           email: email.trim(),
           phone: phone.trim(),
+          preach_frequency: frequency,
           src,
         }),
       });
@@ -72,7 +82,7 @@ export default function ChecklistPage() {
       if (!res.ok) {
         throw new Error(data?.error || "submit_failed");
       }
-      posthog.capture("checklist_signup_submitted");
+      posthog.capture("checklist_signup_submitted", { preach_frequency: frequency });
 
       // The checklist is emailed (via Kit) and texted (via SlickText) —
       // this page's job is done, so hand off to the VSL thank-you page.
@@ -87,7 +97,11 @@ export default function ChecklistPage() {
       } catch {
         // Best-effort only — worst case the form just isn't prefilled.
       }
-      window.location.href = "/checklist/thank-you";
+      // A new lead who preaches most weeks: have the thank-you page fire Meta's Lead event.
+      if (data?.qualified === true) markQualifiedLead(window.sessionStorage);
+      // Most weeks go to the thank-you page (Meta Pixel + the challenge); everyone else goes to the
+      // challenge page with a "your checklist is on its way" bar. The server decides which.
+      window.location.href = typeof data?.next === "string" && data.next.startsWith("/") ? data.next : "/checklist/thank-you";
     } catch (err) {
       setStatus("error");
       setErrorMessage(
@@ -99,7 +113,7 @@ export default function ChecklistPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-50 flex flex-col">
+    <main className="min-h-screen bg-slate-50 flex flex-col font-[family-name:var(--font-inter)]">
       <div className="flex-1 flex items-center justify-center px-6 py-10 sm:py-16">
         <div className="w-full max-w-md lg:max-w-4xl">
           <div className="flex justify-center mb-6 lg:hidden">
@@ -162,12 +176,33 @@ export default function ChecklistPage() {
                     inputMode="numeric"
                     value={phone}
                     onChange={(e) => setPhone(formatPhone(e.target.value))}
-                    placeholder="Phone number"
+                    placeholder="Mobile (for the phone version)"
+                    aria-label="Mobile phone number"
                     className={`w-full rounded-lg border px-3.5 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#4F46E5] ${
                       status === "error" ? "border-red-300" : "border-slate-300 focus:border-[#4F46E5]"
                     }`}
                   />
-                  <p className="text-xs text-slate-600 -mt-1.5">We&apos;ll send the interactive mobile version to your phone 📲</p>
+                  {/* "How often do you preach?" Required. Plain radio buttons, no boxes, kept tight. */}
+                  <fieldset className="pt-1">
+                    <legend className={`mb-1.5 text-sm font-semibold ${status === "error" && !frequency ? "text-red-600" : "text-slate-800"}`}>
+                      How often do you preach?
+                    </legend>
+                    <div className="space-y-0.5">
+                      {PREACH_FREQUENCIES.map((f) => (
+                        <label key={f.value} className="flex cursor-pointer items-center gap-2.5 py-1 text-sm text-slate-800">
+                          <input
+                            type="radio"
+                            name="preach_frequency"
+                            value={f.value}
+                            checked={frequency === f.value}
+                            onChange={() => setFrequency(f.value)}
+                            className="h-4 w-4 accent-[#4F46E5]"
+                          />
+                          {f.label}
+                        </label>
+                      ))}
+                    </div>
+                  </fieldset>
                   {status === "error" && (
                     <p className="text-xs text-red-600">{errorMessage}</p>
                   )}
@@ -180,21 +215,17 @@ export default function ChecklistPage() {
                     {status === "loading" ? "Sending..." : "Get the Checklist"}
                   </button>
                 </form>
-                <p className="text-xs text-slate-400 text-center mt-4">
-                  We&apos;ll only email you about preaching.
-                  <br />
-                  Unsubscribe any time.
-                </p>
               </div>
-              <SmsConsentNotice buttonLabel="Get the Checklist" className="mt-4 px-2" />
+              {/* One combined fine print below the card: the email promise, then the (required) text-message consent. */}
+              <SmsConsentNotice
+                buttonLabel="Get the Checklist"
+                lead="We'll only email you about preaching. Unsubscribe any time."
+                className="mt-4 px-2 text-center"
+              />
               </div>
           </div>
         </div>
       </div>
-
-      <p className="text-center text-sm italic text-slate-400 pb-8 px-6">
-        We don&apos;t write sermons. We build preachers.
-      </p>
     </main>
   );
 }

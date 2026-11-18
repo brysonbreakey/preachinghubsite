@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { MetaPixel } from "@/components/MetaPixel";
+import { MetaLeadEvent } from "@/components/MetaLeadEvent";
 import { ChallengeRoute } from "@/components/challenge/ChallengeRoute";
 
 // Same pixel ID as every earlier version of this page: the ID and the URL (/checklist/thank-you)
@@ -9,7 +10,7 @@ const FB_PIXEL_ID = "1749227409631509";
 
 // A thank-you page shouldn't be searchable; the same offer lives at /challenge for search.
 export const metadata: Metadata = {
-  title: "Free 7-Day Preaching Growth Challenge — PreachingHub",
+  title: "7-Day Preaching Growth Challenge — PreachingHub",
   robots: { index: false, follow: false },
 };
 
@@ -18,10 +19,11 @@ export const metadata: Metadata = {
 // (confirmed via a real PostHog recording), so never serve a cached copy.
 export const dynamic = "force-dynamic";
 
-export default function Page({ searchParams }: { searchParams: Promise<{ now?: string }> }) {
+export default function Page({ searchParams }: { searchParams: Promise<{ now?: string; from?: string }> }) {
   return (
     <>
       <MetaPixel pixelId={FB_PIXEL_ID} />
+      <MetaLeadEvent />
       <ChallengeRoute variant="thank-you" searchParams={searchParams} />
     </>
   );

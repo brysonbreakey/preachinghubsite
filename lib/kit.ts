@@ -1,5 +1,5 @@
-import { CHALLENGE_START_DATE_LABEL } from '@/lib/challenge'
-import { MIN_COUNTDOWN_DAY, chicagoToday, computeDaysUntilChallengeStart } from '@/lib/startCountdown'
+import { CHALLENGE_PASS_END_LABEL, CHALLENGE_START_DATE_LABEL, CHALLENGE_START_TIME_LABEL } from '@/lib/challenge'
+import { MIN_COUNTDOWN_DAY, countdownDate, challengeDayFor, computeDaysUntilChallengeStart } from '@/lib/startCountdown'
 const KIT_API_BASE = 'https://api.kit.com/v4'
 
 function kitHeaders(): Record<string, string> {
@@ -28,7 +28,7 @@ async function kitFetch(path: string, init: RequestInit, retries429 = 0): Promis
       ...init,
       headers: { ...kitHeaders(), ...(init.headers as Record<string, string> | undefined) },
     })
-    if (res.ok) return res.json()
+    if (res.ok) return res.status === 204 ? null : res.json()
     if (res.status === 429 && attempt < retries429) {
       const retryAfter = Number(res.headers.get('retry-after'))
       await sleep(Math.min(Number.isFinite(retryAfter) && retryAfter > 0 ? retryAfter * 1000 : 2000 * 2 ** attempt, 60_000))
@@ -107,12 +107,15 @@ export async function addChecklistContact({
   lastName,
   offerLink,
   phone,
+  regularPreacher,
 }: {
   email: string
   firstName?: string
   lastName?: string
   offerLink?: string
   phone?: string
+  /** They said they preach most weeks: also tagged "regular-preacher". */
+  regularPreacher?: boolean
 }): Promise<void> {
   // offer_link is a Kit custom field, referenced in a follow-up email as
   // {{ subscriber.offer_link }} so the button always points at the exact same
@@ -128,9 +131,50 @@ export async function addChecklistContact({
   await upsertContact({
     email,
     firstName,
-    tags: ['checklist'],
+    tags: regularPreacher ? ['checklist', 'regular-preacher'] : ['checklist'],
     fields: Object.keys(fields).length ? fields : undefined,
   })
+}
+
+const TRACK_TAGS: Record<'clarity' | 'content' | 'creativity', { name: string; id: number }> = {
+  clarity: { name: 'challenge-clarity', id: 25492707 },
+  content: { name: 'challenge-content', id: 25492706 },
+  creativity: { name: 'challenge-creativity', id: 25492708 },
+}
+const TRACK_FIELD_LABEL = { clarity: 'Clarity', content: 'Content', creativity: 'Creativity', not_sure: 'Not sure yet' } as const
+
+/**
+ * Saves the track someone chose for the challenge: the Kit tag challenge-clarity / -content /
+ * -creativity (and removes the other two, so a person has exactly one) and the `challenge_track`
+ * custom field ("Clarity", "Content", "Creativity" or "Not sure yet") for email merge tags.
+ * "Not sure yet" adds no tag.
+ */
+export async function setChallengeTrack({
+  email,
+  firstName,
+  track,
+}: {
+  email: string
+  firstName?: string
+  track: 'clarity' | 'content' | 'creativity' | 'not_sure'
+}): Promise<void> {
+  const subscriberId = await upsertSubscriber({ email, firstName, fields: { challenge_track: TRACK_FIELD_LABEL[track] } })
+  for (const [key, tag] of Object.entries(TRACK_TAGS)) {
+    if (key === track) continue
+    try {
+      await kitFetch(`/tags/${tag.id}/subscribers/${subscriberId}`, { method: 'DELETE' })
+    } catch (err) {
+      if (!(err instanceof KitHttpError && err.status === 404)) throw err // 404: they didn't have that tag
+    }
+  }
+  if (track !== 'not_sure') {
+    await applyTag(await findOrCreateTag(TRACK_TAGS[track].name), subscriberId)
+  }
+}
+
+/** Tags an existing/new Kit contact "regular-preacher" (they preach most weeks). */
+export async function tagRegularPreacher({ email, firstName }: { email: string; firstName?: string }): Promise<void> {
+  await upsertContact({ email, firstName, tags: ['regular-preacher'] })
 }
 
 /**
@@ -157,18 +201,26 @@ export async function addSevenDayChallengeContact({
   if (lastName) base.last_name = lastName
   if (phone) base.mobile_phone = phone
   // challenge_start_date is this cohort's kickoff day, so welcome emails can say when it starts.
-  const full: Record<string, string> = { ...base, challenge_start_date: CHALLENGE_START_DATE_LABEL }
+  const full: Record<string, string> = {
+    ...base,
+    challenge_start_date: CHALLENGE_START_DATE_LABEL,
+    challenge_pass_end: CHALLENGE_PASS_END_LABEL,
+    challenge_start_time: CHALLENGE_START_TIME_LABEL,
+  }
   if (challengeLink) full.challenge_link = challengeLink
   // Late joiners land on the right countdown day right away instead of waiting for the daily job.
-  const days = computeDaysUntilChallengeStart(CHALLENGE_START_DATE_LABEL, chicagoToday())
+  const days = computeDaysUntilChallengeStart(CHALLENGE_START_DATE_LABEL, countdownDate())
   if (days !== null && days >= MIN_COUNTDOWN_DAY) full.days_until_challenge_start = String(days)
+  // Same for challenge_day, so someone from an earlier cohort who signs up again isn't left on "done".
+  const day = challengeDayFor(CHALLENGE_START_DATE_LABEL)
+  if (day !== null) full.challenge_day = day
   const toFields = (f: Record<string, string>) => (Object.keys(f).length ? f : undefined)
   try {
     await upsertContact({ email, firstName, tags: ['7-day-challenge'], fields: toFields(full) })
   } catch (err) {
     // If challenge_link or challenge_start_date hasn't been created in Kit yet, the signup must
     // still go through (and be tagged): retry without them and say so loudly in the logs.
-    console.error('kit: challenge signup failed; retrying without its custom fields (are challenge_link, challenge_start_date and days_until_challenge_start created in Kit?)', err)
+    console.error('kit: challenge signup failed; retrying without its custom fields (are challenge_link, challenge_start_date, challenge_start_time, challenge_pass_end, days_until_challenge_start and challenge_day created in Kit?)', err)
     await upsertContact({ email, firstName, tags: ['7-day-challenge'], fields: toFields(base) })
   }
 }

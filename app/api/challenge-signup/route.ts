@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { resolveMx } from "dns/promises";
 import { waitUntil } from "@vercel/functions";
 import { addSevenDayChallengeContact, addSevenDayChallengeWaitlistContact } from "@/lib/kit";
-import { challengePhase, serverNow } from "@/lib/challenge";
+import { CHALLENGE_START_DATE_LABEL, challengePhase, serverNow } from "@/lib/challenge";
 import { createChallengeLink, createChallengeClaim } from "@/lib/challengeToken";
 import { supabaseAdmin } from "@/lib/supabase";
 
@@ -20,7 +20,7 @@ async function hasMailServer(email: string): Promise<boolean> {
 
 // Signup for the Free 7-Day Preaching Growth Challenge. Same validation as /api/checklist-signup.
 // The SERVER decides what the signup is, from the clock (lib/challenge.ts), never the browser:
-//  - until enrollment closes (midnight CST on November 10): tagged "7-day-challenge", with their
+//  - until enrollment closes (11:59 PM CST on November 17): tagged "7-day-challenge", with their
 //    personal signed PreachingHub access link saved to Kit's challenge_link field for the welcome
 //    email (the link is never returned here: it must only reach the owner of that mailbox);
 //  - after: tagged "7-day-challenge-waitlist", no link.
@@ -58,36 +58,40 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Something went wrong on our end. Please try again." }, { status: 500 });
   }
 
-  // Auto-add to the active challenge run (non-waitlist only, best-effort).
+  // Add them to this cohort's run on the admin console (non-waitlist only, best-effort). The run is
+  // found by its start date (the same date saved to Kit), not by which run is marked "active", so a
+  // signup can never land in the wrong cohort. If no run has this start date it is logged.
   if (!waitlist) {
     waitUntil(
       (async () => {
         try {
-          const { data: activeRun } = await supabaseAdmin()
-            .from('challenge_runs')
-            .select('id')
-            .eq('is_active', true)
-            .maybeSingle()
-          if (activeRun?.id) {
-            await supabaseAdmin()
-              .from('challenge_participants')
-              .upsert(
-                {
-                  challenge_run_id: activeRun.id,
-                  email: email.toLowerCase(),
-                  first_name: firstName || null,
-                  last_name: lastName || null,
-                  phone: phone || null,
-                  signed_up_at: new Date().toISOString(),
-                },
-                { onConflict: 'challenge_run_id,email', ignoreDuplicates: true }
-              )
+          const { data: run } = await supabaseAdmin()
+            .from("challenge_runs")
+            .select("id")
+            .eq("start_date", CHALLENGE_START_DATE_LABEL)
+            .maybeSingle();
+          if (!run?.id) {
+            console.error(`challenge-signup: no challenge_runs row with start_date ${CHALLENGE_START_DATE_LABEL}; ${email} was not added to the admin roster`);
+            return;
           }
+          await supabaseAdmin()
+            .from("challenge_participants")
+            .upsert(
+              {
+                challenge_run_id: run.id,
+                email: email.toLowerCase(),
+                first_name: firstName || null,
+                last_name: lastName || null,
+                phone: phone || null,
+                signed_up_at: new Date().toISOString(),
+              },
+              { onConflict: "challenge_run_id,email", ignoreDuplicates: true },
+            );
         } catch (err) {
-          console.error('challenge-signup: challenge auto-add failed', err)
+          console.error("challenge-signup: roster add failed", err);
         }
-      })()
-    )
+      })(),
+    );
   }
 
   // The popup's second step (create the account right now) needs a short-lived claim; see
