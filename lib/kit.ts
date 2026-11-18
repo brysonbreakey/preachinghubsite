@@ -1,4 +1,4 @@
-import { CHALLENGE_PASS_END_LABEL, CHALLENGE_START_DATE_LABEL, CHALLENGE_START_TIME_LABEL } from '@/lib/challenge'
+import { DEFAULT_COHORT, type PublicCohort } from '@/lib/challengeCohortCore'
 import { MIN_COUNTDOWN_DAY, countdownDate, challengeDayFor, computeDaysUntilChallengeStart } from '@/lib/startCountdown'
 const KIT_API_BASE = 'https://api.kit.com/v4'
 
@@ -188,12 +188,15 @@ export async function addSevenDayChallengeContact({
   lastName,
   phone,
   challengeLink,
+  cohort = DEFAULT_COHORT,
 }: {
   email: string
   firstName?: string
   lastName?: string
   phone?: string
   challengeLink?: string | null
+  /** The cohort being joined (the admin's settings); the built-in cohort when not given. */
+  cohort?: PublicCohort
 }): Promise<void> {
   // last_name, mobile_phone and challenge_link are Kit custom fields; each is only sent when there
   // is a value so it can't blank one already on file (same pattern as the other lead magnets).
@@ -203,16 +206,16 @@ export async function addSevenDayChallengeContact({
   // challenge_start_date is this cohort's kickoff day, so welcome emails can say when it starts.
   const full: Record<string, string> = {
     ...base,
-    challenge_start_date: CHALLENGE_START_DATE_LABEL,
-    challenge_pass_end: CHALLENGE_PASS_END_LABEL,
-    challenge_start_time: CHALLENGE_START_TIME_LABEL,
+    challenge_start_date: cohort.startDate,
+    challenge_pass_end: cohort.passEndLabel,
+    challenge_start_time: cohort.startTimeLabel,
   }
   if (challengeLink) full.challenge_link = challengeLink
   // Late joiners land on the right countdown day right away instead of waiting for the daily job.
-  const days = computeDaysUntilChallengeStart(CHALLENGE_START_DATE_LABEL, countdownDate())
+  const days = computeDaysUntilChallengeStart(cohort.startDate, countdownDate())
   if (days !== null && days >= MIN_COUNTDOWN_DAY) full.days_until_challenge_start = String(days)
   // Same for challenge_day, so someone from an earlier cohort who signs up again isn't left on "done".
-  const day = challengeDayFor(CHALLENGE_START_DATE_LABEL)
+  const day = challengeDayFor(cohort.startDate)
   if (day !== null) full.challenge_day = day
   const toFields = (f: Record<string, string>) => (Object.keys(f).length ? f : undefined)
   try {

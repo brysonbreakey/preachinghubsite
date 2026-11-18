@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { KickoffCalendarButtons } from "@/components/challenge/KickoffCalendarButtons";
 import { getKickoffCalendar } from "@/lib/challengeRun";
-import { CHALLENGE_KICKOFF } from "@/lib/challenge";
+import { getCohort } from "@/lib/challengeCohort";
 
 export const metadata: Metadata = {
   title: { absolute: "Add the kickoff call to your calendar | PreachingHub" },
@@ -16,7 +16,7 @@ export const dynamic = "force-dynamic";
 
 export default async function Page() {
   const calendar = await getKickoffCalendar();
-  const isoStart = new Date(CHALLENGE_KICKOFF).toISOString();
+  const isoStart = new Date((await getCohort()).kickoff).toISOString();
   return (
     <main className="min-h-screen bg-white font-[family-name:var(--font-inter)] text-[#0F172A] antialiased">
       <div className="mx-auto max-w-md px-6 py-16 text-center">

@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { resolveMx } from "dns/promises";
 import { waitUntil } from "@vercel/functions";
 import { addSevenDayChallengeContact, addSevenDayChallengeWaitlistContact } from "@/lib/kit";
-import { CHALLENGE_START_DATE_LABEL, challengePhase, serverNow } from "@/lib/challenge";
+import { challengePhase, serverNow } from "@/lib/challenge";
+import { getCohort } from "@/lib/challengeCohort";
 import { createChallengeLink, createChallengeClaim } from "@/lib/challengeToken";
 import { supabaseAdmin } from "@/lib/supabase";
 
@@ -20,7 +21,7 @@ async function hasMailServer(email: string): Promise<boolean> {
 
 // Signup for the Free 7-Day Preaching Growth Challenge. Same validation as /api/checklist-signup.
 // The SERVER decides what the signup is, from the clock (lib/challenge.ts), never the browser:
-//  - until enrollment closes (11:59 PM CST on November 17): tagged "7-day-challenge", with their
+//  - until enrollment closes (the close time set for the cohort in the admin): tagged "7-day-challenge", with their
 //    personal signed PreachingHub access link saved to Kit's challenge_link field for the welcome
 //    email (the link is never returned here: it must only reach the owner of that mailbox);
 //  - after: tagged "7-day-challenge-waitlist", no link.
@@ -45,13 +46,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "That email address doesn't look like it can receive mail. Double-check it and try again." }, { status: 400 });
   }
 
-  const waitlist = challengePhase(serverNow(req.headers.get("x-challenge-now"))) === "closed";
+  const cohort = await getCohort();
+  const waitlist = challengePhase(serverNow(req.headers.get("x-challenge-now")), cohort) === "closed";
   try {
     if (waitlist) {
       await addSevenDayChallengeWaitlistContact({ email, firstName, lastName, phone });
     } else {
-      const challengeLink = createChallengeLink({ email, firstName, lastName });
-      await addSevenDayChallengeContact({ email, firstName, lastName, phone, challengeLink });
+      const challengeLink = createChallengeLink({ email, firstName, lastName, passUntil: cohort.passUntil });
+      await addSevenDayChallengeContact({ email, firstName, lastName, phone, challengeLink, cohort });
     }
   } catch (err) {
     console.error("challenge-signup: kit failed", err);
@@ -68,10 +70,10 @@ export async function POST(req: NextRequest) {
           const { data: run } = await supabaseAdmin()
             .from("challenge_runs")
             .select("id")
-            .eq("start_date", CHALLENGE_START_DATE_LABEL)
+            .eq("start_date", cohort.startDate)
             .maybeSingle();
           if (!run?.id) {
-            console.error(`challenge-signup: no challenge_runs row with start_date ${CHALLENGE_START_DATE_LABEL}; ${email} was not added to the admin roster`);
+            console.error(`challenge-signup: no challenge_runs row with start_date ${cohort.startDate}; ${email} was not added to the admin roster`);
             return;
           }
           await supabaseAdmin()
@@ -96,6 +98,6 @@ export async function POST(req: NextRequest) {
 
   // The popup's second step (create the account right now) needs a short-lived claim; see
   // createChallengeClaim for why returning it is safe when returning the emailed link is not.
-  const claim = waitlist ? null : createChallengeClaim({ email, firstName, lastName });
+  const claim = waitlist ? null : createChallengeClaim({ email, firstName, lastName, passUntil: cohort.passUntil });
   return NextResponse.json({ ok: true, mode: waitlist ? "waitlist" : "joined", ...(claim ? { claim } : {}) });
 }

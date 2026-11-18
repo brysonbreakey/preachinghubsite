@@ -6,7 +6,8 @@ import posthog from "posthog-js";
 import { Icon } from "@/components/Icon";
 import { PHMark } from "@/components/Logo";
 import { BRENT_GARRARD } from "@/lib/testimonials";
-import { CHALLENGE_PASS_END_LABEL, challengePhase, formatCountdown } from "@/lib/challenge";
+import { challengePhase, formatCountdown } from "@/lib/challenge";
+import { closesPhrase, type PublicCohort } from "@/lib/challengeCohortCore";
 import { ChallengeSignupModal } from "./ChallengeSignupModal";
 import type { KickoffCalendar } from "@/lib/challengeRun";
 
@@ -76,22 +77,22 @@ const INCLUDED: Included[] = [
 ];
 
 const SCHEDULE = [
-  { n: "1", date: "November 17", title: "Find Your Focus", body: "Join the live kickoff, assess your preaching, and choose your growth track." },
-  { n: "2", date: "November 18", title: "Your First Breakthrough", body: "Complete your first targeted exercise in Clarity, Content, or Creativity." },
-  { n: "3", date: "November 19", title: "Edit for Impact", body: "Learn to identify what strengthens your sermon and what might be getting in the way." },
-  { n: "4", date: "November 20", title: "Prepare to Preach", body: "Develop practical pre-preaching habits that help you approach the pulpit with greater confidence." },
-  { n: "5", date: "November 21", title: "Build on Your Progress", body: "Take the next step in your personalized growth track." },
-  { n: "6", date: "November 22", title: "Put It Into Practice", body: "Apply what you've learned to a real sermon and reflect on your progress." },
-  { n: "7", date: "November 23", title: "Build Your 30-Day Growth Plan", body: "Create a practical roadmap for continued improvement and submit it to unlock your personal strategy session." },
+  { n: "1", title: "Find Your Focus", body: "Join the live kickoff, assess your preaching, and choose your growth track." },
+  { n: "2", title: "Your First Breakthrough", body: "Complete your first targeted exercise in Clarity, Content, or Creativity." },
+  { n: "3", title: "Edit for Impact", body: "Learn to identify what strengthens your sermon and what might be getting in the way." },
+  { n: "4", title: "Prepare to Preach", body: "Develop practical pre-preaching habits that help you approach the pulpit with greater confidence." },
+  { n: "5", title: "Build on Your Progress", body: "Take the next step in your personalized growth track." },
+  { n: "6", title: "Put It Into Practice", body: "Apply what you've learned to a real sermon and reflect on your progress." },
+  { n: "7", title: "Build Your 30-Day Growth Plan", body: "Create a practical roadmap for continued improvement and submit it to unlock your personal strategy session." },
 ];
 
-const FAQ = [
+const faqFor = (passEndLabel: string) => [
   ["How much does the challenge cost?", "Nothing. The entire 7-Day Preaching Growth Challenge is free, and no card is required."],
   ["How much time will I need?", "Plan for approximately 15 minutes a day for the exercises and training, plus the live kickoff session. The kickoff replay will be available if you can't attend."],
   ["What if I can't attend the live kickoff?", "No problem! You'll have access to the replay so you can catch up and continue with the challenge."],
   ["Do I need to be an experienced preacher?", "This challenge is designed for people who are actively preaching and genuinely want to improve. Whether you're relatively new or have been preaching for years, you'll choose a growth area that fits your needs."],
   ["What are the three growth tracks?", "You'll choose Clarity, Content, or Creativity based on the area where you most want to improve. Your track determines several of the practical exercises you'll complete throughout the week."],
-  ["Is PreachingHub included?", `Yes! Your registration includes complimentary access to PreachingHub during the challenge and through ${CHALLENGE_PASS_END_LABEL}, 2026. No additional subscription is required.`],
+  ["Is PreachingHub included?", `Yes! Your registration includes complimentary access to PreachingHub during the challenge and through ${passEndLabel}. No additional subscription is required.`],
   ["How do I get the one-on-one coaching session?", "Complete the seven-day challenge and submit your personalized 30-day growth plan. You'll then receive instructions for scheduling your complimentary 20-minute 1:1 Preaching Growth Strategy Session, subject to availability."],
   ["Will I be charged after the challenge?", "No. The challenge is free and we never ask for a card. You can choose to continue with a paid PreachingHub subscription or coaching program afterward, but nothing is charged or renews automatically as part of your challenge registration."],
 ];
@@ -101,7 +102,7 @@ const FAQ = [
 // challenge as the next step after the checklist.
 export type ChallengeVariant = "landing" | "thank-you";
 
-export function ChallengePage({ initialNow, variant = "landing", fromChecklist = false, calendar }: { initialNow: number; variant?: ChallengeVariant; fromChecklist?: boolean; calendar?: KickoffCalendar }) {
+export function ChallengePage({ initialNow, variant = "landing", fromChecklist = false, calendar, cohort }: { initialNow: number; variant?: ChallengeVariant; fromChecklist?: boolean; calendar?: KickoffCalendar; cohort: PublicCohort }) {
   const [modalOpen, setModalOpen] = useState(false);
 
   // The page knows the time the server rendered it at (so a visitor never sees the wrong state
@@ -114,18 +115,18 @@ export function ChallengePage({ initialNow, variant = "landing", fromChecklist =
     const id = setInterval(() => {
       const t = Date.now() + offset;
       setNow(t);
-      if (challengePhase(t) === "closed") clearInterval(id);
+      if (challengePhase(t, cohort) === "closed") clearInterval(id);
     }, 1000);
     return () => clearInterval(id);
-  }, [initialNow]);
-  const phase = challengePhase(now);
+  }, [initialNow, cohort]);
+  const phase = challengePhase(now, cohort);
   const waitlist = phase === "closed";
   const ctaLabel = waitlist ? "Join the waitlist" : "Join the Free Challenge";
   const ctaLabelLower = waitlist ? "Join the waitlist" : "Start Growing for Free";
 
   // One named event per visit, alongside PostHog's automatic $pageview.
   useEffect(() => {
-    posthog.capture("challenge_page_viewed", { phase: challengePhase(initialNow), page: variant === "thank-you" ? "checklist_thank_you" : fromChecklist ? "challenge_from_checklist" : "challenge" });
+    posthog.capture("challenge_page_viewed", { phase: challengePhase(initialNow, cohort), page: variant === "thank-you" ? "checklist_thank_you" : fromChecklist ? "challenge_from_checklist" : "challenge" });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialNow]);
 
@@ -137,7 +138,7 @@ export function ChallengePage({ initialNow, variant = "landing", fromChecklist =
   return (
     <main className="font-[family-name:var(--font-jakarta)] bg-white text-[#0F172A] overflow-x-hidden antialiased">
       <style>{`@keyframes acc-fade-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } } .acc-fade-in { animation: acc-fade-in 0.8s ease-out; }`}</style>
-      {modalOpen && <ChallengeSignupModal phase={phase} calendar={calendar} onClose={() => setModalOpen(false)} />}
+      {modalOpen && <ChallengeSignupModal phase={phase} cohort={cohort} calendar={calendar} onClose={() => setModalOpen(false)} />}
 
       {(variant === "thank-you" || fromChecklist) && (
         // Top bar: same as the one the accelerator version of this page has. Also shown on /challenge
@@ -170,10 +171,10 @@ export function ChallengePage({ initialNow, variant = "landing", fromChecklist =
         <div className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full border text-[10px] font-black uppercase tracking-[0.2em] mb-8 ${phase === "closed" ? "bg-indigo-50 border-indigo-100 text-[#4F46E5]" : "bg-red-50 border-red-100 text-red-600"}`}>
           {phase === "before" && (
             <>
-              Starts in <span className="text-xs normal-case tracking-normal tabular-nums inline-flex gap-3">{formatCountdown(now).split(" ").map((part) => <span key={part.slice(-1)}>{part}</span>)}</span>
+              Starts in <span className="text-xs normal-case tracking-normal tabular-nums inline-flex gap-3">{formatCountdown(now, cohort.kickoff).split(" ").map((part) => <span key={part.slice(-1)}>{part}</span>)}</span>
             </>
           )}
-          {phase === "started" && "Started today. Enrollment closes tonight"}
+          {phase === "started" && `Enrollment closes ${closesPhrase(cohort, now)}`}
           {phase === "closed" && "Enrollment is closed"}
         </div>
         {variant === "thank-you" && (
@@ -201,7 +202,7 @@ export function ChallengePage({ initialNow, variant = "landing", fromChecklist =
           <p className="text-lg md:text-xl text-[#64748B] leading-relaxed font-medium">
             Stop guessing how to improve. Choose the one area of your preaching that needs the most growth, follow a personalized 15-minute-a-day training plan, and start delivering sermons with greater impact.
           </p>
-          <p className={`text-xl md:text-2xl font-bold leading-snug text-[#0F172A] ${H}`}>November 17, 2026</p>
+          <p className={`text-xl md:text-2xl font-bold leading-snug text-[#0F172A] ${H}`}>{cohort.startDateLong}</p>
           <p className="text-sm sm:text-base font-black text-gray-500 uppercase tracking-widest">
             Live Kickoff Call &bull; Personalized Training &bull; 1-on-1 Coaching Opportunity
           </p>
@@ -220,7 +221,7 @@ export function ChallengePage({ initialNow, variant = "landing", fromChecklist =
           </p>
           <p className="max-w-md text-xs sm:text-sm font-medium leading-relaxed text-[#64748B]">
             {phase === "before" && <span className="font-bold text-red-600">Sign up now to receive the pre-challenge homework.</span>}
-            {phase === "started" && <span className="font-bold text-red-600">Enrollment closes tonight at 11:59 PM CST.</span>}
+            {phase === "started" && <span className="font-bold text-red-600">Enrollment closes {closesPhrase(cohort, now)}.</span>}
             {phase === "closed" && "Enrollment for this challenge is closed. Join the waitlist and we'll let you know about the next one."}
           </p>
         </div>
@@ -228,7 +229,7 @@ export function ChallengePage({ initialNow, variant = "landing", fromChecklist =
         <div className="mt-16 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto">
           {[
             ["15 min", "a day, for 7 days"],
-            ["Nov 17 – 23", "100% online, Tuesday to Monday"],
+            [cohort.rangeShort, `100% online, ${cohort.startWeekday} to ${cohort.endWeekday}`],
             ["FREE", "No card required"],
           ].map(([big, small]) => (
             <div key={big} className={`rounded-2xl border border-gray-100 bg-white px-6 py-6 ${SHADOW_PREMIUM}`}>
@@ -357,8 +358,8 @@ export function ChallengePage({ initialNow, variant = "landing", fromChecklist =
               <ol className="md:w-72 shrink-0 space-y-3 text-left">
                 {[
                   ["Today", "Access starts right after you join"],
-                  ["Nov 17 – 23", "Full challenge access"],
-                  [`Nov 24 – 29`, "Extra week to keep practicing"],
+                  [cohort.rangeShort, "Full challenge access"],
+                  ...(cohort.extraWeekShort ? [[cohort.extraWeekShort, "Extra week to keep practicing"]] : []),
                 ].map(([when, what]) => (
                   <li key={when} className="flex items-center gap-3 rounded-2xl bg-white px-4 py-3 border border-emerald-100">
                     <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-emerald-500" aria-hidden="true" />
@@ -368,7 +369,7 @@ export function ChallengePage({ initialNow, variant = "landing", fromChecklist =
               </ol>
             </div>
             <p className="mt-6 text-center text-xs font-medium text-[#64748B]">
-              Access ends after {CHALLENGE_PASS_END_LABEL} and you won&apos;t be charged. Subscribe only if you want to keep going.
+              Access ends after {cohort.passEndLabel} and you won&apos;t be charged. Subscribe only if you want to keep going.
             </p>
           </div>
 
@@ -428,11 +429,11 @@ export function ChallengePage({ initialNow, variant = "landing", fromChecklist =
           </p>
         </div>
         <ol className="space-y-6">
-          {SCHEDULE.map((step) => (
+          {SCHEDULE.map((step, i) => (
             <li key={step.n} className={`flex items-start gap-6 rounded-[2rem] border border-gray-200 bg-white p-8 ${SHADOW_PREMIUM}`}>
               <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#4F46E5] text-xl font-black text-white [color:#fff] ${H}`}>{step.n}</span>
               <div className="space-y-1">
-                <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#4F46E5]">Day {step.n} &mdash; {step.date}</p>
+                <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#4F46E5]">Day {step.n} &mdash; {cohort.dayDates[i]}</p>
                 <h3 className={`text-xl font-black text-[#0F172A] ${H}`}>{step.title}</h3>
                 <p className="text-[#64748B] text-sm font-medium leading-relaxed">{step.body}</p>
               </div>
@@ -473,7 +474,7 @@ export function ChallengePage({ initialNow, variant = "landing", fromChecklist =
       <section className="py-32 max-w-4xl mx-auto px-8 space-y-12">
         <h2 className={`text-3xl font-black text-center text-[#0F172A] uppercase tracking-widest ${H}`}>Questions</h2>
         <div className="space-y-1">
-          {FAQ.map(([q, a]) => (
+          {faqFor(cohort.passEndLabel).map(([q, a]) => (
             <div key={q} className="py-6 border-b border-gray-100">
               <h4 className="font-bold text-[#0F172A] mb-2">{q}</h4>
               <p className="text-[#64748B] text-sm font-medium">{a}</p>
@@ -486,7 +487,7 @@ export function ChallengePage({ initialNow, variant = "landing", fromChecklist =
       <footer className="bg-[#0F172A] text-white py-32 px-8 text-center relative overflow-hidden">
         <div className="max-w-4xl mx-auto space-y-10 relative z-10">
           <h2 className={`text-4xl md:text-6xl font-black tracking-tight leading-tight [color:#fff] ${H}`}>
-            The Next Challenge Begins November 17.
+            The Next Challenge Begins {cohort.startMonthDay}.
           </h2>
           <p className="mx-auto max-w-2xl text-lg font-medium leading-relaxed text-white/70">
             Join this cohort for free and take the first step toward more confident, clear, and impactful preaching.
@@ -500,8 +501,8 @@ export function ChallengePage({ initialNow, variant = "landing", fromChecklist =
               {ctaLabelLower}
             </button>
             <p className="text-xs font-bold text-white/50">
-              {phase === "before" && "Free • No card required • Live kickoff Tuesday, November 17 at 1 PM CST • Enrollment closes 11:59 PM CST on November 17"}
-              {phase === "started" && "Free • No card required • Enrollment closes tonight at 11:59 PM CST"}
+              {phase === "before" && `Free • No card required • Live kickoff ${cohort.kickoffWhen} • Enrollment closes ${cohort.closesLabel}`}
+              {phase === "started" && `Free • No card required • Enrollment closes ${closesPhrase(cohort, now)}`}
               {phase === "closed" && "Enrollment is closed • Join the waitlist and we'll let you know about the next one"}
             </p>
           </div>

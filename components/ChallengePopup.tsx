@@ -6,6 +6,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import posthog from "posthog-js";
 import { challengePhase } from "@/lib/challenge";
+import { DEFAULT_COHORT } from "@/lib/challengeCohortCore";
 
 // Site-wide pop-up for the 7-Day Preaching Growth Challenge. Appears a few seconds after a
 // visitor lands, once: dismissing it (or clicking through) keeps it away for 14 days. It never
@@ -37,16 +38,34 @@ function snooze() {
 export default function ChallengePopup() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  // The cohort the site is showing (set in the admin); the built-in one until it loads.
+  const [cohort, setCohort] = useState<{ kickoff: number; closes: number; rangeLabel: string }>(DEFAULT_COHORT);
   const hidden = HIDDEN_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`));
 
   useEffect(() => {
     if (hidden) return;
-    const id = setTimeout(() => {
-      if (snoozed() || challengePhase(Date.now()) === "closed") return;
+    let cancelled = false;
+    const id = setTimeout(async () => {
+      if (snoozed()) return;
+      let c = DEFAULT_COHORT as { kickoff: number; closes: number; rangeLabel: string };
+      try {
+        const res = await fetch("/api/challenge-cohort");
+        if (res.ok) {
+          const j = await res.json();
+          if (typeof j?.kickoff === "number" && typeof j?.closes === "number" && typeof j?.rangeLabel === "string") c = j;
+        }
+      } catch {
+        // keep the built-in cohort
+      }
+      if (cancelled || challengePhase(Date.now(), c) === "closed") return;
+      setCohort(c);
       setOpen(true);
       posthog.capture("challenge_popup_shown", { path: pathname });
     }, DELAY_MS);
-    return () => clearTimeout(id);
+    return () => {
+      cancelled = true;
+      clearTimeout(id);
+    };
   }, [hidden, pathname]);
 
   useEffect(() => {
@@ -98,7 +117,7 @@ export default function ChallengePopup() {
         />
         <p className="mb-4 text-[10px] font-black uppercase tracking-[0.2em] text-[#4F46E5]">7 days. 15 minutes a day. Free.</p>
         <p className="mb-6 text-base font-medium leading-relaxed text-slate-600">
-          Become a more confident, clear, and impactful preacher in one week. November 17&ndash;23, about 15 minutes a day, free, with complimentary PreachingHub access and a chance to earn a one-on-one coaching session. No card required.
+          Become a more confident, clear, and impactful preacher in one week. {cohort.rangeLabel}, about 15 minutes a day, free, with complimentary PreachingHub access and a chance to earn a one-on-one coaching session. No card required.
         </p>
         <Link
           href="/challenge?utm_source=site_popup"

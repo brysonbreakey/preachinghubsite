@@ -11,9 +11,15 @@ export type KickoffEvent = {
   meetUrl: string;
   /** The kickoff date as "2026-11-17", used to keep the calendar event's id stable per cohort. */
   dateLabel: string;
+  /** Extra text for the calendar item (set per run in the admin); the default line is used when empty. */
+  description?: string;
 };
 
-const DESCRIPTION_LINES = (meetUrl: string) => [`Join on Google Meet: ${meetUrl}`, "", "Bring the sermon you're working on, or be ready to start a new one."];
+const DESCRIPTION_LINES = (meetUrl: string, description?: string) => [
+  `Join on Google Meet: ${meetUrl}`,
+  "",
+  description?.trim() || "Bring the sermon you're working on, or be ready to start a new one.",
+];
 
 function pad(n: number) {
   return String(n).padStart(2, "0");
@@ -51,7 +57,7 @@ export function buildKickoffIcs(event: KickoffEvent, now = Date.now()): string {
     `SUMMARY:${escapeText(event.title)}`,
     `LOCATION:${escapeText(event.meetUrl)}`,
     `URL:${event.meetUrl}`,
-    `DESCRIPTION:${escapeText(DESCRIPTION_LINES(event.meetUrl).join("\n"))}`,
+    `DESCRIPTION:${escapeText(DESCRIPTION_LINES(event.meetUrl, event.description).join("\n"))}`,
     "BEGIN:VALARM",
     "TRIGGER:-PT15M",
     "ACTION:DISPLAY",
@@ -69,7 +75,7 @@ export function googleCalendarUrl(event: KickoffEvent): string {
     action: "TEMPLATE",
     text: event.title,
     dates: `${icsTime(event.start)}/${icsTime(end)}`,
-    details: DESCRIPTION_LINES(event.meetUrl).join("\n"),
+    details: DESCRIPTION_LINES(event.meetUrl, event.description).join("\n"),
     location: event.meetUrl,
   });
   return `https://calendar.google.com/calendar/render?${params.toString()}`;
@@ -83,7 +89,7 @@ export function outlookCalendarUrl(event: KickoffEvent): string {
     subject: event.title,
     startdt: new Date(event.start).toISOString(),
     enddt: new Date(end).toISOString(),
-    body: DESCRIPTION_LINES(event.meetUrl).join("\n"),
+    body: DESCRIPTION_LINES(event.meetUrl, event.description).join("\n"),
     location: event.meetUrl,
   });
   return `https://outlook.live.com/calendar/0/deeplink/compose?${params.toString()}`;

@@ -8,6 +8,7 @@ import { KickoffCalendarButtons } from "@/components/challenge/KickoffCalendarBu
 import { CHALLENGE_TRACKS, type ChallengeTrack } from "@/lib/challengeTracks";
 import type { KickoffCalendar } from "@/lib/challengeRun";
 import type { ChallengePhase } from "@/lib/challenge";
+import type { PublicCohort } from "@/lib/challengeCohortCore";
 import { APP_URL } from "@/lib/urls";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -36,7 +37,7 @@ function formatPhone(value: string): string {
 // and get a PreachingHub account on the spot, signed in and sent to the pre-challenge homework (the
 // app's /evaluate). An email that already has an account is sent to sign in instead; "later" falls
 // back to the emailed access link.
-export function ChallengeSignupModal({ phase, calendar, onClose }: { phase: ChallengePhase; calendar?: KickoffCalendar; onClose: () => void }) {
+export function ChallengeSignupModal({ phase, cohort, calendar, onClose }: { phase: ChallengePhase; cohort: PublicCohort; calendar?: KickoffCalendar; onClose: () => void }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -259,7 +260,7 @@ export function ChallengeSignupModal({ phase, calendar, onClose }: { phase: Chal
               {waitlistView
                 ? "We'll email you if a spot opens or when we run it again."
                 : phase === "before"
-                  ? "Watch your inbox (and your spam folder) for your PreachingHub access link, your pre-challenge homework (it's not a lot, don't worry) and what happens next. The challenge starts Tuesday, November 17."
+                  ? `Watch your inbox (and your spam folder) for your PreachingHub access link, your pre-challenge homework (it's not a lot, don't worry) and what happens next. The challenge starts ${cohort.startWeekday}, ${cohort.startMonthDay}.`
                   : "Watch your inbox (and your spam folder) for your PreachingHub access link and what happens next."}
             </p>
             <button type="button" onClick={onClose} className="w-full rounded-2xl bg-[#4F46E5] hover:bg-indigo-600 text-white font-black text-sm uppercase tracking-widest py-4 transition-colors [color:#fff]">
@@ -275,8 +276,8 @@ export function ChallengeSignupModal({ phase, calendar, onClose }: { phase: Chal
               {phase === "closed"
                 ? "Enrollment for this challenge has closed. Join the waitlist and we'll let you know if a spot opens or when we run it again."
                 : phase === "started"
-                  ? "The challenge has started, and you can still join until 11:59 PM CST tonight. All of it is free, and no card is required. Join if you're ready to show up for the week."
-                  : "Starts Tuesday, November 17. All of it is free, and no card is required. Sign up now to receive the pre-challenge homework. Join if you're ready to show up for the week."}
+                  ? `The challenge has started, and you can still join until ${cohort.closesLabel}. All of it is free, and no card is required. Join if you're ready to show up for the week.`
+                  : `Starts ${cohort.startWeekday}, ${cohort.startMonthDay}. All of it is free, and no card is required. Sign up now to receive the pre-challenge homework. Join if you're ready to show up for the week.`}
             </p>
             <form onSubmit={handleSubmit} noValidate className="space-y-3">
               {status === "error" && (

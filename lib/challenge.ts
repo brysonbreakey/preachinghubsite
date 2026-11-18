@@ -53,15 +53,16 @@ export function serverNow(override?: string | null): number {
 
 export type ChallengePhase = "before" | "started" | "closed";
 
-export function challengePhase(now: number): ChallengePhase {
-  if (now < CHALLENGE_KICKOFF) return "before";
-  if (now < CHALLENGE_CLOSES) return "started";
+/** `times` is the cohort being shown (lib/challengeCohort.ts); without it the built-in cohort is used. */
+export function challengePhase(now: number, times: { kickoff: number; closes: number } = { kickoff: CHALLENGE_KICKOFF, closes: CHALLENGE_CLOSES }): ChallengePhase {
+  if (now < times.kickoff) return "before";
+  if (now < times.closes) return "started";
   return "closed";
 }
 
 /** "6d 3h 22m 10s" until the kickoff (never negative). */
-export function formatCountdown(now: number): string {
-  const total = Math.max(0, Math.floor((CHALLENGE_KICKOFF - now) / 1000));
+export function formatCountdown(now: number, kickoff: number = CHALLENGE_KICKOFF): string {
+  const total = Math.max(0, Math.floor((kickoff - now) / 1000));
   const d = Math.floor(total / 86400);
   const h = Math.floor((total % 86400) / 3600);
   const m = Math.floor((total % 3600) / 60);
