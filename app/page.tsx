@@ -7,6 +7,7 @@ import { PricingTeaser } from "@/components/PricingTeaser";
 import { SampleReportShowcase } from "@/components/SampleReportShowcase";
 import { FeedbackReportMockup } from "@/components/FeedbackReportMockup";
 import { SIGNUP_URL } from "@/lib/urls";
+import { ScaledMockup } from "@/components/ScaledMockup";
 import { TrialDisclosure, TRIAL_CTA_LABEL } from "@/components/TrialDisclosure";
 
 // ─── Cartoon mockups ──────────────────────────────────────────────────────────
@@ -41,75 +42,139 @@ function MockSidebar({ active }: { active: number }) {
   );
 }
 
+function MockIcon({ d }: { d: string }) {
+  return (
+    <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+      <path d={d} />
+    </svg>
+  );
+}
+
+const MOCK_NAV_TOP = [
+  { label: "Search", d: "M21 21l-4.3-4.3M11 18a7 7 0 1 1 0-14 7 7 0 0 1 0 14z" },
+  { label: "Dashboard", d: "M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z", active: true },
+  { label: "Sermons", d: "M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2zM4 19V5" },
+  { label: "Instant Coaching", d: "M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z" },
+  { label: "Calendar", d: "M4 6h16v14H4zM4 10h16M8 3v4M16 3v4" },
+  { label: "Preaching DNA", d: "M5 4c4 4 10 4 14 0M5 20c4-4 10-4 14 0M5 12h14" },
+  { label: "Training", d: "M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM10 8l6 4-6 4z" },
+];
+const MOCK_NAV_BOTTOM = [
+  { label: "Teams", d: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" },
+  { label: "Settings", d: "M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM12 2v3M12 19v3M2 12h3M19 12h3" },
+];
+
 function DashboardMockup() {
   return (
     <BrowserShell url="app.preachinghub.com">
-      <div className="flex text-[10px]" style={{ minHeight: 320 }}>
-        <MockSidebar active={0} />
-        <div className="flex-1 p-4 overflow-hidden">
-          <div className="text-sm font-bold text-slate-800 mb-0.5">Good afternoon.</div>
-          <div className="text-[9px] text-slate-400 mb-4">Here&apos;s where things stand.</div>
-          <div className="flex gap-3 mb-3">
-            {/* Next sermon */}
-            <div className="flex-1 rounded-xl border border-slate-200 p-3">
-              <div className="flex items-start justify-between mb-1">
-                <div className="text-[7px] font-bold uppercase tracking-widest text-[#3760ad]">Next Sermon</div>
-                <div className="relative w-7 h-7 shrink-0">
-                  <svg viewBox="0 0 36 36" className="w-7 h-7 -rotate-90">
-                    <circle cx="18" cy="18" r="14" fill="none" stroke="#e2e8f0" strokeWidth="3.5"/>
-                    <circle cx="18" cy="18" r="14" fill="none" stroke="#3760ad" strokeWidth="3.5" strokeDasharray="44 88" strokeLinecap="round"/>
-                  </svg>
-                  <div className="absolute inset-0 flex items-center justify-center text-[7px] font-bold text-slate-700">50%</div>
-                </div>
+      <div className="flex text-[10px] bg-white" style={{ height: 430 }}>
+        {/* Sidebar */}
+        <div className="w-[116px] shrink-0 border-r border-slate-100 p-2.5 flex flex-col">
+          <div className="mb-3 px-1"><PHLogo height={13} /></div>
+          <div className="flex flex-col gap-0.5">
+            {MOCK_NAV_TOP.map(({ label, d, active }) => (
+              <div
+                key={label}
+                className={`flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-[8.5px] font-medium ${active ? "text-white shadow-sm" : "text-slate-500"}`}
+                style={active ? { background: "#5b5ce6" } : undefined}
+              >
+                <MockIcon d={d} />
+                {label}
               </div>
-              <div className="font-bold text-slate-800 text-[11px] leading-tight mb-0.5">Placed in Family</div>
-              <div className="text-[#3760ad] text-[9px] mb-2">Acts 2:37-46</div>
-              <div className="text-[8px] text-slate-400 mb-2">9d away &middot; Up next: Creativity &rarr; Outline</div>
-              <div className="h-5 px-3 bg-[#3760ad] rounded flex items-center text-white text-[8px] font-medium w-fit">Continue Prep →</div>
+            ))}
+          </div>
+          <div className="mt-auto flex flex-col gap-0.5">
+            {MOCK_NAV_BOTTOM.map(({ label, d }) => (
+              <div key={label} className="flex items-center gap-1.5 px-2 py-1.5 text-[8.5px] font-medium text-slate-500">
+                <MockIcon d={d} />
+                {label}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Main */}
+        <div className="flex-1 min-w-0 p-4 overflow-hidden bg-[#fbfbfd]">
+          <div className="flex items-start justify-between mb-3">
+            <div>
+              <div className="text-[19px] font-extrabold text-slate-900 leading-none tracking-[-0.04em]">Good morning.</div>
+              <div className="text-[8.5px] text-slate-500 mt-1">Here&apos;s where things stand.</div>
             </div>
-            {/* Up next */}
-            <div className="w-36 rounded-xl border border-slate-200 p-3">
-              <div className="text-[7px] font-bold uppercase tracking-widest text-slate-400 mb-2">Up Next</div>
-              {[
-                { step: "Creativity → Outline", sermon: "Placed in Family", when: "Today" },
-                { step: "Editing", sermon: "Placed in Family", when: "2d" },
-                { step: "Rehearsal", sermon: "Placed in Family", when: "4d" },
-              ].map(({ step, sermon, when }) => (
-                <div key={step} className="flex items-start gap-1.5 mb-2 last:mb-0">
-                  <div className="w-1.5 h-1.5 rounded-full mt-1 shrink-0" style={{ background: "#3760ad" }} />
-                  <div className="flex-1 min-w-0">
-                    <div className="font-medium text-slate-700 truncate">{step}</div>
-                    <div className="text-[8px] text-slate-400 truncate">{sermon}</div>
-                  </div>
-                  <span className="text-[8px] shrink-0 text-slate-400">{when}</span>
-                </div>
+            <div className="flex items-center gap-1 rounded-full px-2.5 py-1.5 text-[8px] font-semibold text-white" style={{ background: "#0f1530" }}>
+              <span className="text-[10px] leading-none">+</span> New Sermon
+            </div>
+          </div>
+
+          {/* Next sermon */}
+          <div className="rounded-2xl border border-slate-100 bg-white p-3 mb-2.5 shadow-sm">
+            <div className="text-[6.5px] font-bold uppercase tracking-[0.2em] text-slate-500 leading-relaxed">Next Sermon<br />32 days away</div>
+            <div className="text-[15px] font-extrabold text-slate-900 leading-tight tracking-[-0.03em] mt-1.5">Jesus Loves You</div>
+            <div className="text-[9px] font-semibold text-slate-500 mb-2.5">John 3:16</div>
+            <div className="relative h-[3px] rounded-full bg-slate-100 mb-1.5">
+              <div className="absolute left-0 top-0 h-full w-[16%] rounded-full" style={{ background: "linear-gradient(90deg,#a5b4fc,#5b5ce6)" }} />
+              {[16, 33, 50, 66, 83, 100].map((l, i) => (
+                <div key={l} className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full border bg-white" style={{ left: `${l}%`, borderColor: i === 0 ? "#5b5ce6" : "#cbd5e1" }} />
               ))}
             </div>
+            <div className="flex justify-between text-[6.5px] font-bold uppercase tracking-[0.12em] text-slate-500 mb-2">
+              <span>Up next: <span className="text-slate-900">Read Passage</span></span>
+              <span>0/6 completed</span>
+            </div>
+            <div className="text-[8.5px] font-bold" style={{ color: "#4f46e5" }}>Continue Prep →</div>
           </div>
-          {/* Stats */}
-          <div className="flex rounded-lg border border-slate-100 bg-slate-50 py-1.5 mb-3 divide-x divide-slate-200">
-            {[["2", "Preached"], ["4", "Upcoming"], ["3", "Series"]].map(([n, l]) => (
-              <div key={l} className="flex-1 text-center">
-                <div className="font-bold text-slate-800 text-sm">{n}</div>
-                <div className="text-[8px] text-slate-400">{l}</div>
-              </div>
-            ))}
-          </div>
-          {/* Quick actions */}
-          <div className="grid grid-cols-4 gap-2">
-            {[
-              { label: "Sermon Builder", c: "#3760ad" },
-              { label: "Series", c: "#0ea5e9" },
-              { label: "Get Feedback", c: "#8b5cf6" },
-              { label: "Templates", c: "#10b981" },
-            ].map(({ label, c }) => (
-              <div key={label} className="rounded-xl border border-slate-200 p-2 flex flex-col items-center gap-1 cursor-pointer">
-                <div className="w-5 h-5 rounded-md" style={{ background: c + "18" }}>
-                  <div className="w-full h-full rounded-md" style={{ background: c + "30" }} />
+
+          {/* Insights + stats */}
+          <div className="flex gap-2.5">
+            <div className="flex-1 min-w-0 rounded-2xl border border-slate-100 bg-white p-3 shadow-sm">
+              <div className="flex items-start justify-between">
+                <div>
+                  <div className="text-[11px] font-extrabold text-slate-900 tracking-[-0.03em]">Coaching Insights</div>
+                  <div className="text-[7.5px] text-slate-500 mb-2">Derived from your Preaching DNA Report</div>
                 </div>
-                <span className="text-[8px] text-slate-500 text-center leading-tight">{label}</span>
+                <div className="text-[6px] font-bold uppercase tracking-[0.15em] pb-0.5 border-b" style={{ color: "#4f46e5", borderColor: "#c7d2fe" }}>Full report</div>
               </div>
-            ))}
+              <div className="flex gap-2">
+                <div className="flex-1 min-w-0">
+                  <div className="text-[6.5px] font-bold uppercase tracking-[0.15em] text-emerald-600 mb-1">Signature strength</div>
+                  <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-2 mb-2">
+                    <div className="text-[8.5px] font-semibold text-emerald-800 leading-snug mb-0.5">Exegetical architecture that earns trust</div>
+                    <div className="text-[7px] text-emerald-700/80 leading-snug">You build the point from the text&apos;s own structure, so listeners arrive at Scripture already inside the question it answers.</div>
+                  </div>
+                  <div className="text-[6.5px] font-bold uppercase tracking-[0.15em] mb-1" style={{ color: "#4f46e5" }}>Growth area</div>
+                  <div className="rounded-xl border p-2" style={{ borderColor: "#c7d2fe", background: "#eef2ff" }}>
+                    <div className="text-[8.5px] font-semibold leading-snug mb-0.5" style={{ color: "#3730a3" }}>Landing the conclusion with one clear call</div>
+                    <div className="text-[7px] leading-snug" style={{ color: "#4338ca" }}>Your closing gathers several threads. Choosing one invitation helps it stick.</div>
+                  </div>
+                </div>
+                <div className="w-[38%] shrink-0 rounded-xl p-2 flex flex-col" style={{ background: "#0b1020" }}>
+                  <div className="text-[5.5px] font-bold uppercase tracking-[0.18em] text-slate-400 mb-1.5">AI coach focus</div>
+                  <div className="text-[7.5px] italic leading-snug text-slate-100">&ldquo;You&apos;re at an inflection point where your preparation and your instinct for illustration are starting to reinforce each other.&rdquo;</div>
+                </div>
+              </div>
+            </div>
+            <div className="w-[124px] shrink-0 flex flex-col gap-2.5">
+              <div className="flex rounded-2xl border border-slate-100 bg-white py-2 shadow-sm">
+                {[["14", "Preached"], ["1", "Upcoming"], ["4", "Series"]].map(([n, l]) => (
+                  <div key={l} className="flex-1 text-center">
+                    <div className="text-[13px] font-extrabold text-slate-900 leading-none tracking-[-0.04em]">{n}</div>
+                    <div className="text-[5.5px] font-bold uppercase tracking-[0.04em] text-slate-500 mt-1">{l}</div>
+                  </div>
+                ))}
+              </div>
+              <div className="rounded-2xl border border-slate-100 bg-white p-2.5 shadow-sm">
+                <div className="text-[10px] font-extrabold text-slate-900 tracking-[-0.03em] mb-1.5">Next Steps</div>
+                {[["Read Passage", "Jesus Loves You", "Today"], ["Personal Study", "Jesus Loves You", "3d"]].map(([t, sub, when]) => (
+                  <div key={t} className="flex items-start gap-1 mb-1.5 last:mb-0">
+                    <div className="w-1 h-1 rounded-full bg-slate-300 mt-1 shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <div className="text-[8px] font-bold text-slate-900 truncate">{t}</div>
+                      <div className="text-[6.5px] text-slate-500 truncate">{sub}</div>
+                    </div>
+                    <span className="text-[6.5px] font-bold uppercase text-slate-400">{when}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -193,28 +258,21 @@ function Hero() {
             <span className="w-1.5 h-1.5 rounded-full bg-[#FBBF24] inline-block"></span>
             14-Day Free Trial. Cancel Anytime.
           </div>
-          <h1 className="hero-h1 font-black text-white uppercase tracking-tight leading-[1.04] mb-6">
-            <span className="block text-2xl sm:text-3xl mb-2">Preach with more</span>
-            <span className="block text-[clamp(2.5rem,11vw,4.25rem)]">clarity,</span>
-            <span className="block text-[clamp(2.5rem,11vw,4.25rem)]">confidence,</span>
-            <span className="block text-[clamp(2.5rem,11vw,4.25rem)] text-[#a99dff]">and impact.</span>
-            <span className="mt-5 inline-block text-base sm:text-lg font-extrabold tracking-[0.35em]">
-              Every week.
-              <svg viewBox="0 0 200 10" preserveAspectRatio="none" className="mt-1.5 block h-2 w-full" aria-hidden="true">
-                <path d="M3 6 Q 60 2 100 5 T 197 4" fill="none" stroke="#a99dff" strokeWidth="3.5" strokeLinecap="round" />
-              </svg>
-            </span>
+          <h1 className="hero-h1 font-[family-name:var(--font-inter)] text-[clamp(2.25rem,9vw,3.75rem)] font-extrabold text-white leading-[1.08] tracking-[-0.04em] mb-6">
+            Preach with more clarity, confidence, and{" "}
+            <span className="font-[family-name:var(--font-lora)] italic font-semibold tracking-[-0.01em] text-[1.08em] leading-none text-white">impact.</span>{" "}
+            <span className="whitespace-nowrap">Every week.</span>
           </h1>
           <p className="hero-sub text-xl text-blue-100/80 max-w-xl mx-auto lg:mx-0 mb-10 leading-relaxed">
             Prepare your sermons, preach with confidence, and get personalized feedback to keep improving every week. All in one place.
           </p>
           <div className="hero-cta flex flex-col items-center lg:items-start">
             <div className="flex flex-col items-center gap-2 w-full sm:w-fit">
-              <a href={SIGNUP_URL} className="cta-btn w-full sm:w-auto inline-flex items-center justify-center gap-2 text-[#0b1230] font-bold px-7 py-4 rounded-full text-base shadow-lg bg-white hover:bg-blue-50">
+              <a href={SIGNUP_URL} className="cta-btn w-full sm:w-auto inline-flex items-center justify-center gap-2 text-[#0b1230] font-bold px-4 sm:px-7 py-4 rounded-full text-[15px] sm:text-base whitespace-nowrap shadow-lg bg-white hover:bg-blue-50">
                 {TRIAL_CTA_LABEL}
                 <Icon d="M5 12h14M12 5l7 7-7 7" size={16} color="#0b1230" strokeWidth={2.5} />
               </a>
-              <TrialDisclosure className="text-xs sm:text-[13px] text-blue-100/75 text-center" />
+              <TrialDisclosure stacked className="text-xs text-blue-100/75 text-center leading-relaxed" />
             </div>
           </div>
         </div>
@@ -226,7 +284,9 @@ function Hero() {
             style={{ background: "linear-gradient(135deg, #3760ad, #7c3aed)" }}
           />
           <div className="relative rotate-2 hover:rotate-0 transition-transform duration-500">
-            <DashboardMockup />
+            <ScaledMockup>
+              <DashboardMockup />
+            </ScaledMockup>
           </div>
         </div>
       </div>
