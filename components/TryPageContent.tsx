@@ -55,6 +55,9 @@ const INPUT_OPTIONS: { value: InputType; shortLabel: string; label: string }[] =
   { value: "audio", shortLabel: "Upload", label: "Upload File" },
 ];
 
+const TILE_BG: Record<string, string> = { video: "bg-red-500/10", text: "bg-blue-500/10", audio: "bg-indigo-500/10" };
+const TILE_COLOR: Record<string, string> = { video: "#ef4444", text: "#3b82f6", audio: "#6366f1" };
+
 const NON_VIDEO_ICONS: Record<string, string | string[]> = {
   text: ["M4 7V4h16v3", "M9 20h6", "M12 4v16"],
   audio: ["M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4", "M17 8l-5-5-5 5", "M12 3v12"],
@@ -214,12 +217,19 @@ function splitName(fullName: string): { firstName: string; lastName: string } {
   return { firstName: trimmed.slice(0, idx), lastName: trimmed.slice(idx + 1) };
 }
 
+const RECEIVE_TILES = [
+  { bg: "bg-purple-50", color: "#a855f7" },
+  { bg: "bg-blue-50", color: "#3b82f6" },
+  { bg: "bg-emerald-50", color: "#10b981" },
+  { bg: "bg-indigo-50", color: "#6366f1" },
+  { bg: "bg-orange-50", color: "#f97316" },
+];
+
 const RECEIVE_ITEMS = [
   { icon: ["M12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2Z"], label: "Your Biggest Wins", body: "The one thing to protect and develop" },
   { icon: ["M9 11l3 3L22 4", "M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"], label: "Category Breakdown", body: "Feedback across 7 preaching areas" },
   { icon: ["M23 6l-9.5 9.5-5-5L1 18", "M17 6h6v6"], label: "Top Growth Areas", body: "Specific, actionable coaching priorities" },
   { icon: ["M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z", "M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3", "M12 17h.01"], label: "Questions to Consider", body: "Questions to help deepen your preaching" },
-  { icon: ["M22 12h-4l-3 9L9 3l-3 9H2"], label: "Pacing Analysis", body: "For video & audio submissions" },
 ];
 
 const TEXT_MESSAGES = ["Reading your sermon...", "Writing your coaching report...", "Almost done..."];
@@ -592,26 +602,22 @@ export function TryPageContent({
   return (
     <main>
       <Navbar />
-      <section className="bg-slate-50 pt-32 pb-16 px-6">
-      <div className="max-w-5xl mx-auto">
+      <section className="bg-gray-50 pt-32 pb-16 px-4 sm:px-6">
+      <div className="max-w-6xl mx-auto">
         {aboveForm}
         {heroContent ?? (
-          <div className="text-center mb-10 max-w-2xl mx-auto">
-            <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-900 leading-[1.1] tracking-tight mb-5">
-              Get a free coaching report on a recent sermon
+          <div className="mb-10 max-w-3xl">
+            <h1 className="font-[family-name:var(--font-inter)] text-4xl sm:text-5xl font-black text-slate-900 leading-[1.1] tracking-[-0.05em] mb-4">
+              See exactly how to make your next sermon stronger — free
             </h1>
-            <p className="text-lg text-slate-500 max-w-xl mx-auto leading-relaxed">
-              Submit a YouTube link, paste your notes, or upload audio, video, or a PDF/Word doc.{" "}
-              <strong className="font-semibold text-slate-700">In minutes</strong>,{" "}
-              you&apos;ll receive helpful sermon feedback to take your preaching to the next level. No account needed.
+            <p className="text-base text-slate-500 max-w-xl font-medium leading-relaxed">
+              Share a recent sermon and get a personalized coaching report in minutes.{" "}
+              <strong className="font-semibold text-slate-700">No account needed.</strong>
             </p>
           </div>
         )}
 
-        {/* Proof, above the form. */}
-        <div className="mb-10">
-          <Testimonial {...BRENT_GARRARD} />
-        </div>
+        
 
         <div className="grid lg:grid-cols-[1fr_300px] lg:grid-rows-[auto_1fr] gap-6 items-start">
           {/* Narrow screens: form first, then the sample, then "What you'll receive". Wide: top of the right column. */}
@@ -619,7 +625,7 @@ export function TryPageContent({
             <SampleReportTeaser onOpen={openSample} />
           </div>
           <div className="order-1 lg:order-none lg:col-start-1 lg:row-start-1 lg:row-span-2">
-          <form id="try-form" onSubmit={handleSubmit} onFocusCapture={trackFormStarted} noValidate className="scroll-mt-24 bg-white rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/60 p-6 sm:p-8 space-y-8">
+          <form id="try-form" onSubmit={handleSubmit} onFocusCapture={trackFormStarted} noValidate className="scroll-mt-24 bg-white rounded-3xl border border-gray-200 shadow-sm p-5 sm:p-8 space-y-6 sm:space-y-8">
             {submitError && (
               <div className="rounded-lg bg-red-50 border border-red-100 text-red-700 text-sm px-4 py-3">
                 {submitError}
@@ -628,30 +634,29 @@ export function TryPageContent({
 
             {/* Sermon submission */}
             <div>
-              <p className="block text-lg font-bold text-slate-900 mb-3">
+              <p className="block text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-4">
                 Submit your sermon
               </p>
 
-              <div className="rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 p-5 sm:p-6">
-                <div className="flex gap-2 mb-5">
+              <div>
+                <div className="grid grid-cols-3 gap-2 mb-6">
                   {INPUT_OPTIONS.map(({ value, shortLabel, label }) => (
                     <button
                       key={value}
                       type="button"
                       onClick={() => selectInputType(value)}
-                      className={`flex-1 inline-flex items-center justify-center gap-1.5 rounded-lg border px-2 py-2.5 text-xs sm:text-sm font-medium whitespace-nowrap transition-colors ${
-                        inputType === value
-                          ? "border-[#3760ad] bg-blue-50 text-[#3760ad]"
-                          : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"
+                      className={`flex flex-col items-center gap-2.5 transition-all duration-200 ${
+                        inputType === value ? "opacity-100" : "opacity-70 hover:opacity-100"
                       }`}
                     >
-                      {value === "video" ? (
-                        <YouTubeIcon size={15} />
-                      ) : (
-                        <Icon d={NON_VIDEO_ICONS[value]} size={15} color={inputType === value ? "#3760ad" : "#64748b"} strokeWidth={2} className="shrink-0" />
-                      )}
-                      <span className="hidden min-[420px]:inline">{label}</span>
-                      <span className="min-[420px]:hidden">{shortLabel}</span>
+                      <div className={`w-14 h-14 rounded-2xl flex items-center justify-center border-2 transition-colors ${TILE_BG[value]} ${inputType === value ? "border-indigo-500" : "border-transparent"}`}>
+                        {value === "video" ? (
+                          <YouTubeIcon size={22} />
+                        ) : (
+                          <Icon d={NON_VIDEO_ICONS[value]} size={20} color={TILE_COLOR[value]} strokeWidth={2} className="shrink-0" />
+                        )}
+                      </div>
+                      <span className={`text-sm font-bold ${inputType === value ? "text-gray-900" : "text-gray-500"}`}>{label}</span>
                     </button>
                   ))}
                 </div>
@@ -664,8 +669,8 @@ export function TryPageContent({
                       value={transcript}
                       onChange={(e) => setTranscript(e.target.value)}
                       placeholder="Paste your sermon notes, outline, or full transcript here. The more detail you include, the more specific your coaching report will be."
-                      className={`w-full rounded-lg border bg-white px-3.5 py-3 text-sm text-slate-900 placeholder:text-slate-400 leading-relaxed focus:outline-none focus:ring-2 focus:ring-[#3760ad] ${
-                        errors.transcript ? "border-red-300" : "border-slate-300 focus:border-[#3760ad]"
+                      className={`w-full rounded-2xl border bg-gray-50 px-5 py-4 text-sm text-gray-900 placeholder:text-gray-400 leading-relaxed focus:outline-none focus:ring-2 focus:ring-indigo-500/10 transition-all ${
+                        errors.transcript ? "border-red-300" : "border-gray-100 focus:border-indigo-300"
                       }`}
                     />
                     {errors.transcript && <p className="text-xs text-red-600 mt-1.5">{errors.transcript}</p>}
@@ -756,31 +761,15 @@ export function TryPageContent({
               </div>
             </div>
 
-            {/* Sermon title */}
-            <div>
-              <label htmlFor="sermonTitle" className="block text-sm font-medium text-slate-700 mb-1.5">
-                Sermon title
-              </label>
-              <input
-                id="sermonTitle"
-                name="sermonTitle"
-                type="text"
-                value={sermonTitle}
-                onChange={(e) => setSermonTitle(e.target.value)}
-                placeholder="Optional"
-                className="w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#3760ad] focus:border-[#3760ad]"
-              />
-            </div>
-
             {/* Contact — last, so the form opens with the opportunity (their sermon) and
                 the ask comes right before the button, framed as where the report goes. */}
             <div>
-              <p className="block text-lg font-bold text-slate-900 mb-3">
+              <p className="block text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-4">
                 Where should we send your report?
               </p>
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-slate-700 mb-1.5">
+                <label htmlFor="name" className="block text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-2">
                   Name
                 </label>
                 <input
@@ -790,14 +779,14 @@ export function TryPageContent({
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="John Smith"
-                  className={`w-full rounded-lg border px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#3760ad] ${
-                    errors.name ? "border-red-300" : "border-slate-300 focus:border-[#3760ad]"
+                  className={`w-full rounded-2xl border px-5 py-4 text-sm text-gray-900 bg-gray-50 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/10 transition-all ${
+                    errors.name ? "border-red-300" : "border-gray-100 focus:border-indigo-300"
                   }`}
                 />
                 {errors.name && <p className="text-xs text-red-600 mt-1.5">{errors.name}</p>}
               </div>
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-1.5">
+                <label htmlFor="email" className="block text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-2">
                   Email address
                 </label>
                 <input
@@ -807,15 +796,15 @@ export function TryPageContent({
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Email address"
-                  className={`w-full rounded-lg border px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#3760ad] ${
-                    errors.email ? "border-red-300" : "border-slate-300 focus:border-[#3760ad]"
+                  className={`w-full rounded-2xl border px-5 py-4 text-sm text-gray-900 bg-gray-50 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/10 transition-all ${
+                    errors.email ? "border-red-300" : "border-gray-100 focus:border-indigo-300"
                   }`}
                 />
                 {errors.email && <p className="text-xs text-red-600 mt-1.5">{errors.email}</p>}
               </div>
               {showPhoneField && (
                 <div className="sm:col-span-2">
-                  <label htmlFor="phone" className="block text-sm font-medium text-slate-700 mb-1.5">
+                  <label htmlFor="phone" className="block text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-2">
                     Phone number
                   </label>
                   <input
@@ -826,8 +815,8 @@ export function TryPageContent({
                     value={phone}
                     onChange={(e) => setPhone(formatPhone(e.target.value))}
                     placeholder="xxx-xxx-xxxx"
-                    className={`w-full rounded-lg border px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#3760ad] ${
-                      errors.phone ? "border-red-300" : "border-slate-300 focus:border-[#3760ad]"
+                    className={`w-full rounded-2xl border px-5 py-4 text-sm text-gray-900 bg-gray-50 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/10 transition-all ${
+                      errors.phone ? "border-red-300" : "border-gray-100 focus:border-indigo-300"
                     }`}
                   />
                   {errors.phone && <p className="text-xs text-red-600 mt-1.5">{errors.phone}</p>}
@@ -839,8 +828,7 @@ export function TryPageContent({
             <button
               type="submit"
               disabled={isChecking}
-              className="cta-btn w-full inline-flex items-center justify-center gap-2 font-semibold px-4 sm:px-6 py-4 rounded-xl text-sm sm:text-base text-white disabled:opacity-60 whitespace-nowrap"
-              style={{ backgroundColor: "#3760ad" }}
+              className="w-full inline-flex items-center justify-center gap-2 font-bold px-4 sm:px-6 py-5 rounded-full text-base sm:text-lg text-white bg-[#4F46E5] hover:bg-[#4338CA] shadow-lg shadow-indigo-500/25 transition-colors disabled:opacity-60 whitespace-nowrap"
             >
               <Icon d="M13 2 3 14h9l-1 8 10-12h-9z" size={17} color="white" strokeWidth={2} className="shrink-0" />
               <span>{isChecking ? "Checking..." : "Get My Free Report"}</span>
@@ -853,23 +841,26 @@ export function TryPageContent({
               className="mt-4 px-2"
             />
           )}
+          <div className="mt-8 px-2">
+            <Testimonial {...BRENT_GARRARD} left />
+          </div>
           </div>
 
           {/* What you'll receive */}
-          <div className="order-3 lg:order-none lg:col-start-2 lg:row-start-2 bg-white rounded-2xl border border-slate-200 p-6 lg:sticky lg:top-16">
-            <div className="font-semibold text-slate-800 mb-4">What you&apos;ll receive</div>
-            <div className="space-y-4">
-              {RECEIVE_ITEMS.map(({ icon, label, body }) => (
+          <div className="order-3 lg:order-none lg:col-start-2 lg:row-start-2 bg-white rounded-3xl border border-gray-200 shadow-sm p-8 lg:sticky lg:top-16">
+            <div className="text-[11px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-6">What you&apos;ll receive</div>
+            <div className="space-y-5">
+              {RECEIVE_ITEMS.map(({ icon, label, body }, i) => { const tile = RECEIVE_TILES[i % RECEIVE_TILES.length]; return (
                 <div key={label} className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-[#3760ad]/10 flex items-center justify-center shrink-0">
-                    <Icon d={icon} size={15} color="#3760ad" strokeWidth={2} />
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${tile.bg}`}>
+                    <Icon d={icon} size={16} color={tile.color} strokeWidth={2} />
                   </div>
                   <div>
-                    <div className="text-sm font-semibold text-slate-800">{label}</div>
-                    <div className="text-xs text-slate-500">{body}</div>
+                    <div className="text-sm font-bold text-gray-900">{label}</div>
+                    <div className="text-xs text-gray-500 font-medium">{body}</div>
                   </div>
                 </div>
-              ))}
+              );})}
             </div>
           </div>
 
