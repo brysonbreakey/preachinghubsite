@@ -18,7 +18,7 @@ export function SampleReportTeaser({ onOpen }: { onOpen: () => void }) {
         <div aria-hidden className="absolute inset-x-2 top-2 bottom-0 rounded-xl bg-white border border-slate-200 shadow-sm rotate-[5deg] origin-bottom transition-transform duration-300 group-hover:rotate-[7deg]" />
 
         <div aria-hidden className="absolute inset-x-1 top-0 bottom-0 rounded-xl bg-white border border-slate-200 shadow-lg group-hover:shadow-xl transition-shadow duration-300 px-4 py-4 overflow-hidden">
-          <p className="text-[9px] font-semibold uppercase tracking-widest text-[#3760ad]">Sermon Feedback Report</p>
+          <p className="text-[9px] font-semibold uppercase tracking-widest text-[#3760ad]">Sermon Coaching Report</p>
           <p className="text-[15px] font-semibold text-slate-900 leading-snug mt-0.5 mb-3">{SAMPLE_TITLE}</p>
           <div className="space-y-1.5">
             {SAMPLE_REPORT.categories.map((cat) => {

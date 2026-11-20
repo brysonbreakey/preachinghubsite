@@ -93,7 +93,7 @@ export function SampleReportModal({ onClose }: { onClose: (method: CloseMethod) 
 
         <div ref={scrollRef} onScroll={onScroll} className="flex-1 overflow-y-auto overscroll-contain px-5 sm:px-8 py-6 bg-white">
           <div className="pb-5 mb-6 border-b border-slate-200">
-            <p className="text-xs font-semibold uppercase tracking-widest text-[#3760ad] mb-1">Sermon Feedback Report</p>
+            <p className="text-xs font-semibold uppercase tracking-widest text-[#3760ad] mb-1">Sermon Coaching Report</p>
             <h2 id="sample-report-title" className="text-2xl sm:text-3xl font-semibold text-slate-900 leading-tight">{SAMPLE_TITLE}</h2>
           </div>
 

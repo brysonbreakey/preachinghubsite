@@ -82,7 +82,8 @@ export default function TermsPage() {
           <UL>
             <li>Paid subscription plans are billed in advance on a recurring basis (monthly or annually, as selected at signup) until canceled.</li>
             <li>You may cancel your subscription at any time through your account settings or by contacting us. Cancellation takes effect at the end of your current billing period.</li>
-            <li>All fees are non-refundable, including partial-month or partial-year periods, except where required by applicable law.</li>
+            <li>All fees are non-refundable, including partial-month or partial-year periods, except (a) as provided in the 30-Day Money-Back Guarantee below, or (b) where required by applicable law.</li>
+            <li><strong>30-Day Money-Back Guarantee.</strong> If you do not feel that you have grown as a preacher within 30 days after your first payment for a paid subscription, you may request a full refund of that payment by emailing bryson@preachinghub.com within those 30 days. We will refund you without requiring a reason. The guarantee applies to your first payment only, not to renewals, and is limited to one refund per customer. Refunds are issued to your original payment method, and your access to paid features ends when the refund is processed.</li>
             <li>We may change subscription pricing with at least 30 days&apos; notice before the change applies to your next billing cycle. Continued use of the Service after a price change takes effect constitutes acceptance of the new pricing.</li>
             <li>If a payment fails, we may suspend access to paid features until payment is resolved.</li>
             <li>Certain discounted, promotional, grant-funded, or lifetime-access offers may carry additional or different terms disclosed at the time of the offer; those specific terms control in the event of a conflict with this Section 4.</li>

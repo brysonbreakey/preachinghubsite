@@ -8,7 +8,7 @@ import { FaqSection } from "@/components/FaqSection";
 import { COACHING_FAQ_IDS } from "@/lib/faqs";
 
 export const metadata: Metadata = {
-  title: "Sermon Feedback — PreachingHub",
+  title: "Instant Coaching — PreachingHub",
   description:
     "Get specific, private coaching on every sermon you preach: what's working, how to grow, and what to work on next. Try it free for 14 days.",
 };
@@ -24,7 +24,7 @@ function ReportPreview() {
   ];
   return (
     <div className="rounded-3xl border border-slate-200 bg-white shadow-xl shadow-slate-200/70 p-6 sm:p-7 w-full max-w-md mx-auto select-none">
-      <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">Sermon feedback report</p>
+      <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">Sermon coaching report</p>
       <p className="font-[family-name:var(--font-inter)] font-black tracking-[-0.04em] text-2xl text-slate-900 mt-1 mb-5">Grace That Finds Us</p>
       <div className="rounded-2xl bg-emerald-50 border border-emerald-100 p-4 mb-4">
         <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-600 mb-1">Your biggest win</p>
@@ -109,7 +109,7 @@ export default function SermonFeedbackPage() {
       <section className="pt-32 pb-16 sm:pb-24 px-6 bg-slate-50">
         <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-14 items-center">
           <div>
-            <Eyebrow>Sermon feedback</Eyebrow>
+            <Eyebrow>Instant Coaching</Eyebrow>
             <h1 className={`${H} text-[clamp(2.5rem,7vw,4.25rem)] leading-[1.05] text-slate-900 mb-6`}>
               See what&apos;s landing. Fix what <span className={`${SERIF} italic font-semibold tracking-[-0.01em] text-[1.08em]`} style={{ color: INDIGO }}>isn&apos;t.</span>
             </h1>

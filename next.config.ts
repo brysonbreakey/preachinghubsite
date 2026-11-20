@@ -29,6 +29,8 @@ const nextConfig: NextConfig = {
     return [
       // Short link to the app's signup page; query params (utm etc.) carry through.
       { source: "/start", destination: `${APP_URL}/auth/login?mode=signup`, permanent: false },
+      // The Instant Coaching page was first published as /features/sermon-feedback.
+      { source: "/features/sermon-feedback", destination: "/features/instant-coaching", permanent: true },
       ...APP_ONLY_PATHS.map((path) => ({
         source: `/${path}/:rest*`,
         destination: `${APP_URL}/${path}/:rest*`,

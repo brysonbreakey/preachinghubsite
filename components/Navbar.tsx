@@ -7,7 +7,7 @@ import { APP_URL, SIGNUP_URL } from "@/lib/urls";
 
 const FEATURE_LINKS = [
   { href: "/features/sermon-builder", label: "Sermon Builder", desc: "Prep, write, and get coached in one place" },
-  { href: "/features/sermon-feedback", label: "Sermon Feedback", desc: "Specific coaching on every sermon" },
+  { href: "/features/instant-coaching", label: "Instant Coaching", desc: "Specific coaching on every sermon" },
   { href: "/features/preaching-dna", label: "Preaching DNA", desc: "Patterns across all your sermons" },
   { href: "/teams", label: "Teams", desc: "Prepare and preach together" },
 ];

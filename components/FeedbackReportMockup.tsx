@@ -16,7 +16,7 @@ export function FeedbackReportMockup() {
     <div className="rounded-2xl border border-slate-200 shadow-2xl shadow-slate-200/80 overflow-hidden bg-white select-none text-[10px]" style={{ fontFamily: "system-ui, sans-serif" }}>
       {/* Header */}
       <div className="bg-[#3760ad] px-5 py-3.5">
-        <div className="text-[7px] font-bold uppercase tracking-widest text-blue-200 mb-1">Sermon Feedback Report</div>
+        <div className="text-[7px] font-bold uppercase tracking-widest text-blue-200 mb-1">Sermon Coaching Report</div>
         <div className="text-white font-bold text-[13px] leading-tight">Grace That Finds Us</div>
         <div className="text-blue-200 text-[8px] mt-0.5">Luke 15:11-32 &middot; Jul 6, 2026 &middot; 38 min</div>
       </div>

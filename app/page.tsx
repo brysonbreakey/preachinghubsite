@@ -359,7 +359,7 @@ function ProblemStatement() {
 function Features() {
   const bigFeature = {
     icon: ["m12 3-1.9 5.8a2 2 0 0 1-1.287 1.288L3 12l5.8 1.9a2 2 0 0 1 1.288 1.287L12 21l1.9-5.8a2 2 0 0 1 1.287-1.288L21 12l-5.8-1.9a2 2 0 0 1-1.288-1.287Z"],
-    label: "Instant Sermon Feedback",
+    label: "Instant Coaching",
     title: "Expert coaching on every sermon",
     body: "Every sermon you preach is a chance to grow. Upload a recording, your notes, or even a YouTube link, and get expert coaching — built by real preaching coaches — to help you preach with more clarity, confidence, and impact, sermon after sermon.",
     features: ["Detailed Coaching Report", "Voice Memo from Your AI Coach", "Pacing Analysis", "Tone/Volume Analyzer", "Face/Body Language Analyzer", "Full Sermon Transcript"],
@@ -510,7 +510,7 @@ function ProcessCycle() {
       title: "Refine",
       icon: ["M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z", "M19 10v2a7 7 0 0 1-14 0v-2", "M12 19v4", "M8 23h8"],
       body: "Upload your notes or a rehearsal recording and get coaching feedback before you ever step into the pulpit.",
-      tools: ["Live Recording", "AI Feedback Reports"],
+      tools: ["Live Recording", "AI Coaching Reports"],
     },
     {
       number: "03",
