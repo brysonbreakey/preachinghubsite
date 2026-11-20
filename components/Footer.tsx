@@ -12,6 +12,7 @@ export function Footer() {
             <a href={SIGNUP_URL} className="hover:text-white transition-colors">Try Free for 14 Days</a>
             <a href="/pricing" className="hover:text-white transition-colors">Pricing</a>
             <a href="/teams" className="hover:text-white transition-colors">Teams</a>
+            <a href="/about" className="hover:text-white transition-colors">About</a>
             <a href="mailto:support@preachinghub.com" className="hover:text-white transition-colors">Support</a>
           </div>
         </div>

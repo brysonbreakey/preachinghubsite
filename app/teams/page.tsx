@@ -32,7 +32,7 @@ function Hero() {
           Take your team&apos;s preaching to new levels.
         </h1>
         <p className="text-xl text-blue-100/80 max-w-2xl mx-auto mb-10 leading-relaxed">
-          Assign sermons, share a preaching calendar, and collaborate. Every preacher keeps their own full PreachingHub account — their own coaching, their own sermon library — while you get one consolidated bill and a discount that gets bigger the more of your staff you bring on.
+          Assign sermons, share a preaching calendar, and collaborate. Every preacher keeps their own full PreachingHub All-Access account — their own coaching, their own sermon library — while you get one consolidated bill and a discount that gets bigger the more of your staff you bring on.
         </p>
         <div className="flex items-center justify-center mb-4">
           <a href="#calculator" className="cta-btn w-full sm:w-auto inline-flex items-center justify-center gap-2 text-[#0b1230] font-bold px-7 py-4 rounded-xl text-base shadow-lg bg-white hover:bg-blue-50">
@@ -74,7 +74,7 @@ function WhyTeamBilling() {
       icon: ["M3 3h7v7H3z", "M14 3h7v7h-7z", "M14 14h7v7h-7z", "M3 14h7v7H3z"],
       label: "One Plan for Everyone",
       title: "No tiers to manage",
-      body: "Every teammate gets the full PreachingHub experience — the same sermon builder, AI coaching, and delivery analysis. You just add seats as your staff grows.",
+      body: "Every teammate gets the full PreachingHub All-Access experience — the same sermon builder, AI coaching, and delivery analysis. You just add seats as your staff grows.",
       accent: "#10b981", bg: "#f0fdf4",
     },
   ];
@@ -118,7 +118,7 @@ function TierFeatures() {
             One plan. Every seat.
           </h2>
           <p className="text-lg text-slate-500 max-w-xl mx-auto">
-            No tiers to assign or manage &mdash; every teammate you add gets the full PreachingHub experience.
+            No tiers to assign or manage &mdash; every teammate you add gets the full PreachingHub All-Access experience.
           </p>
         </div>
         <div

@@ -209,7 +209,7 @@ export function StackUp() {
                 <tr>
                   <td className="w-56 sticky left-0 z-10 bg-white px-5 py-4 border-b border-slate-100" style={{ verticalAlign: "top" }}>
                     <div className="text-sm text-slate-600">Longitudinal growth tracking</div>
-                    <div className="text-xs text-slate-400">Preaching Fingerprint</div>
+                    <div className="text-xs text-slate-400">Preaching DNA</div>
                   </td>
                   <td className="w-36 sticky left-56 z-10 px-4 py-4 text-center border-b border-slate-100" style={{ backgroundColor: "#eff6ff" }}><Check /></td>
                   <td className="px-4 py-4 text-center border-b border-slate-100"><Cross /></td>

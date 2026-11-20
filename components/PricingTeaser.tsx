@@ -8,10 +8,11 @@ import { PLAN_FEATURES } from "@/lib/planFeatures";
 import { BillingToggle } from "@/components/BillingToggle";
 import { PLAN_PRICING, type Billing } from "@/lib/pricing";
 import { TrialDisclosure, TRIAL_CTA_LABEL } from "@/components/TrialDisclosure";
+import { GuaranteeBadge } from "@/components/GuaranteeBadge";
 
-const NAVY = "#3760ad";
+const NAVY = "#4F46E5";
 
-const HIGHLIGHT_NAMES = ["Sermon Builder", "Coaching Reports", "Delivery Analysis", "Visual Delivery"];
+const HIGHLIGHT_NAMES = ["Sermon Builder", "Coaching Reports", "Voice Memo from Your AI Coach", "Delivery Analysis", "Visual Delivery"];
 const HIGHLIGHTS = PLAN_FEATURES.filter((f) => HIGHLIGHT_NAMES.includes(f.name));
 
 export function PricingTeaser() {
@@ -25,7 +26,7 @@ export function PricingTeaser() {
           One plan. ${plan.perMonth}/mo.
         </h2>
         <p className="text-lg text-slate-500 mb-6 max-w-md mx-auto">
-          No tiers, no locked features. The full PreachingHub experience &mdash; ${plan.perMonth}/mo ({plan.billedLabel}), cancel anytime.
+          No tiers, no locked features. PreachingHub All-Access is ${plan.perMonth}/mo, cancel anytime.
         </p>
         <div className="flex items-center justify-center mb-10">
           <BillingToggle billing={billing} onChange={setBilling} />
@@ -41,6 +42,7 @@ export function PricingTeaser() {
           </a>
         </div>
         <TrialDisclosure className="text-xs text-slate-500 mt-5" />
+        <GuaranteeBadge className="mt-2" />
       </div>
     </section>
   );

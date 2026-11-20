@@ -68,7 +68,7 @@ export default function PrivacyPage() {
             <li>Provide, operate, and maintain the Service, including sermon coaching and evaluation features.</li>
             <li>Process payments and manage subscriptions.</li>
             <li>Generate AI-assisted coaching feedback on sermon content and delivery.</li>
-            <li>Track progress over time (e.g., the Preaching Fingerprint feature).</li>
+            <li>Track progress over time (e.g., the Preaching DNA feature).</li>
             <li>Communicate with you about your account, updates, or support requests.</li>
             <li>Improve and develop the Service.</li>
             <li>Detect, prevent, and address technical issues, fraud, or abuse.</li>

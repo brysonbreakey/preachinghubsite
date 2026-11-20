@@ -10,6 +10,7 @@ const APP_ONLY_PATHS = [
   "auth",
   "calendar",
   "coach",
+  "dna",
   "evaluate",
   "fingerprint",
   "invite",

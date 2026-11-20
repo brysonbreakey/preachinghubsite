@@ -104,7 +104,7 @@ export function TeamPricingCalculator() {
       </div>
 
       <p className="text-center text-sm text-slate-400 mb-8">
-        ${SEAT_PRICES[billing]}/seat/month, {billing === "annual" ? "billed annually" : "billed monthly"} &mdash; every seat gets the full PreachingHub plan.
+        ${SEAT_PRICES[billing]}/seat/month, {billing === "annual" ? "billed annually" : "billed monthly"} &mdash; every seat gets the full PreachingHub All-Access plan.
       </p>
 
       <div className="rounded-xl bg-slate-50 border border-slate-100 p-6">

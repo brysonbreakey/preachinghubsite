@@ -9,6 +9,8 @@ import { FeedbackReportMockup } from "@/components/FeedbackReportMockup";
 import { SIGNUP_URL } from "@/lib/urls";
 import { ScaledMockup } from "@/components/ScaledMockup";
 import { TrialDisclosure, TRIAL_CTA_LABEL } from "@/components/TrialDisclosure";
+import { FaqSection } from "@/components/FaqSection";
+import { HOME_FAQ_IDS } from "@/lib/faqs";
 
 // ─── Cartoon mockups ──────────────────────────────────────────────────────────
 
@@ -22,22 +24,6 @@ function BrowserShell({ url, children }: { url: string; children: React.ReactNod
         <div className="ml-3 flex-1 max-w-[200px] bg-white rounded border border-slate-200 h-4 flex items-center px-2 text-[9px] text-slate-400">{url}</div>
       </div>
       {children}
-    </div>
-  );
-}
-
-// Mini sidebar used inside mockups
-function MockSidebar({ active }: { active: number }) {
-  const items = ["Dashboard", "Sermon Builder", "Get Feedback", "Series", "Templates", "Research Tools", "Preaching Fingerprint"];
-  return (
-    <div className="w-28 bg-white border-r border-slate-100 p-2.5 shrink-0 flex flex-col gap-0.5">
-      <div className="mb-2.5 px-1"><PHLogo height={13} /></div>
-      {items.map((label, i) => (
-        <div key={label} className={`flex items-center gap-1.5 px-2 py-1.5 rounded-md text-[9px] ${i === active ? "bg-blue-50 text-[#3760ad] font-semibold" : "text-slate-400"}`}>
-          <div className="w-1 h-1 rounded-full shrink-0" style={{ background: i === active ? "#3760ad" : "#cbd5e1" }} />
-          {label}
-        </div>
-      ))}
     </div>
   );
 }
@@ -183,53 +169,96 @@ function DashboardMockup() {
 }
 
 function FeedbackInputMockup() {
+  const tiles = [
+    { label: "Paste Text", bg: "#eff6ff", c: "#3b82f6", d: "M4 7V4h16v3M9 20h6M12 4v16", on: true },
+    { label: "YouTube", bg: "#fef2f2", c: "#ef4444", d: "M5 6h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2zM10 9.5l4 2.5-4 2.5z" },
+    { label: "Upload File", bg: "#eef2ff", c: "#6366f1", d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" },
+    { label: "Record", bg: "#fff7ed", c: "#f97316", d: "M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2M12 19v3" },
+  ];
+  const receive = [
+    { label: "Biggest Wins", bg: "#faf5ff", c: "#a855f7", d: "M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z" },
+    { label: "Category Breakdown", bg: "#eff6ff", c: "#3b82f6", d: "M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" },
+    { label: "How to Grow", bg: "#ecfdf5", c: "#10b981", d: "M23 6l-9.5 9.5-5-5L1 18M17 6h6v6" },
+    { label: "Questions to Consider", bg: "#eef2ff", c: "#6366f1", d: "M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01" },
+  ];
   return (
     <BrowserShell url="app.preachinghub.com/evaluate">
-      <div className="flex text-[10px]" style={{ minHeight: 300 }}>
-        <MockSidebar active={2} />
-        <div className="flex-1 p-4 flex gap-3 overflow-hidden">
-          <div className="flex-1 flex flex-col gap-2.5">
-            <div className="text-sm font-bold text-slate-800">Get Sermon Feedback</div>
-            <div className="text-[9px] text-slate-400">Upload your sermon or paste your notes and receive structured coaching.</div>
-            <div className="rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 p-4 flex flex-col items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-[#3760ad]/10 flex items-center justify-center">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3760ad" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                </svg>
+      <div className="flex text-[10px] bg-white" style={{ height: 360, width: 600 }}>
+        {/* Sidebar */}
+        <div className="w-[104px] shrink-0 border-r border-slate-100 p-2.5 flex flex-col">
+          <div className="mb-3 px-1"><PHLogo height={13} /></div>
+          <div className="flex flex-col gap-0.5">
+            {MOCK_NAV_TOP.map(({ label, d }) => {
+              const active = label === "Instant Coaching";
+              return (
+                <div
+                  key={label}
+                  className={`flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-[8px] font-medium ${active ? "text-white shadow-sm" : "text-slate-500"}`}
+                  style={active ? { background: "#5b5ce6" } : undefined}
+                >
+                  <MockIcon d={d} />
+                  {label}
+                </div>
+              );
+            })}
+          </div>
+          <div className="mt-auto flex flex-col gap-0.5">
+            {MOCK_NAV_BOTTOM.map(({ label, d }) => (
+              <div key={label} className="flex items-center gap-1.5 px-2 py-1.5 text-[8px] font-medium text-slate-500">
+                <MockIcon d={d} />
+                {label}
               </div>
-              <div className="font-semibold text-slate-600 text-[10px]">Drop your sermon here</div>
-              <div className="text-[8px] text-slate-400">Upload a file, paste your notes, or record live</div>
-              <div className="flex gap-1.5 mt-1">
-                {["Paste Video Link", "Paste Text", "Upload File"].map(btn => (
-                  <div key={btn} className="bg-white border border-slate-200 rounded px-2 py-1 text-[8px] text-slate-600 font-medium">{btn}</div>
+            ))}
+          </div>
+        </div>
+
+        {/* Main */}
+        <div className="flex-1 min-w-0 p-3.5 overflow-hidden bg-[#fbfbfd]">
+          <div className="text-[18px] font-black text-slate-900 leading-none tracking-[-0.05em]">Get Sermon Feedback</div>
+          <div className="text-[7.5px] text-slate-500 font-medium mt-1.5 mb-3 max-w-[260px] leading-snug">Upload your sermon or paste your notes to receive structured, premium coaching across seven key areas.</div>
+          <div className="flex gap-2.5 items-start">
+            <div className="flex-1 min-w-0 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
+              <div className="text-[5.5px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-1">Sermon Name <span className="normal-case tracking-normal font-normal">(optional)</span></div>
+              <div className="rounded-lg bg-slate-50 border border-slate-100 px-2 py-1.5 text-[7.5px] text-slate-400 mb-2.5">e.g. Presence Changes Everything</div>
+              <div className="grid grid-cols-4 gap-1 mb-2.5">
+                {tiles.map(({ label, bg, c, d, on }) => (
+                  <div key={label} className={`flex flex-col items-center gap-1 ${on ? "" : "opacity-50"}`}>
+                    <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ background: bg, color: c }}>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d={d} /></svg>
+                    </div>
+                    <span className={`text-[6.5px] font-bold ${on ? "text-slate-900" : "text-slate-500"}`}>{label}</span>
+                  </div>
                 ))}
               </div>
+              <div className="rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-[7.5px] text-slate-400 h-[58px] mb-2">Paste your notes, outline, or transcript here…</div>
+              <div className="grid grid-cols-2 gap-1 mb-2.5 text-[6px] font-bold uppercase tracking-wider text-center">
+                <div className="rounded-full bg-white shadow-sm border border-slate-100 py-1" style={{ color: "#4f46e5" }}>Future sermon</div>
+                <div className="rounded-full bg-slate-100 py-1 text-slate-500">Past sermon</div>
+              </div>
+              <div className="rounded-full py-1.5 flex items-center justify-center gap-1 text-[7px] font-bold uppercase tracking-widest text-white" style={{ background: "#334155" }}>
+                <MockIcon d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z" /> Generate Coaching Report
+              </div>
             </div>
-            <div className="h-7 bg-[#3760ad] rounded-lg flex items-center justify-center text-white text-[9px] font-semibold gap-1.5">
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-              Get Feedback
-            </div>
-          </div>
-          <div className="w-32 flex flex-col gap-2.5 shrink-0">
-            <div className="rounded-xl border border-slate-200 p-2.5">
-              <div className="font-semibold text-slate-700 mb-1.5 text-[9px]">What you&apos;ll receive</div>
-              {[
-                { icon: "★", label: "Your Biggest Wins" },
-                { icon: "◉", label: "Category Breakdown" },
-                { icon: "↑", label: "Top Growth Areas" },
-                { icon: "?", label: "Reflection Questions" },
-                { icon: "~", label: "Pacing Analysis" },
-              ].map(({ icon, label }) => (
-                <div key={label} className="flex items-center gap-1.5 py-0.5 text-[8px] text-slate-500">
-                  <span className="text-[#3760ad] w-3 shrink-0 font-bold">{icon}</span>{label}
-                </div>
-              ))}
-            </div>
-            <div className="rounded-xl border border-slate-200 p-2.5">
-              <div className="font-semibold text-slate-700 mb-1.5 text-[9px]">Recent Reports</div>
-              {["The Lost Sheep", "Grace Abounds", "Kingdom Come"].map(name => (
-                <div key={name} className="text-[8px] text-slate-500 py-0.5 border-b border-slate-50 last:border-0 truncate">{name}</div>
-              ))}
+
+            <div className="w-[150px] shrink-0 flex flex-col gap-2">
+              <div className="rounded-2xl p-3 relative overflow-hidden text-white" style={{ background: "linear-gradient(135deg,#4f46e5,#6366f1)" }}>
+                <div className="w-6 h-6 rounded-lg bg-white/20 mb-1.5" />
+                <div className="text-[9px] font-black leading-tight tracking-[-0.02em]">Personalized Coaching Profile</div>
+                <div className="text-[6px] text-white/80 mt-1 leading-snug">Calibrate our AI to your context, tradition, and preaching style.</div>
+                <div className="mt-2 rounded-lg bg-white text-center py-1 text-[5.5px] font-bold uppercase tracking-widest" style={{ color: "#4f46e5" }}>Set up your profile →</div>
+                <div className="absolute -bottom-4 -right-4 w-14 h-14 rounded-full border-[7px] border-white/10" />
+              </div>
+              <div className="rounded-2xl border border-slate-200 bg-white p-2.5 shadow-sm">
+                <div className="text-[5.5px] font-bold uppercase tracking-[0.2em] text-slate-400 mb-1.5">What you&apos;ll receive</div>
+                {receive.map(({ label, bg, c, d }) => (
+                  <div key={label} className="flex items-center gap-1.5 mb-1 last:mb-0">
+                    <div className="w-4 h-4 rounded-md flex items-center justify-center shrink-0" style={{ background: bg, color: c }}>
+                      <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d={d} /></svg>
+                    </div>
+                    <span className="text-[6.5px] font-bold text-slate-800 truncate">{label}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -333,7 +362,7 @@ function Features() {
     label: "Instant Sermon Feedback",
     title: "Expert coaching on every sermon",
     body: "Every sermon you preach is a chance to grow. Upload a recording, your notes, or even a YouTube link, and get expert coaching — built by real preaching coaches — to help you preach with more clarity, confidence, and impact, sermon after sermon.",
-    features: ["Detailed Coaching Report", "Pacing Analysis", "Tone/Volume Analyzer", "Face/Body Language Analyzer", "Full Sermon Transcript"],
+    features: ["Detailed Coaching Report", "Voice Memo from Your AI Coach", "Pacing Analysis", "Tone/Volume Analyzer", "Face/Body Language Analyzer", "Full Sermon Transcript"],
     accent: "#3760ad", bg: "#eff6ff",
   };
 
@@ -431,12 +460,12 @@ function Features() {
             </ul>
           </div>
           <div className="min-w-0 flex justify-center md:justify-end">
-            <div className="feature-mockup-scale relative">
+            <div className="feature-mockup-scale relative w-full max-w-[600px]">
               <div className="absolute -bottom-8 -right-8 scale-[0.5] origin-bottom-right rotate-2" style={{ zIndex: 0 }}>
                 <FeedbackReportMockup />
               </div>
               <div className="relative" style={{ zIndex: 1 }}>
-                <FeedbackInputMockup />
+                <ScaledMockup designWidth={600}><FeedbackInputMockup /></ScaledMockup>
               </div>
             </div>
           </div>
@@ -478,7 +507,7 @@ function ProcessCycle() {
     },
     {
       number: "02",
-      title: "Rehearse",
+      title: "Refine",
       icon: ["M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z", "M19 10v2a7 7 0 0 1-14 0v-2", "M12 19v4", "M8 23h8"],
       body: "Upload your notes or a rehearsal recording and get coaching feedback before you ever step into the pulpit.",
       tools: ["Live Recording", "AI Feedback Reports"],
@@ -495,7 +524,7 @@ function ProcessCycle() {
       title: "Review",
       icon: ["M22 12h-4l-3 9L9 3l-3 9H2"],
       body: "Get a detailed coaching report — strengths, growth areas, and pacing analysis — so you keep growing sermon after sermon.",
-      tools: ["PDF Coaching Report", "Pacing Analysis", "Tone/Volume Analysis", "Visual Delivery Analysis"],
+      tools: ["PDF Coaching Report", "Voice Memo from Your AI Coach", "Pacing Analysis", "Tone/Volume Analysis", "Visual Delivery Analysis"],
     },
   ];
 
@@ -632,11 +661,14 @@ function AboutCompany() {
           <p className="text-lg text-slate-500 leading-relaxed mb-8">
             It won&apos;t generate an outline, write your sermon, or hand you application points. It will coach you into the best preacher you can be. Feedback tool, sermon builder, templates, resource library, idea bank, series builder, sermon organizer, customizable prep process &mdash; everything here is built to take your preaching to a new level.
           </p>
-          <a href={SIGNUP_URL} className="inline-flex items-center justify-center gap-2 text-white font-semibold px-6 py-4 rounded-xl text-base transition-colors" style={{ backgroundColor: "#3760ad" }}>
+          <a href={SIGNUP_URL} className="inline-flex items-center justify-center gap-2 text-white font-semibold px-7 py-4 rounded-full text-base transition-colors hover:brightness-110" style={{ backgroundColor: "#4F46E5" }}>
             {TRIAL_CTA_LABEL}
             <Icon d="M5 12h14M12 5l7 7-7 7" size={16} color="white" strokeWidth={2.5} />
           </a>
           <TrialDisclosure className="text-slate-500 text-xs mt-3" />
+          <a href="/about" className="inline-flex items-center gap-1.5 mt-5 text-sm font-semibold hover:underline" style={{ color: "#4F46E5" }}>
+            More about us <Icon d="M5 12h14M12 5l7 7-7 7" size={14} strokeWidth={2.5} />
+          </a>
         </div>
       </div>
     </section>
@@ -690,6 +722,7 @@ export default function Page() {
       <AboutCompany />
       <PricingTeaser />
       <SampleReportShowcase />
+      <FaqSection ids={HOME_FAQ_IDS} bg="bg-slate-50" />
       <FinalCTA />
       <Footer />
     </main>
