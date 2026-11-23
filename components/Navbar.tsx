@@ -32,7 +32,7 @@ export function Navbar() {
         >
           <span className="font-black uppercase tracking-[0.12em] mr-2">Black Friday</span>
           <span className="sm:hidden">$29/mo for 6 months · code {BF_MONTHLY_CODE}</span>
-          <span className="hidden sm:inline">$29/mo for 6 months (code {BF_MONTHLY_CODE}) or 50% off annual (code {BF_ANNUAL_CODE}), after your 14-day free trial</span>
+          <span className="hidden sm:inline">$29/mo for 6 months (code {BF_MONTHLY_CODE}) or 50% off your first year of annual (code {BF_ANNUAL_CODE}), after your 14-day free trial</span>
           <span className="ml-2 underline underline-offset-2">Start free &rarr;</span>
         </a>
       )}

@@ -24,6 +24,7 @@ const HIDDEN_PREFIXES = [
   "/challenge",
   "/checklist",
   "/accelerator",
+  "/blackfriday",
   "/1-dollar-month",
   "/returning-1-dollar-month",
   "/o",
@@ -215,7 +216,7 @@ export default function BlackFridayPopup() {
           <div className="flex items-center justify-between gap-3 rounded-2xl border border-slate-200 p-4">
             <div>
               <p className="font-[family-name:var(--font-inter)] text-lg font-extrabold tracking-[-0.02em] text-slate-900">50% off annual</p>
-              <p className="text-sm text-slate-500">On the annual plan</p>
+              <p className="text-sm text-slate-500">Your first year on the annual plan</p>
             </div>
             <CodeChip code={BF_ANNUAL_CODE} />
           </div>

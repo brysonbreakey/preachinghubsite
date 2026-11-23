@@ -14,7 +14,7 @@ export function BlackFridayOffer() {
 
   const options = [
     { big: "$29/mo", sub: "for 6 months, then $49/mo", plan: "Monthly plan", code: BF_MONTHLY_CODE },
-    { big: "50% off", sub: "the annual plan", plan: "Annual plan", code: BF_ANNUAL_CODE },
+    { big: "50% off", sub: "your first year of the annual plan", plan: "Annual plan", code: BF_ANNUAL_CODE },
   ];
 
   return (
