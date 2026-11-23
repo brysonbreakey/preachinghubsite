@@ -68,19 +68,26 @@ export function BlackFridayLanding() {
 
           <div className="grid sm:grid-cols-2 gap-4 text-left mb-8">
             {OFFERS.map((o) => (
-              <div key={o.code} className="rounded-3xl bg-white border border-slate-200 p-6 shadow-sm">
+              <div key={o.code} className="group relative rounded-3xl bg-white border border-slate-200 p-6 shadow-sm transition hover:border-indigo-300 hover:shadow-md">
                 <p className="text-[11px] font-bold uppercase tracking-[0.15em] text-slate-400">{o.plan}</p>
                 <p className={`${H} text-4xl text-slate-900 mt-1`}>{o.big}</p>
                 <p className="text-sm text-slate-500 mb-4">{o.sub}</p>
                 <button
                   type="button"
                   onClick={() => copy(o.code)}
-                  className="rounded-lg border border-dashed border-indigo-300 bg-indigo-50 px-3 py-1.5 font-mono text-sm font-bold tracking-wider"
+                  className="relative z-10 rounded-lg border border-dashed border-indigo-300 bg-indigo-50 px-3 py-1.5 font-mono text-sm font-bold tracking-wider"
                   style={{ color: INDIGO }}
                   aria-label={`Copy code ${o.code}`}
                 >
                   {copied === o.code ? "Copied ✓" : `Code ${o.code}`}
                 </button>
+                <a
+                  href={buildSignupUrl("black_friday_page")}
+                  className="mt-5 flex items-center justify-between text-sm font-bold after:absolute after:inset-0 after:rounded-3xl after:content-['']"
+                  style={{ color: INDIGO }}
+                >
+                  Start free 14-day trial <span aria-hidden="true">&rarr;</span>
+                </a>
               </div>
             ))}
           </div>
