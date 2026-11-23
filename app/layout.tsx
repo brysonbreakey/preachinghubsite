@@ -3,7 +3,7 @@ import { Inter, Lora, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import ScrollReveal from "@/components/ScrollReveal";
 import PostHogInit from "@/components/PostHogInit";
-import EvaluationPopup from "@/components/EvaluationPopup";
+import SitePopup from "@/components/SitePopup";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const lora = Lora({ subsets: ["latin"], style: ["italic"], variable: "--font-lora" });
@@ -92,7 +92,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <PostHogInit />
         {children}
         <ScrollReveal />
-        <EvaluationPopup />
+        <SitePopup />
       </body>
     </html>
   );

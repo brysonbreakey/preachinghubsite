@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PHLogo } from "@/components/Logo";
 import { Icon } from "@/components/Icon";
-import { APP_URL, SIGNUP_URL } from "@/lib/urls";
+import { APP_URL, SIGNUP_URL, buildSignupUrl } from "@/lib/urls";
+import { BF_ANNUAL_CODE, BF_MONTHLY_CODE, isBlackFridayNow } from "@/lib/blackFriday";
 
 const FEATURE_LINKS = [
   { href: "/features/sermon-builder", label: "Sermon Builder", desc: "Prep, write, and get coached in one place" },
@@ -19,9 +20,22 @@ const NAV_LINKS = [
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
+  const [bf, setBf] = useState(false);
+  useEffect(() => setBf(isBlackFridayNow()), []);
 
   return (
     <header className="fixed top-0 inset-x-0 z-50 bg-white/95 backdrop-blur border-b border-slate-200">
+      {bf && (
+        <a
+          href={buildSignupUrl("black_friday_banner")}
+          className="block bg-[#4F46E5] hover:bg-[#4338CA] transition-colors text-white text-center text-xs sm:text-[13px] font-semibold px-4 py-2 leading-snug"
+        >
+          <span className="font-black uppercase tracking-[0.12em] mr-2">Black Friday</span>
+          <span className="sm:hidden">$29/mo for 6 months · code {BF_MONTHLY_CODE}</span>
+          <span className="hidden sm:inline">$29/mo for 6 months (code {BF_MONTHLY_CODE}) or 50% off annual (code {BF_ANNUAL_CODE}), after your 14-day free trial</span>
+          <span className="ml-2 underline underline-offset-2">Start free &rarr;</span>
+        </a>
+      )}
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
         <a href="/" onClick={() => setOpen(false)}><PHLogo height={28} /></a>
         <nav className="hidden lg:flex items-center gap-8 text-sm text-slate-600">

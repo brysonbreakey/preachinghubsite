@@ -6,6 +6,7 @@ import { FaqSection } from "@/components/FaqSection";
 import { PRICING_FAQ_IDS } from "@/lib/faqs";
 import { GUARANTEE_LONG, GUARANTEE_SHORT, GUARANTEE_EMAIL } from "@/lib/guarantee";
 import { Accent, H, INDIGO } from "@/components/FeatureBits";
+import { BlackFridayOffer } from "@/components/BlackFridayOffer";
 
 export const metadata: Metadata = {
   title: "Pricing — PreachingHub",
@@ -53,6 +54,7 @@ export default function PricingPage() {
     <main>
       <Navbar />
       <Hero />
+      <BlackFridayOffer />
       <PricingCard />
       <Guarantee />
       <FaqSection ids={PRICING_FAQ_IDS} />
