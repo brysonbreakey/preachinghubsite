@@ -13,10 +13,16 @@ const DISCOVER = [
   "Use your big idea as a north star to guide your editing process",
 ];
 
+const DESCRIPTION = "A short video on finding and sharpening your sermon's big idea.";
+// The video's own thumbnail for link previews. Bump "v" after changing it on YouTube, so apps fetch it again.
+const PREVIEW = { url: `https://i.ytimg.com/vi/${YOUTUBE_ID}/maxresdefault.jpg?v=2`, width: 1280, height: 720 };
+
 export const metadata: Metadata = {
   title: { absolute: `${TITLE} | PreachingHub` },
-  description: "A short video on finding and sharpening your sermon's big idea.",
+  description: DESCRIPTION,
   alternates: { canonical: "/watch/big-idea" },
+  openGraph: { title: TITLE, description: DESCRIPTION, url: "/watch/big-idea", siteName: "PreachingHub", type: "website", images: [PREVIEW] },
+  twitter: { card: "summary_large_image", title: TITLE, description: DESCRIPTION, images: [PREVIEW.url] },
 };
 
 // A focused video page: no header or footer, just the logo back to the home page.
