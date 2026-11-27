@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PHLogo } from "@/components/Logo";
+import { YouTubeEmbed } from "@/components/YouTubeEmbed";
 
 const TITLE = "Crafting a memorable Big Idea";
 const YOUTUBE_ID = "LcTA2GMxYYI";
@@ -41,13 +42,7 @@ export default function Page() {
           </ul>
         </div>
         <div className="relative aspect-video overflow-hidden rounded-2xl bg-[#0f1530] shadow-2xl shadow-slate-900/20">
-          <iframe
-            src={`https://www.youtube-nocookie.com/embed/${YOUTUBE_ID}?rel=0&playsinline=1`}
-            title={TITLE}
-            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; fullscreen"
-            allowFullScreen
-            className="absolute inset-0 h-full w-full"
-          />
+          <YouTubeEmbed id={YOUTUBE_ID} title={TITLE} />
         </div>
         <a
           href={ARTICLE_URL}
